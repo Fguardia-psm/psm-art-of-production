@@ -16,7 +16,8 @@ export const Route = createFileRoute("/partner")({
 });
 
 function PartnerPage() {
-  const { provisionalArchetype, lead } = useCampaignStore();
+  const { provisionalArchetype, lead, unlocked, fieldReportsSeen } =
+    useCampaignStore();
   const leaderHref = fieldLeaderUrl(
     provisionalArchetype,
     lead?.name?.split(" ")[0],
@@ -28,14 +29,27 @@ function PartnerPage() {
         <div>
           <SectionKicker ink>PSM Brokerage</SectionKicker>
           <h1 className="mt-3 font-display text-3xl sm:text-4xl text-parchment">
-            Why top producers partner here
+            Partner — after proof
           </h1>
           <p className="mt-4 font-body text-parchment/65 leading-relaxed">
-            The principles in The Art of Production are timeless. The structure
-            to live them — carriers, marketing, technology, compliance, and a
-            human field path — is what an FMO must provide. That is the banner
-            PSM raises.
+            The campaign earned trust. Field Reports earned the seat at the
+            table. This page is the handoff to a human conversation — not a
+            hard close.
           </p>
+          {unlocked && !fieldReportsSeen ? (
+            <div className="mt-4 rounded-lg border border-brass/40 bg-brass/10 px-4 py-3">
+              <p className="font-body text-sm text-parchment/80">
+                Recommended: read{" "}
+                <Link
+                  to="/field-reports"
+                  className="underline underline-offset-2 text-brass-bright"
+                >
+                  Field Reports
+                </Link>{" "}
+                first — three producers on operating leverage.
+              </p>
+            </div>
+          ) : null}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3">
@@ -86,18 +100,24 @@ function PartnerPage() {
               </li>
             ))}
           </ul>
+          {unlocked ? (
+            <Button asChild variant="secondary" size="sm" className="mt-4">
+              <Link to="/field-reports">Full Field Reports chapter</Link>
+            </Button>
+          ) : null}
         </div>
 
         <div className="rounded-xl border border-brass/30 bg-brass/10 px-5 py-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Next step
+            The conversation
           </p>
           <h2 className="mt-2 font-display text-2xl text-parchment">
             Talk to a field leader
           </h2>
           <p className="mt-2 font-body text-sm text-parchment/60 leading-relaxed">
-            Bring your archetype, NPN, and book stage. We will map contracts,
-            marketing fire, and infrastructure — not a generic pitch deck.
+            Bring your archetype, NPN, and book stage. We map contracts,
+            marketing fire, and infrastructure — not a generic pitch deck. Our
+            job was to earn curiosity; the recruiter’s job is the close.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="primary" size="xl">
@@ -118,9 +138,11 @@ function PartnerPage() {
           <Button asChild variant="secondary" size="lg">
             <Link to="/">Back to the campaign</Link>
           </Button>
-          <Button asChild variant="secondary" size="lg">
-            <Link to="/dossier">Your dossier</Link>
-          </Button>
+          {unlocked ? (
+            <Button asChild variant="secondary" size="lg">
+              <Link to="/dossier">Your dossier</Link>
+            </Button>
+          ) : null}
         </div>
 
         <p className="font-display text-xl italic text-parchment/45">

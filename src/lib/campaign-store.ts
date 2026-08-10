@@ -31,11 +31,13 @@ interface CampaignState {
   unlocked: boolean;
   lead: LeadProfile | null;
   leaderCode: string | null;
+  fieldReportsSeen: boolean;
   setScoutAnswer: (questionId: string, optionIndex: number) => void;
   completeScout: () => void;
   completeChapter: (slug: ChapterSlug, result: ChapterResult) => void;
   completeNineFaces: (score: number) => void;
   unlock: (lead: LeadProfile) => void;
+  markFieldReportsSeen: () => void;
   ensureLeaderCode: () => string;
   resetCampaign: () => void;
 }
@@ -60,6 +62,7 @@ const initial = {
   unlocked: false,
   lead: null as LeadProfile | null,
   leaderCode: null as string | null,
+  fieldReportsSeen: false,
 };
 
 export const useCampaignStore = create<CampaignState>()(
@@ -92,6 +95,7 @@ export const useCampaignStore = create<CampaignState>()(
           lead,
           leaderCode: s.leaderCode ?? makeLeaderCode(),
         })),
+      markFieldReportsSeen: () => set({ fieldReportsSeen: true }),
       ensureLeaderCode: () => {
         const existing = get().leaderCode;
         if (existing) return existing;

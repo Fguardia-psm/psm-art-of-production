@@ -9,7 +9,7 @@ import {
   ARCHETYPES,
   CLIENT_FACES,
   PDF_URL,
-  PSM_PARTNER_URL,
+  RECRUITER_OPENERS,
   fieldLeaderUrl,
   resultLabel,
 } from "@/lib/content";
@@ -29,6 +29,7 @@ function DossierPage() {
     chapterResults,
     leaderCode,
     ensureLeaderCode,
+    fieldReportsSeen,
     resetCampaign,
   } = useCampaignStore();
 
@@ -37,6 +38,7 @@ function DossierPage() {
   }
 
   const arch = ARCHETYPES[provisionalArchetype];
+  const opener = RECRUITER_OPENERS[provisionalArchetype];
   const code = leaderCode ?? ensureLeaderCode();
   const leaderHref = fieldLeaderUrl(
     provisionalArchetype,
@@ -74,6 +76,29 @@ function DossierPage() {
     }
   }
 
+  async function copyRecruiterBrief() {
+    const text = [
+      `RECRUITER BRIEF — The Art of Production`,
+      `Agent: ${lead?.name ?? ""}`,
+      `NPN: ${lead?.npn ?? ""} · ${lead?.state ?? ""}`,
+      `Stage: ${lead?.bookStage ?? ""}`,
+      `Archetype: ${arch.name}`,
+      ``,
+      `Open with: ${opener.openWith}`,
+      `Proof angle: ${opener.proofAngle}`,
+      `Avoid: ${opener.avoid}`,
+      ``,
+      `Nine Faces: ${nineFacesScore}/9`,
+      `Field reports: ${fieldReportsSeen ? "reviewed" : "pending"}`,
+    ].join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Recruiter brief copied.");
+    } catch {
+      alert(text);
+    }
+  }
+
   function downloadScripts() {
     const lines = [
       `THE ART OF PRODUCTION — Script Pack`,
@@ -83,6 +108,10 @@ function DossierPage() {
       ``,
       `MONDAY MOVE`,
       arch.mondayScript,
+      ``,
+      `RECRUITER OPEN`,
+      opener.openWith,
+      opener.proofAngle,
       ``,
       `NINE FACES — OPENING LINES`,
       ...CLIENT_FACES.flatMap((f) => [
@@ -118,9 +147,50 @@ function DossierPage() {
               : "Your dossier"}
           </h1>
           <p className="mt-2 font-body text-charcoal-muted">
-            Sealed after the campaign. Your scorecard, scripts, and path to PSM.
+            Identity sealed. Next: evidence — then the conversation.
           </p>
         </div>
+
+        {/* Primary post-NPN journey */}
+        <section className="rounded-xl border border-brass/35 bg-brass/10 p-5 sm:p-6">
+          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+            Post-kit path
+          </p>
+          <ol className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 font-ui text-xs text-charcoal-muted">
+            <li className="text-brass font-medium">1. Dossier</li>
+            <li className="hidden sm:inline opacity-40">→</li>
+            <li className={fieldReportsSeen ? "text-brass font-medium" : "text-charcoal"}>
+              2. Field Reports (proof)
+            </li>
+            <li className="hidden sm:inline opacity-40">→</li>
+            <li>3. Field leader / Partner</li>
+          </ol>
+          <h2 className="mt-4 font-display text-2xl text-charcoal">
+            {fieldReportsSeen
+              ? "Proof reviewed — take the conversation"
+              : "Read Field Reports before you partner"}
+          </h2>
+          <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
+            Elite producers don’t switch FMOs on poetry. They switch — or even
+            take the call — on operating leverage. Three field reports. Then a
+            human conversation with your archetype already known.
+          </p>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <Button asChild variant="paper" size="lg">
+              <Link to="/field-reports">
+                {fieldReportsSeen ? "Revisit Field Reports" : "Open Field Reports"}
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+            {fieldReportsSeen ? (
+              <Button asChild variant="outline" size="lg">
+                <a href={leaderHref} target="_blank" rel="noreferrer">
+                  Talk to a field leader
+                </a>
+              </Button>
+            ) : null}
+          </div>
+        </section>
 
         <section className="ink-wash rounded-xl border border-parchment/10 px-6 py-10 text-center shadow-[var(--shadow-plate)] sm:px-10">
           <p className="font-ui text-[11px] uppercase tracking-[0.28em] text-brass-bright/90">
@@ -175,6 +245,31 @@ function DossierPage() {
           </div>
         </div>
 
+        <aside className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-5 sm:p-6">
+          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
+            Recruiter brief · more valuable than the lead alone
+          </p>
+          <p className="mt-3 font-display text-xl text-parchment leading-snug">
+            {opener.openWith}
+          </p>
+          <p className="mt-3 font-body text-sm text-parchment/60 leading-relaxed">
+            Proof angle: {opener.proofAngle}
+          </p>
+          <p className="mt-2 font-body text-xs text-parchment/40">
+            Avoid: {opener.avoid}
+          </p>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="mt-4"
+            onClick={copyRecruiterBrief}
+          >
+            <Copy className="size-3.5" />
+            Copy recruiter brief
+          </Button>
+        </aside>
+
         <aside className="rounded-xl border border-brass/30 bg-brass/8 p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
             Next campaign move with PSM
@@ -192,8 +287,8 @@ function DossierPage() {
             Script pack · Nine Faces
           </p>
           <p className="mt-2 font-body text-sm text-charcoal-muted">
-            Opening lines you can use Monday. Download the full pack for your
-            desk.
+            Opening lines for Monday. The Nine Faces alone was worth the NPN —
+            keep them on your desk.
           </p>
           <ul className="mt-4 space-y-3 max-h-64 overflow-y-auto pr-1">
             {CLIENT_FACES.slice(0, 4).map((f) => (
@@ -219,33 +314,6 @@ function DossierPage() {
           </Button>
         </section>
 
-        <section className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-6 sm:p-8">
-          <h3 className="font-display text-2xl">
-            Join the ranks that prepare wisely
-          </h3>
-          <p className="mt-3 font-body text-parchment/65 leading-relaxed max-w-xl">
-            Talk to a field leader with your archetype preloaded — or start your
-            partner journey with PSM’s mentorship, marketing, tech, and
-            compliance-first support.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Button asChild variant="primary" size="lg">
-              <a href={leaderHref} target="_blank" rel="noreferrer">
-                Talk to a field leader
-                <ArrowRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
-                Partner with PSM
-              </a>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <Link to="/partner">Why agents join</Link>
-            </Button>
-          </div>
-        </section>
-
         <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
           <div className="flex items-start gap-3">
             <Users className="size-5 text-brass shrink-0 mt-0.5" />
@@ -254,8 +322,7 @@ function DossierPage() {
                 Leader mode · downline invite
               </p>
               <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed">
-                Assign this campaign to your team. Share your leader code so they
-                walk the same path before AEP.
+                Assign this campaign before AEP. Same language. Same Nine Faces.
               </p>
               <p className="mt-3 font-display text-2xl tracking-widest text-charcoal">
                 {code}
@@ -277,6 +344,12 @@ function DossierPage() {
         <QuotePlate quote="Walk the path with discipline, and the path will rise to meet you." />
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Button asChild variant="paper" size="lg">
+            <Link to="/field-reports">
+              Field Reports
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
           <Button asChild variant="outline" size="lg">
             <a href={PDF_URL} target="_blank" rel="noreferrer">
               <Download className="size-4" />
@@ -288,7 +361,7 @@ function DossierPage() {
             Share your banner
           </Button>
           <Button asChild variant="ghost" size="lg">
-            <Link to="/map">Revisit campaign map</Link>
+            <Link to="/map">Campaign map</Link>
           </Button>
         </div>
 

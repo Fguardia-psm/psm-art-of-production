@@ -842,6 +842,116 @@ export const US_STATES = [
   "VA","WA","WV","WI","WY","DC",
 ];
 
+
+export interface FieldReport {
+  id: string;
+  codename: string;
+  role: string;
+  stage: string;
+  pressure: string;
+  switchReason: string;
+  leverage: string;
+  result: string;
+  economics: string[];
+  forArchetypes: ArchetypeId[];
+}
+
+/** Proof chapter — after dossier, before partner close */
+export const FIELD_REPORTS: FieldReport[] = [
+  {
+    id: "builder",
+    codename: "The Builder",
+    role: "Independent agency owner",
+    stage: "8 producing agents · multi-state Medicare",
+    pressure:
+      "Contracting, E&O, and compliance review began consuming nights that used to go to coaching and recruiting.",
+    switchReason:
+      "Not because production was weak — because the ceiling was operational. Every new agent added weight, not leverage.",
+    leverage:
+      "PSM’s compliance-first infrastructure, carrier access, and training paths let the owner hire into a system instead of inventing one.",
+    result:
+      "Recruiting capacity returned. The owner stopped being the bottleneck for every appointment and every paperwork exception.",
+    economics: [
+      "Hours reclaimed from back-office → reinvested in recruiting conversations",
+      "New agents onboard into shared methods instead of tribal knowledge",
+      "Compliance burden distributed — license risk no longer a solo midnight job",
+    ],
+    forArchetypes: ["field-marshal", "quartermaster", "cartographer"],
+  },
+  {
+    id: "producer",
+    codename: "The Producer",
+    role: "Strong personal book · high AEP volume",
+    stage: "Top-decile personal production · solo-heavy shop",
+    pressure:
+      "Support ceiling hit. Marketing was ad hoc. When carriers shifted, the producer was first to know last.",
+    switchReason:
+      "Needed an FMO that matched craft — not cheerleading. Wanted fire (marketing) and intelligence without babysitting.",
+    leverage:
+      "Marketing Hub materials, exclusive lead programs, and field mentorship that respects a producer who already knows how to close.",
+    result:
+      "More warm ground before first call. Less improvisation on carrier change weeks. Same craft — higher throughput.",
+    economics: [
+      "Lower cost-per-conversation when presence is already lit",
+      "Fewer dead appointments from cold, uneducated traffic",
+      "Time saved on materials and carrier chase → more appointments kept",
+    ],
+    forArchetypes: ["illuminator", "fire-bearer", "cartographer"],
+  },
+  {
+    id: "marshal",
+    codename: "The Marshal",
+    role: "Agency expansion lead",
+    stage: "Building second tier · targeting 15+ writing agents",
+    pressure:
+      "Ambition outran structure. Training was uneven. Top producers carried culture alone.",
+    switchReason:
+      "Needed operating leverage: consistent training tracks, measurable standards, and a banner agents would join.",
+    leverage:
+      "PSM training paths for new / growing / agency builders, plus technology that keeps the formation intact at volume.",
+    result:
+      "Scale with order. Downline walks the same campaign language. Culture compounds instead of fraying.",
+    economics: [
+      "Faster ramp on new agents → earlier contribution to book growth",
+      "Shared campaign (this experience) becomes onboarding, not a speech",
+      "Leadership time shifts from firefighting to deliberate expansion",
+    ],
+    forArchetypes: ["field-marshal", "quartermaster", "fire-bearer"],
+  },
+];
+
+/** What a field recruiter should open with — more valuable than the lead alone */
+export const RECRUITER_OPENERS: Record<
+  ArchetypeId,
+  { openWith: string; avoid: string; proofAngle: string }
+> = {
+  cartographer: {
+    openWith: "Let’s talk growth systems — market intel, carriers, and prep before the storm.",
+    avoid: "Generic ‘we have great contracts’ openers.",
+    proofAngle: "Show how intelligence and infrastructure reduce improvisation under AEP load.",
+  },
+  illuminator: {
+    openWith: "Let’s talk client relationships — how you win without pressure, and how we protect that craft.",
+    avoid: "High-pressure recruiting scripts.",
+    proofAngle: "Nine Faces + conversation mastery support; proof that support doesn’t flatten their style.",
+  },
+  quartermaster: {
+    openWith: "Let’s talk operations — CRM, back-office, and energy that doesn’t leak.",
+    avoid: "Motivation talks without systems.",
+    proofAngle: "Technology and compliance leverage that turns order into capacity.",
+  },
+  "field-marshal": {
+    openWith: "Let’s talk scaling teams — structure before headcount, culture that holds.",
+    avoid: "Lead dumps without training architecture.",
+    proofAngle: "Agency paths, onboarding, and operating leverage for multi-agent shops.",
+  },
+  "fire-bearer": {
+    openWith: "Let’s talk presence — marketing fire that warms the field before the call.",
+    avoid: "Vanity metrics without enrollment math.",
+    proofAngle: "Marketing Hub, materials, and programs tied to conversations and enrollments.",
+  },
+};
+
 export const PSM_PARTNER_URL =
   "https://www.psmbrokerage.com/?utm_source=art-of-production&utm_medium=campaign&utm_campaign=recruiting";
 

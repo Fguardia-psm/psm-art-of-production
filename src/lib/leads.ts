@@ -18,7 +18,6 @@ export type LeadPayload = {
 export const submitLead = createServerFn({ method: "POST" })
   .validator((data: LeadPayload) => data)
   .handler(async ({ data }) => {
-    // Best-effort persist for preview/demo; never block the unlock UX.
     try {
       const dir = path.join(process.cwd(), "data");
       await mkdir(dir, { recursive: true });
@@ -27,12 +26,14 @@ export const submitLead = createServerFn({ method: "POST" })
     } catch (err) {
       console.warn("[leads] persist skipped:", err);
     }
+    // Archetype is the recruiting context — log explicitly for CRM handoff
     console.info("[leads] captured", {
       email: data.email,
       npn: data.npn,
       state: data.state,
       archetype: data.archetype,
       bookStage: data.bookStage,
+      recruiterHint: `Open with ${data.archetype} talk track`,
     });
-    return { ok: true as const };
+    return { ok: true as const, archetype: data.archetype };
   });

@@ -12,24 +12,36 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const hydrated = useHydrated();
-  const { scoutComplete, unlocked, completedChapters, nineFacesComplete } =
-    useCampaignStore();
+  const {
+    scoutComplete,
+    unlocked,
+    completedChapters,
+    nineFacesComplete,
+    fieldReportsSeen,
+  } = useCampaignStore();
 
-  const resumeTo =
-    !hydrated
-      ? "/scout"
-      : unlocked
+  const resumeTo = !hydrated
+    ? "/scout"
+    : unlocked
+      ? fieldReportsSeen
         ? "/dossier"
-        : nineFacesComplete
-          ? "/unlock"
-          : scoutComplete
-            ? completedChapters.length >= 5
-              ? "/nine-faces"
-              : "/map"
-            : "/scout";
+        : "/field-reports"
+      : nineFacesComplete
+        ? "/unlock"
+        : scoutComplete
+          ? completedChapters.length >= 5
+            ? "/nine-faces"
+            : "/map"
+          : "/scout";
 
   const ctaLabel =
-    hydrated && scoutComplete ? "Resume the Campaign" : "Begin the Campaign";
+    hydrated && unlocked
+      ? fieldReportsSeen
+        ? "Open your dossier"
+        : "Continue to Field Reports"
+      : hydrated && scoutComplete
+        ? "Resume the Campaign"
+        : "Begin the Campaign";
 
   return (
     <div className="min-h-dvh ink-wash text-parchment flex flex-col">
@@ -101,8 +113,8 @@ function LandingPage() {
               },
               {
                 k: "03",
-                t: "Claim the kit",
-                d: "Unlock your dossier, the manual, and join PSM.",
+                t: "Proof, then the call",
+                d: "Field Reports earn the conversation. Recruiters close.",
               },
             ].map((item) => (
               <li
