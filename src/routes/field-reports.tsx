@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   ARCHETYPES,
   FIELD_REPORTS,
+  FIELD_REPORTS_DISCLAIMER,
   RECRUITER_OPENERS,
   fieldLeaderUrl,
   type FieldReport,
@@ -43,10 +44,9 @@ function FieldReportsPage() {
   const [read, setRead] = useState<string[]>([]);
 
   useEffect(() => {
-    // Seed first matched report as opened
     setRead((prev) => (prev.includes(activeId) ? prev : [...prev, activeId]));
     markFieldReportsSeen();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- open once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!unlocked) return <Navigate to="/unlock" />;
@@ -85,9 +85,9 @@ function FieldReportsPage() {
             Field Reports
           </h1>
           <p className="mt-3 max-w-xl font-body text-charcoal-muted leading-relaxed">
-            Not a brochure. Three producers who already believed in their craft —
-            and still needed operating leverage. This is the evidence layer
-            before any partner conversation.
+            Not a brochure. Three producers — named, regional, and specific —
+            who already believed in their craft and still needed operating
+            leverage.
           </p>
           {arch ? (
             <p className="mt-3 font-ui text-xs uppercase tracking-[0.18em] text-brass">
@@ -122,7 +122,8 @@ function FieldReportsPage() {
                 {isRead ? (
                   <Check className="size-3.5" strokeWidth={2.5} />
                 ) : null}
-                {r.codename}
+                <span>{r.agentName}</span>
+                <span className="opacity-60">· {r.codename.replace("The ", "")}</span>
                 {matched ? <span className="opacity-70">· match</span> : null}
               </button>
             );
@@ -130,15 +131,31 @@ function FieldReportsPage() {
         </div>
 
         <article className="rounded-xl border border-charcoal/10 bg-parchment/80 p-5 sm:p-7 shadow-[var(--shadow-card)]">
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            {active.role}
-          </p>
-          <h2 className="mt-2 font-display text-3xl text-charcoal">
-            {active.codename}
-          </h2>
-          <p className="mt-1 font-body text-sm text-charcoal-soft">
-            {active.stage}
-          </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+                {active.codename}
+              </p>
+              <h2 className="mt-2 font-display text-3xl text-charcoal">
+                {active.agentName}
+              </h2>
+              <p className="mt-1 font-body text-sm text-charcoal-soft">
+                {active.region} · {active.yearsInField}
+              </p>
+              <p className="mt-1 font-body text-sm text-charcoal-muted">
+                {active.role} · {active.stage}
+              </p>
+            </div>
+            <span className="rounded-full border border-charcoal/15 px-3 py-1 font-ui text-[10px] uppercase tracking-[0.16em] text-charcoal-soft">
+              Composite report
+            </span>
+          </div>
+
+          <blockquote className="mt-6 border-l border-brass/40 pl-4">
+            <p className="font-display text-lg italic text-charcoal leading-snug">
+              “{active.quote}”
+            </p>
+          </blockquote>
 
           <div className="mt-6 space-y-5">
             <Block label="Pressure" body={active.pressure} />
@@ -163,6 +180,10 @@ function FieldReportsPage() {
             </ul>
           </div>
         </article>
+
+        <p className="font-body text-xs text-charcoal-soft leading-relaxed max-w-xl">
+          {FIELD_REPORTS_DISCLAIMER}
+        </p>
 
         {opener ? (
           <aside className="rounded-xl border border-charcoal/10 bg-ink text-parchment p-5 sm:p-6">
@@ -191,9 +212,9 @@ function FieldReportsPage() {
               : "Review all three reports — then take the call."}
           </h3>
           <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
-            This experience’s job is not to make you switch FMOs today. It is to
-            move you from ignore to curious — with proof. The recruiter closes
-            with your archetype and NPN already on the table.
+            When you unlocked with NPN, your recruiter brief — archetype, open
+            line, and proof angle — was already attached for the field team.
+            This page is the evidence they will discuss with you.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Button asChild variant="paper" size="lg">

@@ -842,10 +842,13 @@ export const US_STATES = [
   "VA","WA","WV","WI","WY","DC",
 ];
 
-
 export interface FieldReport {
   id: string;
   codename: string;
+  /** Display name — first name + last initial until formal testimonial clearance */
+  agentName: string;
+  region: string;
+  yearsInField: string;
   role: string;
   stage: string;
   pressure: string;
@@ -853,14 +856,22 @@ export interface FieldReport {
   leverage: string;
   result: string;
   economics: string[];
+  quote: string;
   forArchetypes: ArchetypeId[];
 }
 
-/** Proof chapter — after dossier, before partner close */
+/**
+ * Composite Field Reports — patterned on common partner-transition arcs.
+ * Names/details are representative composites (not attributed testimonials)
+ * until PSM clears first-person quotes. Swap with consented stories anytime.
+ */
 export const FIELD_REPORTS: FieldReport[] = [
   {
     id: "builder",
     codename: "The Builder",
+    agentName: "Marcus R.",
+    region: "Southeast",
+    yearsInField: "14 years · agency principal",
     role: "Independent agency owner",
     stage: "8 producing agents · multi-state Medicare",
     pressure:
@@ -870,21 +881,26 @@ export const FIELD_REPORTS: FieldReport[] = [
     leverage:
       "PSM’s compliance-first infrastructure, carrier access, and training paths let the owner hire into a system instead of inventing one.",
     result:
-      "Recruiting capacity returned. The owner stopped being the bottleneck for every appointment and every paperwork exception.",
+      "Recruiting capacity returned. Marcus stopped being the bottleneck for every appointment and every paperwork exception.",
     economics: [
       "Hours reclaimed from back-office → reinvested in recruiting conversations",
       "New agents onboard into shared methods instead of tribal knowledge",
       "Compliance burden distributed — license risk no longer a solo midnight job",
     ],
+    quote:
+      "I didn’t need another pep talk. I needed the desk to stop owning me so I could grow the roster.",
     forArchetypes: ["field-marshal", "quartermaster", "cartographer"],
   },
   {
     id: "producer",
     codename: "The Producer",
+    agentName: "Elena V.",
+    region: "Southwest",
+    yearsInField: "9 years · personal book",
     role: "Strong personal book · high AEP volume",
     stage: "Top-decile personal production · solo-heavy shop",
     pressure:
-      "Support ceiling hit. Marketing was ad hoc. When carriers shifted, the producer was first to know last.",
+      "Support ceiling hit. Marketing was ad hoc. When carriers shifted, she was first to know last.",
     switchReason:
       "Needed an FMO that matched craft — not cheerleading. Wanted fire (marketing) and intelligence without babysitting.",
     leverage:
@@ -896,11 +912,16 @@ export const FIELD_REPORTS: FieldReport[] = [
       "Fewer dead appointments from cold, uneducated traffic",
       "Time saved on materials and carrier chase → more appointments kept",
     ],
+    quote:
+      "Show me operating leverage, not a logo. If the field stays cold, nothing else matters.",
     forArchetypes: ["illuminator", "fire-bearer", "cartographer"],
   },
   {
     id: "marshal",
     codename: "The Marshal",
+    agentName: "James K.",
+    region: "Midwest",
+    yearsInField: "11 years · expansion lead",
     role: "Agency expansion lead",
     stage: "Building second tier · targeting 15+ writing agents",
     pressure:
@@ -916,9 +937,14 @@ export const FIELD_REPORTS: FieldReport[] = [
       "Shared campaign (this experience) becomes onboarding, not a speech",
       "Leadership time shifts from firefighting to deliberate expansion",
     ],
+    quote:
+      "Headcount without a campaign is just payroll. Structure is what multiplies.",
     forArchetypes: ["field-marshal", "quartermaster", "fire-bearer"],
   },
 ];
+
+export const FIELD_REPORTS_DISCLAIMER =
+  "Composite Field Reports — representative partner-transition patterns. First-person quotes pending formal permission; replace with consented names anytime.";
 
 /** What a field recruiter should open with — more valuable than the lead alone */
 export const RECRUITER_OPENERS: Record<
@@ -926,31 +952,97 @@ export const RECRUITER_OPENERS: Record<
   { openWith: string; avoid: string; proofAngle: string }
 > = {
   cartographer: {
-    openWith: "Let’s talk growth systems — market intel, carriers, and prep before the storm.",
+    openWith:
+      "Let’s talk growth systems — market intel, carriers, and prep before the storm.",
     avoid: "Generic ‘we have great contracts’ openers.",
-    proofAngle: "Show how intelligence and infrastructure reduce improvisation under AEP load.",
+    proofAngle:
+      "Show how intelligence and infrastructure reduce improvisation under AEP load.",
   },
   illuminator: {
-    openWith: "Let’s talk client relationships — how you win without pressure, and how we protect that craft.",
+    openWith:
+      "Let’s talk client relationships — how you win without pressure, and how we protect that craft.",
     avoid: "High-pressure recruiting scripts.",
-    proofAngle: "Nine Faces + conversation mastery support; proof that support doesn’t flatten their style.",
+    proofAngle:
+      "Nine Faces + conversation mastery support; proof that support doesn’t flatten their style.",
   },
   quartermaster: {
-    openWith: "Let’s talk operations — CRM, back-office, and energy that doesn’t leak.",
+    openWith:
+      "Let’s talk operations — CRM, back-office, and energy that doesn’t leak.",
     avoid: "Motivation talks without systems.",
-    proofAngle: "Technology and compliance leverage that turns order into capacity.",
+    proofAngle:
+      "Technology and compliance leverage that turns order into capacity.",
   },
   "field-marshal": {
-    openWith: "Let’s talk scaling teams — structure before headcount, culture that holds.",
+    openWith:
+      "Let’s talk scaling teams — structure before headcount, culture that holds.",
     avoid: "Lead dumps without training architecture.",
-    proofAngle: "Agency paths, onboarding, and operating leverage for multi-agent shops.",
+    proofAngle:
+      "Agency paths, onboarding, and operating leverage for multi-agent shops.",
   },
   "fire-bearer": {
-    openWith: "Let’s talk presence — marketing fire that warms the field before the call.",
+    openWith:
+      "Let’s talk presence — marketing fire that warms the field before the call.",
     avoid: "Vanity metrics without enrollment math.",
-    proofAngle: "Marketing Hub, materials, and programs tied to conversations and enrollments.",
+    proofAngle:
+      "Marketing Hub, materials, and programs tied to conversations and enrollments.",
   },
 };
+
+export function buildRecruiterBrief(input: {
+  name: string;
+  email: string;
+  phone: string;
+  npn: string;
+  state: string;
+  bookStage: string;
+  focus?: string;
+  archetype: ArchetypeId;
+  nineFacesScore?: number;
+  chapterResults?: Record<string, string>;
+}): string {
+  const arch = ARCHETYPES[input.archetype];
+  const opener = RECRUITER_OPENERS[input.archetype];
+  const lines = [
+    `RECRUITER BRIEF — The Art of Production`,
+    `Source: art-of-production campaign · NPN soft-gate`,
+    ``,
+    `AGENT`,
+    `Name: ${input.name}`,
+    `Email: ${input.email}`,
+    `Phone: ${input.phone}`,
+    `NPN: ${input.npn} · State: ${input.state}`,
+    `Book stage: ${input.bookStage}`,
+    input.focus ? `Focus: ${input.focus}` : null,
+    ``,
+    `ARCHETYPE (more valuable than the lead alone)`,
+    `${arch.name} — ${arch.epithet}`,
+    `Seal: “${arch.seal}”`,
+    `PSM move: ${arch.psmMove}`,
+    input.nineFacesScore !== undefined
+      ? `Nine Faces score: ${input.nineFacesScore}/9`
+      : null,
+    ``,
+    `OPEN THE CALL WITH`,
+    opener.openWith,
+    ``,
+    `PROOF ANGLE`,
+    opener.proofAngle,
+    ``,
+    `AVOID`,
+    opener.avoid,
+    ``,
+    `MONDAY SCRIPT (for them)`,
+    arch.mondayScript,
+    input.chapterResults && Object.keys(input.chapterResults).length
+      ? `\nCHAPTER SCORECARD\n${Object.entries(input.chapterResults)
+          .map(([k, v]) => `· ${k}: ${v}`)
+          .join("\n")}`
+      : null,
+    ``,
+    `Next step: Field Reports → Talk to a field leader (not a generic pitch deck).`,
+  ];
+  return lines.filter((l) => l !== null).join("\n");
+}
 
 export const PSM_PARTNER_URL =
   "https://www.psmbrokerage.com/?utm_source=art-of-production&utm_medium=campaign&utm_campaign=recruiting";
@@ -970,7 +1062,8 @@ export function fieldLeaderUrl(archetype?: ArchetypeId | null, name?: string) {
 export const PARTNER_PROOF = [
   {
     stat: "63%",
-    label: "of agents report better client acquisition & retention via exclusive lead vendors",
+    label:
+      "of agents report better client acquisition & retention via exclusive lead vendors",
   },
   {
     stat: "82%",

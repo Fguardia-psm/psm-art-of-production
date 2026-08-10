@@ -90,6 +90,8 @@ function DossierPage() {
       ``,
       `Nine Faces: ${nineFacesScore}/9`,
       `Field reports: ${fieldReportsSeen ? "reviewed" : "pending"}`,
+      ``,
+      `(Also auto-attached on NPN submit for CRM / webhook.)`,
     ].join("\n");
     try {
       await navigator.clipboard.writeText(text);
@@ -147,11 +149,11 @@ function DossierPage() {
               : "Your dossier"}
           </h1>
           <p className="mt-2 font-body text-charcoal-muted">
-            Identity sealed. Next: evidence — then the conversation.
+            Identity sealed. Recruiter brief filed. Next: Field Reports —
+            then the conversation.
           </p>
         </div>
 
-        {/* Primary post-NPN journey */}
         <section className="rounded-xl border border-brass/35 bg-brass/10 p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
             Post-kit path
@@ -159,7 +161,11 @@ function DossierPage() {
           <ol className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 font-ui text-xs text-charcoal-muted">
             <li className="text-brass font-medium">1. Dossier</li>
             <li className="hidden sm:inline opacity-40">→</li>
-            <li className={fieldReportsSeen ? "text-brass font-medium" : "text-charcoal"}>
+            <li
+              className={
+                fieldReportsSeen ? "text-brass font-medium" : "text-charcoal"
+              }
+            >
               2. Field Reports (proof)
             </li>
             <li className="hidden sm:inline opacity-40">→</li>
@@ -168,12 +174,12 @@ function DossierPage() {
           <h2 className="mt-4 font-display text-2xl text-charcoal">
             {fieldReportsSeen
               ? "Proof reviewed — take the conversation"
-              : "Read Field Reports before you partner"}
+              : "Meet Marcus, Elena & James before you partner"}
           </h2>
           <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
-            Elite producers don’t switch FMOs on poetry. They switch — or even
-            take the call — on operating leverage. Three field reports. Then a
-            human conversation with your archetype already known.
+            Elite producers don’t switch FMOs on poetry. Read three Field
+            Reports with names, regions, and economics — then talk to a human
+            who already has your archetype brief.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="paper" size="lg">
@@ -247,7 +253,7 @@ function DossierPage() {
 
         <aside className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Recruiter brief · more valuable than the lead alone
+            Recruiter brief · auto-filed on NPN unlock
           </p>
           <p className="mt-3 font-display text-xl text-parchment leading-snug">
             {opener.openWith}
@@ -257,6 +263,10 @@ function DossierPage() {
           </p>
           <p className="mt-2 font-body text-xs text-parchment/40">
             Avoid: {opener.avoid}
+          </p>
+          <p className="mt-3 font-body text-xs text-parchment/45">
+            Stored with your lead for CRM / Zapier (`LEAD_WEBHOOK_URL`) and
+            copyable below for the field call.
           </p>
           <Button
             type="button"

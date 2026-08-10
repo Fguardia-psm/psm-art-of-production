@@ -10,8 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  ARCHETYPES,
   BOOK_STAGES,
+  RECRUITER_OPENERS,
   US_STATES,
+  buildRecruiterBrief,
+  resultLabel,
+  type ArchetypeId,
   type BookStage,
 } from "@/lib/content";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
@@ -60,6 +65,28 @@ function UnlockPage() {
     if (!consent)
       return setError("Confirm consent to continue as a licensed agent.");
 
+    const archetype = (state.provisionalArchetype ??
+      "cartographer") as ArchetypeId;
+    const opener = RECRUITER_OPENERS[archetype];
+    const chapterResults = Object.fromEntries(
+      Object.entries(state.chapterResults).map(([k, v]) => [
+        k,
+        resultLabel(v),
+      ]),
+    );
+    const recruiterBrief = buildRecruiterBrief({
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: digits,
+      npn: cleanNpn,
+      state: licenseState,
+      bookStage: bookStage as string,
+      focus: focus || undefined,
+      archetype,
+      nineFacesScore: state.nineFacesScore,
+      chapterResults,
+    });
+
     setSubmitting(true);
     try {
       const lead = {
@@ -72,7 +99,14 @@ function UnlockPage() {
         focus: focus || undefined,
         consented: true,
         submittedAt: new Date().toISOString(),
-        archetype: state.provisionalArchetype ?? "cartographer",
+        archetype,
+        recruiterBrief,
+        recruiterOpenWith: opener.openWith,
+        recruiterProofAngle: opener.proofAngle,
+        recruiterAvoid: opener.avoid,
+        nineFacesScore: state.nineFacesScore,
+        chapterResults,
+        source: "art-of-production",
       };
       await submitLead({ data: lead });
       state.unlock({
@@ -94,6 +128,10 @@ function UnlockPage() {
     }
   }
 
+  const archPreview = state.provisionalArchetype
+    ? ARCHETYPES[state.provisionalArchetype]
+    : null;
+
   return (
     <CampaignShell>
       <div className="mx-auto max-w-lg animate-fade-up">
@@ -102,112 +140,117 @@ function UnlockPage() {
           Unlock your campaign kit
         </h1>
         <p className="mt-3 font-body text-charcoal-muted leading-relaxed">
-          Enter your credentials. Claim your full archetype dossier, the sealed
-          map, and the manual. NPN verifies you walk this field.
+          Enter your credentials. Claim your full archetype dossier, Field
+          Reports, and the manual. NPN verifies you walk this field — and routes
+          a recruiter brief with your talk track to the team.
         </p>
+        {archPreview ? (
+          <p className="mt-3 font-ui text-xs uppercase tracking-[0.18em] text-brass">
+            Brief will open as · {archPreview.name}
+          </p>
+        ) : null}
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
-          <Field label="Full name" htmlFor="name">
+          <div className="space-y-2">
+            <Label htmlFor="name">Full name</Label>
             <Input
               id="name"
-              autoComplete="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Jordan Hale"
+              autoComplete="name"
+              className="min-h-11"
             />
-          </Field>
-          <Field label="Work email" htmlFor="email">
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Work email</Label>
             <Input
               id="email"
               type="email"
-              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@agency.com"
+              autoComplete="email"
+              className="min-h-11"
             />
-          </Field>
-          <Field label="Mobile phone" htmlFor="phone">
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Mobile</Label>
             <Input
               id="phone"
               type="tel"
-              autoComplete="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="(555) 000-0000"
+              autoComplete="tel"
+              className="min-h-11"
             />
-          </Field>
-          <Field label="NPN" htmlFor="npn">
-            <Input
-              id="npn"
-              inputMode="numeric"
-              value={npn}
-              onChange={(e) => setNpn(e.target.value)}
-              placeholder="National Producer Number"
-            />
-          </Field>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Primary license state" htmlFor="state">
+            <div className="space-y-2">
+              <Label htmlFor="npn">NPN</Label>
+              <Input
+                id="npn"
+                inputMode="numeric"
+                value={npn}
+                onChange={(e) => setNpn(e.target.value)}
+                className="min-h-11"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="state">License state</Label>
               <select
                 id="state"
                 value={licenseState}
                 onChange={(e) => setLicenseState(e.target.value)}
-                className={cn(
-                  "flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3.5 font-ui text-sm text-charcoal shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass/40",
-                )}
+                className="flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3 font-ui text-sm"
               >
-                <option value="">Select state</option>
+                <option value="">Select</option>
                 {US_STATES.map((s) => (
                   <option key={s} value={s}>
                     {s}
                   </option>
                 ))}
               </select>
-            </Field>
-            <Field label="Book stage" htmlFor="stage">
-              <select
-                id="stage"
-                value={bookStage}
-                onChange={(e) => setBookStage(e.target.value as BookStage | "")}
-                className={cn(
-                  "flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3.5 font-ui text-sm text-charcoal shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass/40",
-                )}
-              >
-                <option value="">Select stage</option>
-                {BOOK_STAGES.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
+            </div>
           </div>
-          <Field label="Primary focus (optional)" htmlFor="focus">
-            <select
+          <div className="space-y-2">
+            <Label>Book stage</Label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {BOOK_STAGES.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setBookStage(s.id)}
+                  className={cn(
+                    "rounded-lg border px-3 py-3 text-left font-ui text-sm min-h-11",
+                    bookStage === s.id
+                      ? "border-brass bg-brass/10"
+                      : "border-charcoal/12 hover:border-brass/35",
+                  )}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="focus">What are you building next? (optional)</Label>
+            <Input
               id="focus"
               value={focus}
               onChange={(e) => setFocus(e.target.value)}
-              className={cn(
-                "flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3.5 font-ui text-sm text-charcoal shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass/40",
-              )}
-            >
-              <option value="">Prefer not to say</option>
-              <option value="medicare">Medicare</option>
-              <option value="lh">Life & Health</option>
-              <option value="both">Both</option>
-            </select>
-          </Field>
-
-          <label className="flex items-start gap-3 rounded-lg border border-charcoal/10 bg-parchment/60 px-4 py-3 cursor-pointer">
+              placeholder="Agency, personal book, marketing…"
+              className="min-h-11"
+            />
+          </div>
+          <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               className="mt-1 size-4 accent-[var(--color-brass)]"
             />
-            <span className="font-ui text-sm text-charcoal-muted leading-snug">
-              I am a licensed insurance agent. PSM may contact me about
-              partnership and send agent-use materials related to The Art of
-              Production.
+            <span className="font-body text-sm text-charcoal-muted leading-snug">
+              I am a licensed insurance agent (or applying under supervision) and
+              consent to PSM contacting me about partnership. For agent use only.
             </span>
           </label>
 
@@ -220,38 +263,23 @@ function UnlockPage() {
           <Button
             type="submit"
             variant="paper"
-            size="xl"
+            size="lg"
             className="w-full"
             disabled={submitting}
           >
-            {submitting ? "Sealing credentials…" : "Claim the kit"}
+            {submitting ? "Sealing…" : "Unlock dossier & Field Reports"}
           </Button>
-
-          <p className="text-center font-ui text-[11px] text-charcoal-soft">
-            For licensed agents. NPN verifies you walk this field.{" "}
-            <Link to="/map" className="underline underline-offset-2">
-              Return to map
-            </Link>
-          </p>
         </form>
+
+        <p className="mt-6 text-center">
+          <Link
+            to="/map"
+            className="font-ui text-xs text-charcoal-soft underline-offset-2 hover:underline"
+          >
+            Return to map
+          </Link>
+        </p>
       </div>
     </CampaignShell>
-  );
-}
-
-function Field({
-  label,
-  htmlFor,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {children}
-    </div>
   );
 }
