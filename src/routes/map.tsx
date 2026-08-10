@@ -1,5 +1,9 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { CampaignShell, SectionKicker } from "@/components/shell";
+import {
+  CampaignShell,
+  ReadinessPlate,
+  SectionKicker,
+} from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
   OPTIONAL_CHAPTERS,
@@ -8,6 +12,7 @@ import {
   resultLabel,
 } from "@/lib/content";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
+import { computeReadiness } from "@/lib/readiness";
 import { cn } from "@/lib/utils";
 import { Check, Lock, ArrowRight, Star } from "lucide-react";
 
@@ -22,6 +27,7 @@ function MapPage() {
   }
 
   const progress = requiredProgress(state);
+  const readiness = computeReadiness(state);
   const archetype = state.provisionalArchetype
     ? ARCHETYPES[state.provisionalArchetype]
     : null;
@@ -41,8 +47,8 @@ function MapPage() {
               The field before you
             </h1>
             <p className="mt-2 font-body text-charcoal-muted max-w-lg">
-              Seal five required campaigns and the Nine Faces. Deep campaigns
-              open for veterans after the core path.
+              Ink path through five campaigns and the Nine Faces. Seals mark
+              mastery — not empty XP.
             </p>
           </div>
           {archetype ? (
@@ -52,132 +58,150 @@ function MapPage() {
           ) : null}
         </div>
 
-        <ol className="mt-10 space-y-3">
-          {REQUIRED_CHAPTERS.map((chapter, index) => {
-            const done = state.completedChapters.includes(chapter.slug);
-            const prevDone =
-              index === 0 ||
-              state.completedChapters.includes(
-                REQUIRED_CHAPTERS[index - 1]!.slug,
-              );
-            const locked = !prevDone && !done;
-            const result = state.chapterResults[chapter.slug];
+        <div className="mt-6">
+          <ReadinessPlate
+            score={readiness.score}
+            label={readiness.label}
+            parts={readiness.parts}
+          />
+        </div>
 
-            return (
-              <li key={chapter.slug}>
-                {locked ? (
-                  <div className="flex items-center gap-4 rounded-xl border border-charcoal/10 bg-parchment/40 px-4 py-4 opacity-60">
-                    <Lock className="size-4 text-charcoal-soft shrink-0" />
-                    <div>
-                      <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
-                        Chapter {chapter.number}
-                      </p>
-                      <p className="font-display text-xl text-charcoal">
-                        {chapter.title}
-                      </p>
+        <div className="relative mt-10">
+          <div
+            className="absolute left-[22px] top-3 bottom-3 w-px map-path-line sm:left-[23px]"
+            aria-hidden
+          />
+          <ol className="relative space-y-3">
+            {REQUIRED_CHAPTERS.map((chapter, index) => {
+              const done = state.completedChapters.includes(chapter.slug);
+              const prevDone =
+                index === 0 ||
+                state.completedChapters.includes(
+                  REQUIRED_CHAPTERS[index - 1]!.slug,
+                );
+              const locked = !prevDone && !done;
+              const result = state.chapterResults[chapter.slug];
+
+              return (
+                <li key={chapter.slug}>
+                  {locked ? (
+                    <div className="flex items-center gap-4 rounded-xl border border-charcoal/10 bg-parchment/40 px-4 py-4 opacity-60">
+                      <span className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full border border-charcoal/20 bg-parchment">
+                        <Lock className="size-4 text-charcoal-soft" />
+                      </span>
+                      <div>
+                        <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
+                          Chapter {chapter.number} · fog of war
+                        </p>
+                        <p className="font-display text-xl text-charcoal">
+                          {chapter.title}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <Link
-                    to="/chapter/$slug"
-                    params={{ slug: chapter.slug }}
-                    className={cn(
-                      "flex items-center gap-4 rounded-xl border px-4 py-4 transition-colors",
-                      done
-                        ? "border-brass/35 bg-brass/8 hover:bg-brass/12"
-                        : "border-charcoal/12 bg-parchment/80 hover:border-brass/40",
-                    )}
-                  >
-                    <span
+                  ) : (
+                    <Link
+                      to="/chapter/$slug"
+                      params={{ slug: chapter.slug }}
                       className={cn(
-                        "flex size-9 shrink-0 items-center justify-center rounded-full border font-ui text-xs",
+                        "flex items-center gap-4 rounded-xl border px-4 py-4 transition-colors",
                         done
-                          ? "border-brass bg-brass text-ink"
-                          : "border-charcoal/20 text-charcoal-muted",
+                          ? "border-brass/35 bg-brass/8 hover:bg-brass/12"
+                          : "border-charcoal/12 bg-parchment/80 hover:border-brass/40",
                       )}
                     >
-                      {done ? (
-                        <Check className="size-4" strokeWidth={2.5} />
-                      ) : (
-                        chapter.number
-                      )}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
-                        Chapter {chapter.number}
-                        {result ? ` · ${resultLabel(result)}` : ""}
-                      </p>
-                      <p className="font-display text-xl text-charcoal truncate">
-                        {chapter.title}
-                      </p>
-                    </div>
-                    <ArrowRight className="size-4 text-charcoal-soft shrink-0" />
-                  </Link>
-                )}
-              </li>
-            );
-          })}
+                      <span
+                        className={cn(
+                          "relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full border font-ui text-xs",
+                          done
+                            ? "border-brass bg-brass text-ink seal-stamp"
+                            : "border-charcoal/20 bg-parchment text-charcoal-muted",
+                        )}
+                      >
+                        {done ? (
+                          <Check className="size-4" strokeWidth={2.5} />
+                        ) : (
+                          chapter.number
+                        )}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
+                          Chapter {chapter.number}
+                          {result ? ` · ${resultLabel(result)} seal` : ""}
+                        </p>
+                        <p className="font-display text-xl text-charcoal truncate">
+                          {chapter.title}
+                        </p>
+                      </div>
+                      <ArrowRight className="size-4 text-charcoal-soft shrink-0" />
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
 
-          <li>
-            {!deepUnlocked ? (
-              <div className="flex items-center gap-4 rounded-xl border border-charcoal/10 bg-parchment/40 px-4 py-4 opacity-60">
-                <Lock className="size-4 text-charcoal-soft shrink-0" />
-                <div>
-                  <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
-                    Master scene
-                  </p>
-                  <p className="font-display text-xl text-charcoal">
-                    The Nine Faces
-                  </p>
+            <li>
+              {!deepUnlocked ? (
+                <div className="flex items-center gap-4 rounded-xl border border-charcoal/10 bg-parchment/40 px-4 py-4 opacity-60">
+                  <span className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full border border-charcoal/20 bg-parchment">
+                    <Lock className="size-4 text-charcoal-soft" />
+                  </span>
+                  <div>
+                    <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
+                      Master scene · fog of war
+                    </p>
+                    <p className="font-display text-xl text-charcoal">
+                      The Nine Faces
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <Link
-                to="/nine-faces"
-                className={cn(
-                  "flex items-center gap-4 rounded-xl border px-4 py-4 transition-colors",
-                  state.nineFacesComplete
-                    ? "border-brass/35 bg-brass/8 hover:bg-brass/12"
-                    : "border-charcoal/12 bg-parchment/80 hover:border-brass/40",
-                )}
-              >
-                <span
+              ) : (
+                <Link
+                  to="/nine-faces"
                   className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-full border font-ui text-xs",
+                    "flex items-center gap-4 rounded-xl border px-4 py-4 transition-colors",
                     state.nineFacesComplete
-                      ? "border-brass bg-brass text-ink"
-                      : "border-charcoal/20 text-charcoal-muted",
+                      ? "border-brass/35 bg-brass/8 hover:bg-brass/12"
+                      : "border-charcoal/12 bg-parchment/80 hover:border-brass/40",
                   )}
                 >
-                  {state.nineFacesComplete ? (
-                    <Check className="size-4" strokeWidth={2.5} />
-                  ) : (
-                    <Star className="size-4" strokeWidth={2} />
-                  )}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
-                    Master scene
-                    {state.nineFacesComplete
-                      ? ` · ${state.nineFacesScore}/9`
-                      : ""}
-                  </p>
-                  <p className="font-display text-xl text-charcoal">
-                    The Nine Faces
-                  </p>
-                </div>
-                <ArrowRight className="size-4 text-charcoal-soft shrink-0" />
-              </Link>
-            )}
-          </li>
-        </ol>
+                  <span
+                    className={cn(
+                      "relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full border font-ui text-xs",
+                      state.nineFacesComplete
+                        ? "border-brass bg-brass text-ink seal-stamp"
+                        : "border-charcoal/20 bg-parchment text-charcoal-muted",
+                    )}
+                  >
+                    {state.nineFacesComplete ? (
+                      <Check className="size-4" strokeWidth={2.5} />
+                    ) : (
+                      <Star className="size-4" strokeWidth={2} />
+                    )}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
+                      Master scene
+                      {state.nineFacesComplete
+                        ? ` · ${state.nineFacesScore}/9 · face deck unlocked`
+                        : ""}
+                    </p>
+                    <p className="font-display text-xl text-charcoal">
+                      The Nine Faces
+                    </p>
+                  </div>
+                  <ArrowRight className="size-4 text-charcoal-soft shrink-0" />
+                </Link>
+              )}
+            </li>
+          </ol>
+        </div>
 
         {deepUnlocked ? (
           <div className="mt-10">
             <SectionKicker>Deep campaigns · optional</SectionKicker>
             <p className="mt-2 font-body text-sm text-charcoal-muted max-w-lg">
-              For agency builders and intelligence-driven producers. Not required
-              for the kit — recommended for Field Marshals and Cartographers.
+              High-protein for Field Marshals and Cartographers. Not required
+              for the kit.
             </p>
             <ol className="mt-4 space-y-3">
               {OPTIONAL_CHAPTERS.map((chapter) => {

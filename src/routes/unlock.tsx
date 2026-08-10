@@ -20,6 +20,7 @@ import {
   type BookStage,
 } from "@/lib/content";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
+import { computeReadiness } from "@/lib/readiness";
 import { submitLead } from "@/lib/leads";
 import { cn } from "@/lib/utils";
 
@@ -74,6 +75,7 @@ function UnlockPage() {
         resultLabel(v),
       ]),
     );
+    const readiness = computeReadiness(state);
     const recruiterBrief = buildRecruiterBrief({
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -85,6 +87,8 @@ function UnlockPage() {
       archetype,
       nineFacesScore: state.nineFacesScore,
       chapterResults,
+      readinessScore: readiness.score,
+      readinessLabel: readiness.label,
     });
 
     setSubmitting(true);

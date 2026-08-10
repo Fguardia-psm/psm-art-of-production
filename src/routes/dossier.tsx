@@ -2,6 +2,7 @@ import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
   CampaignShell,
   QuotePlate,
+  ReadinessPlate,
   SectionKicker,
 } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import {
   resultLabel,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
+import { computeReadiness } from "@/lib/readiness";
 import { ArrowRight, Copy, Download, Share2, Users } from "lucide-react";
 
 export const Route = createFileRoute("/dossier")({
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/dossier")({
 });
 
 function DossierPage() {
+  const state = useCampaignStore();
   const {
     unlocked,
     provisionalArchetype,
@@ -31,7 +34,7 @@ function DossierPage() {
     ensureLeaderCode,
     fieldReportsSeen,
     resetCampaign,
-  } = useCampaignStore();
+  } = state;
 
   if (!unlocked || !provisionalArchetype) {
     return <Navigate to="/unlock" />;
@@ -44,13 +47,14 @@ function DossierPage() {
     provisionalArchetype,
     lead?.name?.split(" ")[0],
   );
+  const readiness = computeReadiness(state);
 
   const scorecard = Object.entries(chapterResults)
     .map(([slug, r]) => `${slug}: ${resultLabel(r)}`)
     .join("\n");
 
   async function shareBanner() {
-    const text = `${arch.name} — ${arch.epithet}\n“${arch.seal}”\nNine Faces: ${nineFacesScore}/9\nThe Art of Production · PSM Brokerage`;
+    const text = `${arch.name} — ${arch.epithet}\n“${arch.seal}”\nNine Faces: ${nineFacesScore}/9\nReadiness: ${readiness.score}/100\nThe Art of Production · PSM Brokerage`;
     try {
       if (navigator.share) {
         await navigator.share({ title: arch.name, text });
@@ -83,6 +87,7 @@ function DossierPage() {
       `NPN: ${lead?.npn ?? ""} · ${lead?.state ?? ""}`,
       `Stage: ${lead?.bookStage ?? ""}`,
       `Archetype: ${arch.name}`,
+      `Readiness: ${readiness.score}/100 — ${readiness.label}`,
       ``,
       `Open with: ${opener.openWith}`,
       `Proof angle: ${opener.proofAngle}`,
@@ -90,8 +95,6 @@ function DossierPage() {
       ``,
       `Nine Faces: ${nineFacesScore}/9`,
       `Field reports: ${fieldReportsSeen ? "reviewed" : "pending"}`,
-      ``,
-      `(Also auto-attached on NPN submit for CRM / webhook.)`,
     ].join("\n");
     try {
       await navigator.clipboard.writeText(text);
@@ -103,10 +106,11 @@ function DossierPage() {
 
   function downloadScripts() {
     const lines = [
-      `THE ART OF PRODUCTION — Script Pack`,
+      `THE ART OF PRODUCTION — Nine Faces Loot Deck + Script Pack`,
       `Agent: ${lead?.name ?? ""}`,
       `Archetype: ${arch.name}`,
       `Nine Faces: ${nineFacesScore}/9`,
+      `Campaign readiness: ${readiness.score}/100`,
       ``,
       `MONDAY MOVE`,
       arch.mondayScript,
@@ -115,11 +119,12 @@ function DossierPage() {
       opener.openWith,
       opener.proofAngle,
       ``,
-      `NINE FACES — OPENING LINES`,
+      `NINE FACES — LOOT DECK (opening lines)`,
       ...CLIENT_FACES.flatMap((f) => [
         ``,
-        `${f.name}`,
+        `══ ${f.name} ══`,
         `Cue: ${f.cue}`,
+        `Approach: ${f.approach}`,
         `Open: ${f.openingLine}`,
         `Note: ${f.fieldNote}`,
       ]),
@@ -127,13 +132,13 @@ function DossierPage() {
       `CHAPTER SCORECARD`,
       scorecard,
       ``,
-      `For Agent Use Only · PSM Brokerage`,
+      `For Agent Use Only · PSM Brokerage · High-protein residue from the campaign`,
     ];
     const blob = new Blob([lines.join("\n")], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "art-of-production-script-pack.txt";
+    a.download = "art-of-production-face-deck.txt";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -149,37 +154,41 @@ function DossierPage() {
               : "Your dossier"}
           </h1>
           <p className="mt-2 font-body text-charcoal-muted">
-            Identity sealed. Recruiter brief filed. Next: Field Reports —
-            then the conversation.
+            Seals pressed. Face deck unlocked. Manual ready. Proof next.
           </p>
         </div>
 
+        <ReadinessPlate
+          score={readiness.score}
+          label={readiness.label}
+          parts={readiness.parts}
+        />
+
         <section className="rounded-xl border border-brass/35 bg-brass/10 p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Post-kit path
+            Post-kit path · cooperate over extract
           </p>
           <ol className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 font-ui text-xs text-charcoal-muted">
-            <li className="text-brass font-medium">1. Dossier</li>
+            <li className="text-brass font-medium">1. Dossier + loot</li>
             <li className="hidden sm:inline opacity-40">→</li>
             <li
               className={
                 fieldReportsSeen ? "text-brass font-medium" : "text-charcoal"
               }
             >
-              2. Field Reports (proof)
+              2. Field Reports
             </li>
             <li className="hidden sm:inline opacity-40">→</li>
-            <li>3. Field leader / Partner</li>
+            <li>3. Field leader</li>
           </ol>
           <h2 className="mt-4 font-display text-2xl text-charcoal">
             {fieldReportsSeen
               ? "Proof reviewed — take the conversation"
-              : "Meet Marcus, Elena & James before you partner"}
+              : "Take your loot, then read the Field Reports"}
           </h2>
           <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
-            Elite producers don’t switch FMOs on poetry. Read three Field
-            Reports with names, regions, and economics — then talk to a human
-            who already has your archetype brief.
+            High-protein path: face deck for Monday, Field Reports for the
+            economics of a switch, then a human who already has your brief.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="paper" size="lg">
@@ -188,13 +197,10 @@ function DossierPage() {
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
-            {fieldReportsSeen ? (
-              <Button asChild variant="outline" size="lg">
-                <a href={leaderHref} target="_blank" rel="noreferrer">
-                  Talk to a field leader
-                </a>
-              </Button>
-            ) : null}
+            <Button type="button" variant="outline" size="lg" onClick={downloadScripts}>
+              <Download className="size-4" />
+              Download face deck
+            </Button>
           </div>
         </section>
 
@@ -210,6 +216,12 @@ function DossierPage() {
           </p>
           <p className="mx-auto mt-6 max-w-lg font-body text-parchment/65 leading-relaxed">
             {arch.summary}
+          </p>
+          <p className="mt-4 font-ui text-[10px] uppercase tracking-[0.2em] text-parchment/40">
+            Blind spot (we do not flatter)
+          </p>
+          <p className="mx-auto mt-2 max-w-md font-body text-sm text-parchment/55">
+            {arch.blindSpot}
           </p>
         </section>
 
@@ -231,13 +243,7 @@ function DossierPage() {
           </div>
           <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Blind spot
-            </p>
-            <p className="mt-3 font-body text-sm text-charcoal leading-relaxed">
-              {arch.blindSpot}
-            </p>
-            <p className="mt-4 font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Nine Faces
+              Nine Faces · loot
             </p>
             <p className="mt-2 font-display text-2xl text-charcoal tabular-nums">
               {nineFacesScore}/9
@@ -251,9 +257,44 @@ function DossierPage() {
           </div>
         </div>
 
+        <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5 sm:p-6">
+          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+            Face deck · high-protein residue
+          </p>
+          <p className="mt-2 font-body text-sm text-charcoal-muted">
+            Cards earned from the master scene. Not vanity XP — lines you can
+            use at the table Monday.
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {CLIENT_FACES.map((f) => (
+              <li
+                key={f.id}
+                className="rounded-lg border border-charcoal/10 bg-parchment px-3 py-3"
+              >
+                <p className="font-ui text-[10px] uppercase tracking-[0.16em] text-brass">
+                  {f.name}
+                </p>
+                <p className="mt-1 font-display text-sm italic text-charcoal leading-snug">
+                  {f.openingLine}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="mt-4"
+            onClick={downloadScripts}
+          >
+            <Download className="size-4" />
+            Download full face deck
+          </Button>
+        </section>
+
         <aside className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Recruiter brief · auto-filed on NPN unlock
+            Recruiter brief · auto-filed on NPN
           </p>
           <p className="mt-3 font-display text-xl text-parchment leading-snug">
             {opener.openWith}
@@ -263,10 +304,6 @@ function DossierPage() {
           </p>
           <p className="mt-2 font-body text-xs text-parchment/40">
             Avoid: {opener.avoid}
-          </p>
-          <p className="mt-3 font-body text-xs text-parchment/45">
-            Stored with your lead for CRM / Zapier (`LEAD_WEBHOOK_URL`) and
-            copyable below for the field call.
           </p>
           <Button
             type="button"
@@ -282,47 +319,23 @@ function DossierPage() {
 
         <aside className="rounded-xl border border-brass/30 bg-brass/8 p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Next campaign move with PSM
+            Sealed reward · the manual (canon)
           </p>
           <p className="mt-2 font-body text-charcoal leading-relaxed">
-            {arch.psmMove}
+            This campaign complements the article — it does not replace it. The
+            PDF remains the high-protein primary source. Walk the path; own the
+            manual.
           </p>
           <p className="mt-4 font-display text-lg italic text-charcoal">
             “{arch.seal}”
           </p>
-        </aside>
-
-        <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5 sm:p-6">
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Script pack · Nine Faces
-          </p>
-          <p className="mt-2 font-body text-sm text-charcoal-muted">
-            Opening lines for Monday. The Nine Faces alone was worth the NPN —
-            keep them on your desk.
-          </p>
-          <ul className="mt-4 space-y-3 max-h-64 overflow-y-auto pr-1">
-            {CLIENT_FACES.slice(0, 4).map((f) => (
-              <li key={f.id} className="border-t border-charcoal/8 pt-3">
-                <p className="font-ui text-xs font-medium text-charcoal">
-                  {f.name}
-                </p>
-                <p className="mt-1 font-display text-sm italic text-charcoal">
-                  {f.openingLine}
-                </p>
-              </li>
-            ))}
-          </ul>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="mt-4"
-            onClick={downloadScripts}
-          >
-            <Download className="size-4" />
-            Download full script pack
+          <Button asChild variant="paper" size="lg" className="mt-4">
+            <a href={PDF_URL} target="_blank" rel="noreferrer">
+              <Download className="size-4" />
+              Download the manual
+            </a>
           </Button>
-        </section>
+        </aside>
 
         <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
           <div className="flex items-start gap-3">
@@ -332,7 +345,7 @@ function DossierPage() {
                 Leader mode · downline invite
               </p>
               <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed">
-                Assign this campaign before AEP. Same language. Same Nine Faces.
+                Assign this campaign before AEP. Same seals. Same face deck.
               </p>
               <p className="mt-3 font-display text-2xl tracking-widest text-charcoal">
                 {code}
@@ -359,12 +372,6 @@ function DossierPage() {
               Field Reports
               <ArrowRight className="size-4" />
             </Link>
-          </Button>
-          <Button asChild variant="outline" size="lg">
-            <a href={PDF_URL} target="_blank" rel="noreferrer">
-              <Download className="size-4" />
-              Download the manual
-            </a>
           </Button>
           <Button type="button" variant="outline" size="lg" onClick={shareBanner}>
             <Share2 className="size-4" />

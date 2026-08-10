@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
+import { computeReadiness } from "@/lib/readiness";
 
 export function AgentOnlyRibbon({ className }: { className?: string }) {
   return (
@@ -15,6 +16,14 @@ export function AgentOnlyRibbon({ className }: { className?: string }) {
   );
 }
 
+function seasonLine(done: number, total: number) {
+  if (done <= 0) return "The land is still quiet…";
+  if (done < 3) return "Preparation forges the season…";
+  if (done < total - 1) return "The campaign advances…";
+  if (done < total) return "The Nine Faces await…";
+  return "The field is marked. Proof remains…";
+}
+
 export function CampaignHeader({
   tone = "paper",
 }: {
@@ -22,6 +31,7 @@ export function CampaignHeader({
 }) {
   const state = useCampaignStore();
   const progress = requiredProgress(state);
+  const readiness = computeReadiness(state);
   const ink = tone === "ink";
 
   return (
@@ -34,15 +44,25 @@ export function CampaignHeader({
       )}
     >
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link
-          to="/"
-          className={cn(
-            "font-display text-sm title-spaced-wide",
-            ink ? "text-parchment/90" : "text-charcoal",
-          )}
-        >
-          The Art of Production
-        </Link>
+        <div className="min-w-0">
+          <Link
+            to="/"
+            className={cn(
+              "font-display text-sm title-spaced-wide",
+              ink ? "text-parchment/90" : "text-charcoal",
+            )}
+          >
+            The Art of Production
+          </Link>
+          <p
+            className={cn(
+              "mt-0.5 truncate font-ui text-[10px] tracking-wide",
+              ink ? "text-parchment/40" : "text-charcoal-soft",
+            )}
+          >
+            {seasonLine(progress.done, progress.total)}
+          </p>
+        </div>
         <div className="flex items-center gap-3">
           <div
             className="hidden items-center gap-2 sm:flex"
@@ -54,9 +74,7 @@ export function CampaignHeader({
                 className={cn(
                   "size-2 rounded-full border transition-colors",
                   i < progress.done
-                    ? ink
-                      ? "border-brass bg-brass"
-                      : "border-brass bg-brass"
+                    ? "border-brass bg-brass"
                     : ink
                       ? "border-parchment/25 bg-transparent"
                       : "border-charcoal/20 bg-transparent",
@@ -64,14 +82,27 @@ export function CampaignHeader({
               />
             ))}
           </div>
-          <span
-            className={cn(
-              "font-ui text-[11px] tabular-nums tracking-wide",
-              ink ? "text-parchment/55" : "text-charcoal-soft",
-            )}
-          >
-            {progress.done}/{progress.total}
-          </span>
+          <div className="text-right">
+            <span
+              className={cn(
+                "font-ui text-[11px] tabular-nums tracking-wide",
+                ink ? "text-parchment/55" : "text-charcoal-soft",
+              )}
+            >
+              {progress.done}/{progress.total}
+            </span>
+            {state.scoutComplete ? (
+              <p
+                className={cn(
+                  "font-ui text-[10px] tabular-nums",
+                  ink ? "text-brass-bright/70" : "text-brass",
+                )}
+                title={readiness.label}
+              >
+                Ready {readiness.score}
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>
@@ -95,8 +126,20 @@ export function CampaignShell({
       )}
     >
       <CampaignHeader tone={tone} />
-      <main className={cn("flex-1 mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12", className)}>
-        {children}
+      <main
+        className={cn(
+          "flex-1 mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12",
+          className,
+        )}
+      >
+        <div
+          className={cn(
+            tone === "paper" &&
+              "book-chrome rounded-xl bg-parchment/40 px-4 py-6 sm:px-8 sm:py-8",
+          )}
+        >
+          {children}
+        </div>
       </main>
       <footer
         className={cn(
@@ -167,5 +210,38 @@ export function MarkWell({ children }: { children: React.ReactNode }) {
       </p>
       <p className="font-body text-base text-charcoal leading-relaxed">{children}</p>
     </aside>
+  );
+}
+
+export function ReadinessPlate({
+  score,
+  label,
+  parts,
+}: {
+  score: number;
+  label: string;
+  parts: { label: string; pts: number; max: number }[];
+}) {
+  return (
+    <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
+      <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+        Campaign readiness · not vanity XP
+      </p>
+      <p className="mt-2 font-display text-4xl text-charcoal tabular-nums">
+        {score}
+        <span className="text-lg text-charcoal-soft"> / 100</span>
+      </p>
+      <p className="mt-1 font-body text-sm text-charcoal-muted">{label}</p>
+      <ul className="mt-4 space-y-2">
+        {parts.map((p) => (
+          <li key={p.label} className="flex items-center justify-between gap-3">
+            <span className="font-ui text-xs text-charcoal-soft">{p.label}</span>
+            <span className="font-ui text-xs tabular-nums text-charcoal">
+              {p.pts}/{p.max}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ChapterInteraction, ChapterResult } from "@/lib/content";
 import { Button } from "@/components/ui/button";
-import { Check, Compass, X } from "lucide-react";
+import { Check, Compass, Flame, X } from "lucide-react";
 
 export function ChapterInteractionPanel({
   interaction,
@@ -29,6 +29,7 @@ export function ChapterInteractionPanel({
   return <ReflectPick interaction={interaction} onResolved={onResolved} />;
 }
 
+/** Night Before AEP — rising storm meter; stack high-protein prep on the workbench */
 function PrepStorm({
   interaction,
   onResolved,
@@ -39,6 +40,29 @@ function PrepStorm({
   const [selected, setSelected] = useState<string[]>([]);
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<ChapterResult>("lesson");
+  const [storm, setStorm] = useState(0);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    if (!started || done) return;
+    const id = window.setInterval(() => {
+      setStorm((s) => {
+        if (s >= 100) {
+          window.clearInterval(id);
+          return 100;
+        }
+        return s + 1.2;
+      });
+    }, 80);
+    return () => window.clearInterval(id);
+  }, [started, done]);
+
+  useEffect(() => {
+    if (started && storm >= 100 && !done) {
+      commit(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storm, started, done]);
 
   const goodCount = selected.filter((id) =>
     interaction.options.find((o) => o.id === id)?.good,
@@ -48,16 +72,20 @@ function PrepStorm({
   );
 
   function toggle(id: string) {
-    if (done) return;
+    if (done || !started) return;
     setSelected((s) =>
       s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
     );
   }
 
-  function commit() {
+  function commit(auto = false) {
+    if (done) return;
     let r: ChapterResult = "lesson";
     if (goodCount >= interaction.need && !hasBad) r = "victory";
     else if (goodCount >= interaction.need - 1 || (goodCount >= 2 && hasBad))
+      r = "field-note";
+    // Late auto-seal: slightly harsher if storm finished without enough prep
+    if (auto && r === "victory" && storm >= 100 && goodCount === interaction.need)
       r = "field-note";
     setResult(r);
     setDone(true);
@@ -72,8 +100,58 @@ function PrepStorm({
         : interaction.failure;
 
   return (
-    <div className="space-y-5">
-      <p className="font-body text-charcoal">{interaction.prompt}</p>
+    <div className={cn("space-y-5 rounded-xl p-1", started && "storm-field")}>
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-ember">
+            Set-piece · The Night Before AEP
+          </p>
+          <p className="mt-1 font-body text-charcoal">{interaction.prompt}</p>
+        </div>
+        {started ? (
+          <p className="font-ui text-xs tabular-nums text-charcoal-soft">
+            Storm {Math.min(100, Math.round(storm))}%
+          </p>
+        ) : null}
+      </div>
+
+      {started ? (
+        <div
+          className="h-2 overflow-hidden rounded-full border border-charcoal/10 bg-charcoal/5"
+          aria-hidden
+        >
+          <div
+            className="storm-meter h-full rounded-full"
+            style={{ width: `${Math.min(100, storm)}%` }}
+          />
+        </div>
+      ) : null}
+
+      <div className="rounded-lg border border-dashed border-brass/35 bg-parchment/50 px-3 py-3">
+        <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass mb-2">
+          Workbench · stack what multiplies production
+        </p>
+        <div className="flex min-h-12 flex-wrap gap-2">
+          {selected.length === 0 ? (
+            <span className="font-body text-xs text-charcoal-soft">
+              Empty — the unprepared improvise when the storm breaks.
+            </span>
+          ) : (
+            selected.map((id) => {
+              const opt = interaction.options.find((o) => o.id === id);
+              return (
+                <span
+                  key={id}
+                  className="rounded-full border border-brass/30 bg-brass/10 px-3 py-1 font-ui text-xs"
+                >
+                  {opt?.label}
+                </span>
+              );
+            })
+          )}
+        </div>
+      </div>
+
       <div className="grid gap-2 sm:grid-cols-2">
         {interaction.options.map((opt) => {
           const on = selected.includes(opt.id);
@@ -81,12 +159,14 @@ function PrepStorm({
             <button
               key={opt.id}
               type="button"
+              disabled={!started || done}
               onClick={() => toggle(opt.id)}
               className={cn(
                 "rounded-lg border px-4 py-3 text-left font-ui text-sm transition-colors min-h-11",
                 on
                   ? "border-brass bg-brass/10 text-ink"
                   : "border-charcoal/12 bg-parchment/60 hover:border-brass/40",
+                (!started || done) && "opacity-70",
               )}
             >
               {opt.label}
@@ -94,22 +174,35 @@ function PrepStorm({
           );
         })}
       </div>
-      {!done ? (
+
+      {!started ? (
+        <Button variant="paper" size="lg" onClick={() => setStarted(true)}>
+          Begin the quiet watch
+        </Button>
+      ) : !done ? (
         <Button
           variant="paper"
           size="lg"
           disabled={selected.length === 0}
-          onClick={commit}
+          onClick={() => commit(false)}
         >
-          Face the storm
+          Seal preparation before the storm
         </Button>
       ) : (
-        <ResultBanner result={result} text={text} />
+        <div className="space-y-3">
+          <ResultBanner result={result} text={text} />
+          {result !== "lesson" ? (
+            <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass animate-seal">
+              Prep checklist sealed · high-protein residue for Monday
+            </p>
+          ) : null}
+        </div>
       )}
     </div>
   );
 }
 
+/** Multi-beat dialogue — pressure rises on bad paths; field notes allowed */
 function ObjectionPlay({
   interaction,
   onResolved,
@@ -118,24 +211,66 @@ function ObjectionPlay({
   onResolved: (result: ChapterResult) => void;
 }) {
   const [pick, setPick] = useState<string | null>(null);
+  const [pressure, setPressure] = useState(28);
   const chosen = interaction.options.find((o) => o.id === pick);
+
+  function choose(id: string) {
+    if (pick) return;
+    const opt = interaction.options.find((o) => o.id === id);
+    if (!opt) return;
+    setPick(id);
+    if (opt.grade === "lesson") setPressure(88);
+    else if (opt.grade === "field-note") setPressure(52);
+    else setPressure(18);
+    onResolved(opt.grade);
+  }
 
   return (
     <div className="space-y-5">
       <p className="font-body text-charcoal">{interaction.prompt}</p>
-      <blockquote className="rounded-lg border border-charcoal/10 bg-ink/5 px-4 py-3 font-display text-lg italic text-charcoal">
-        {interaction.clientLine}
-      </blockquote>
+
+      <div className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-4 sm:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
+            Client at the table
+          </p>
+          <p className="font-ui text-[10px] tabular-nums text-parchment/50">
+            Tension {pressure}%
+          </p>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-parchment/10">
+          <div
+            className="h-full rounded-full bg-ember-soft transition-all duration-500"
+            style={{ width: `${pressure}%` }}
+          />
+        </div>
+        <blockquote className="mt-4 font-display text-lg italic text-parchment/90 sm:text-xl">
+          {interaction.clientLine}
+        </blockquote>
+        <div
+          className={cn(
+            "mt-4 flex size-14 items-center justify-center rounded-full border font-display text-2xl transition-colors",
+            pick
+              ? chosen?.grade === "victory"
+                ? "border-success/40 bg-success/15 text-parchment"
+                : chosen?.grade === "field-note"
+                  ? "border-brass/40 bg-brass/15"
+                  : "border-ember/40 bg-ember/20"
+              : "border-parchment/20 text-parchment/70",
+          )}
+          aria-hidden
+        >
+          {pick ? (chosen?.grade === "victory" ? "○" : chosen?.grade === "field-note" ? "◑" : "✕") : "?"}
+        </div>
+      </div>
+
       <div className="grid gap-2">
         {interaction.options.map((opt) => (
           <button
             key={opt.id}
             type="button"
             disabled={!!pick}
-            onClick={() => {
-              setPick(opt.id);
-              onResolved(opt.grade);
-            }}
+            onClick={() => choose(opt.id)}
             className={cn(
               "rounded-lg border px-4 py-3 text-left font-ui text-sm transition-colors min-h-11",
               pick === opt.id
@@ -159,6 +294,7 @@ function ObjectionPlay({
   );
 }
 
+/** Parchment ground map — place banners on fertile tiles */
 function GroundSelect({
   interaction,
   onResolved,
@@ -196,7 +332,10 @@ function GroundSelect({
   return (
     <div className="space-y-5">
       <p className="font-body text-charcoal">{interaction.prompt}</p>
-      <div className="grid gap-2 sm:grid-cols-2">
+      <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
+        Plant banners · avoid barren tiles
+      </p>
+      <div className="parchment-map book-chrome grid grid-cols-2 gap-2 rounded-xl p-3 sm:p-4 sm:grid-cols-3">
         {interaction.grounds.map((g) => {
           const on = selected.includes(g.id);
           return (
@@ -205,17 +344,28 @@ function GroundSelect({
               type="button"
               onClick={() => toggle(g.id)}
               className={cn(
-                "rounded-lg border px-4 py-3 text-left transition-colors min-h-11",
+                "relative min-h-[88px] rounded-lg border px-3 py-3 text-left transition-colors",
                 on
-                  ? "border-brass bg-brass/10"
-                  : "border-charcoal/12 bg-parchment/60 hover:border-brass/40",
+                  ? g.fertile
+                    ? "border-brass bg-brass/15"
+                    : "border-ember/50 bg-ember/10"
+                  : "border-charcoal/15 bg-parchment/70 hover:border-brass/40",
               )}
             >
-              <span className="font-ui text-sm font-medium text-charcoal">
+              <span className="font-ui text-xs font-medium text-charcoal leading-snug">
                 {g.label}
               </span>
+              {on ? (
+                <span className="mt-2 block font-display text-lg text-brass">
+                  ⚑
+                </span>
+              ) : (
+                <span className="mt-2 block font-ui text-[10px] text-charcoal-soft">
+                  open ground
+                </span>
+              )}
               {done && on ? (
-                <span className="mt-1 block font-body text-xs text-charcoal-muted">
+                <span className="mt-1 block font-body text-[11px] text-charcoal-muted leading-snug">
                   {g.note}
                 </span>
               ) : null}
@@ -237,9 +387,9 @@ function GroundSelect({
           result={result}
           text={
             result === "victory"
-              ? "Opportunity flows to you as water flows downhill. You no longer chase — prospects seek you out."
+              ? "Opportunity flows to you as water flows downhill. Your ground map is sealed — protein for the week."
               : result === "field-note"
-                ? "You found fertile patches — and still stepped on barren ground. Reposition where trust is already sown."
+                ? "Fertile patches found — and barren steps taken. Reposition where trust is already sown."
                 : "Poor ground consumes effort. Stand where eyes naturally fall."
           }
         />
@@ -361,6 +511,7 @@ function DayFormation({
   );
 }
 
+/** Night plain — light beacons; protein = channel + measure */
 function FiresTend({
   interaction,
   onResolved,
@@ -389,7 +540,7 @@ function FiresTend({
   return (
     <div className="space-y-5">
       <p className="font-body text-charcoal">{interaction.prompt}</p>
-      <div className="grid gap-2">
+      <div className="grid gap-2 rounded-xl border border-ink/10 bg-ink p-3 sm:p-4">
         {interaction.fires.map((f) => {
           const on = lit.includes(f.id);
           return (
@@ -398,20 +549,26 @@ function FiresTend({
               type="button"
               onClick={() => toggle(f.id)}
               className={cn(
-                "rounded-lg border px-4 py-3 text-left transition-colors min-h-11",
+                "flex items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors min-h-11",
                 on
-                  ? "border-ember/50 bg-ember/10"
-                  : "border-charcoal/12 bg-parchment/60 hover:border-ember/30",
+                  ? "border-ember/50 bg-ember/15 beacon-glow text-parchment"
+                  : "border-parchment/15 bg-parchment/5 text-parchment/85 hover:border-ember/30",
               )}
             >
-              <span className="font-ui text-sm font-medium text-charcoal">
-                {f.label}
+              <Flame
+                className={cn(
+                  "mt-0.5 size-4 shrink-0",
+                  on ? "text-ember-soft" : "text-parchment/40",
+                )}
+              />
+              <span>
+                <span className="font-ui text-sm font-medium">{f.label}</span>
+                {on ? (
+                  <span className="mt-1 block font-body text-xs text-parchment/60">
+                    {f.note} · measure: conversations → enrollments
+                  </span>
+                ) : null}
               </span>
-              {on ? (
-                <span className="mt-1 block font-body text-xs text-charcoal-muted">
-                  {f.note}
-                </span>
-              ) : null}
             </button>
           );
         })}
@@ -430,7 +587,7 @@ function FiresTend({
           result={result}
           text={
             result === "victory"
-              ? "The ground is no longer cold. When contact arrives, the conversation begins with recognition."
+              ? "The ground is no longer cold. Presence before the first call — protein for the pipeline."
               : result === "field-note"
                 ? "A few flames burn — not yet a landscape. Tend more fires, and measure each one."
                 : "A single flame warms few. Tend more fires before the advance."
@@ -451,7 +608,6 @@ function ReflectPick({
   const [selected, setSelected] = useState<string[]>([]);
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<ChapterResult>("lesson");
-
   const badIds = new Set(["hire-fast", "gossip"]);
 
   function toggle(id: string) {
@@ -536,7 +692,7 @@ function ResultBanner({
 }) {
   const label =
     result === "victory"
-      ? "Victory"
+      ? "Victory seal"
       : result === "field-note"
         ? "Field note"
         : "Lesson";
@@ -553,7 +709,7 @@ function ResultBanner({
     >
       <span className="mt-0.5 shrink-0">
         {result === "victory" ? (
-          <Check className="size-5 text-success" strokeWidth={2} />
+          <Check className="size-5 text-success seal-stamp" strokeWidth={2} />
         ) : result === "field-note" ? (
           <Compass className="size-5 text-brass-dim" strokeWidth={2} />
         ) : (

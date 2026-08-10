@@ -391,7 +391,8 @@ export const CHAPTERS: Chapter[] = [
       "Master’s note: Top books still leave 10–15% of prep for the first week of AEP — plans flex. Rigidity is not preparation.",
     interaction: {
       type: "prep-storm",
-      prompt: "The land is still quiet. What do you forge before the storm?",
+      prompt:
+        "The night before AEP. The storm meter rises. Stack only what multiplies production on the workbench — empty calories leave you exposed.",
       need: 3,
       options: [
         { id: "crm", label: "Order CRM and renewal records", good: true },
@@ -438,7 +439,7 @@ export const CHAPTERS: Chapter[] = [
       "Master’s note: Silence after a hard truth is not failure — it is processing. Do not fill every pause with product.",
     interaction: {
       type: "objection",
-      prompt: "Choose how you meet the resistance.",
+      prompt: "Dialogue at the table. Tension rises if you force. Choose the path that forges trust.",
       clientLine:
         "“I’ve been burned by agents before. I’m not signing anything today.”",
       options: [
@@ -497,7 +498,7 @@ export const CHAPTERS: Chapter[] = [
       "Master’s note: Employer groups and faith communities can be fertile ground too — if you enter as a servant of the community, not a pitch.",
     interaction: {
       type: "ground",
-      prompt: "Mark the fertile ground. Avoid the barren.",
+      prompt: "Unfurl the parchment map. Plant banners only on fertile ground.",
       need: 3,
       grounds: [
         {
@@ -592,7 +593,7 @@ export const CHAPTERS: Chapter[] = [
     interaction: {
       type: "fires",
       prompt:
-        "Tend the five fires. A single flame warms few; a well-tended blaze transforms the landscape.",
+        "Night plain. Light the beacons. A single flame warms few; a measured blaze transforms the landscape.",
       need: 4,
       fires: [
         {
@@ -845,7 +846,6 @@ export const US_STATES = [
 export interface FieldReport {
   id: string;
   codename: string;
-  /** Display name — first name + last initial until formal testimonial clearance */
   agentName: string;
   region: string;
   yearsInField: string;
@@ -860,11 +860,6 @@ export interface FieldReport {
   forArchetypes: ArchetypeId[];
 }
 
-/**
- * Composite Field Reports — patterned on common partner-transition arcs.
- * Names/details are representative composites (not attributed testimonials)
- * until PSM clears first-person quotes. Swap with consented stories anytime.
- */
 export const FIELD_REPORTS: FieldReport[] = [
   {
     id: "builder",
@@ -946,7 +941,6 @@ export const FIELD_REPORTS: FieldReport[] = [
 export const FIELD_REPORTS_DISCLAIMER =
   "Composite Field Reports — representative partner-transition patterns. First-person quotes pending formal permission; replace with consented names anytime.";
 
-/** What a field recruiter should open with — more valuable than the lead alone */
 export const RECRUITER_OPENERS: Record<
   ArchetypeId,
   { openWith: string; avoid: string; proofAngle: string }
@@ -999,6 +993,8 @@ export function buildRecruiterBrief(input: {
   archetype: ArchetypeId;
   nineFacesScore?: number;
   chapterResults?: Record<string, string>;
+  readinessScore?: number;
+  readinessLabel?: string;
 }): string {
   const arch = ARCHETYPES[input.archetype];
   const opener = RECRUITER_OPENERS[input.archetype];
@@ -1020,6 +1016,9 @@ export function buildRecruiterBrief(input: {
     `PSM move: ${arch.psmMove}`,
     input.nineFacesScore !== undefined
       ? `Nine Faces score: ${input.nineFacesScore}/9`
+      : null,
+    input.readinessScore !== undefined
+      ? `Campaign readiness: ${input.readinessScore}/100 — ${input.readinessLabel ?? ""}`
       : null,
     ``,
     `OPEN THE CALL WITH`,
@@ -1050,7 +1049,6 @@ export const PSM_PARTNER_URL =
 export const PDF_URL =
   "https://www.psmbrokerage.com/hubfs/THE%20ART%20OF%20PRODUCTION.pdf";
 
-/** Field leader handoff — archetype preloaded via query when possible */
 export function fieldLeaderUrl(archetype?: ArchetypeId | null, name?: string) {
   const u = new URL(PSM_PARTNER_URL);
   u.searchParams.set("utm_content", "field-leader");
