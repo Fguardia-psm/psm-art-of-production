@@ -8,6 +8,8 @@ import type {
 } from "./content";
 import { REQUIRED_CHAPTER_SLUGS, scoreArchetype } from "./content";
 
+export const CAMPAIGN_STORAGE_KEY = "art-of-production-campaign";
+
 export interface LeadProfile {
   name: string;
   email: string;
@@ -39,6 +41,7 @@ interface CampaignState {
   unlock: (lead: LeadProfile) => void;
   markFieldReportsSeen: () => void;
   ensureLeaderCode: () => string;
+  /** Wipe all campaign progress in memory (persist writes on next tick). */
   resetCampaign: () => void;
 }
 
@@ -51,7 +54,8 @@ function makeLeaderCode() {
   return out;
 }
 
-const initial = {
+/** Fresh progress payload — never include actions. */
+export const EMPTY_CAMPAIGN = {
   scoutAnswers: {} as Record<string, number>,
   scoutComplete: false,
   provisionalArchetype: null as ArchetypeId | null,
@@ -68,7 +72,7 @@ const initial = {
 export const useCampaignStore = create<CampaignState>()(
   persist(
     (set, get) => ({
-      ...initial,
+      ...EMPTY_CAMPAIGN,
       setScoutAnswer: (questionId, optionIndex) =>
         set((s) => ({
           scoutAnswers: { ...s.scoutAnswers, [questionId]: optionIndex },
@@ -82,6 +86,7 @@ export const useCampaignStore = create<CampaignState>()(
       },
       completeChapter: (slug, result) =>
         set((s) => ({
+          // Allow re-sealing if chapter is replayed after a soft clear
           completedChapters: s.completedChapters.includes(slug)
             ? s.completedChapters
             : [...s.completedChapters, slug],
@@ -103,11 +108,81 @@ export const useCampaignStore = create<CampaignState>()(
         set({ leaderCode: code });
         return code;
       },
-      resetCampaign: () => set({ ...initial }),
+      resetCampaign: () => {
+        // Explicit field wipe — avoids accidental action clobber
+        set({
+          scoutAnswers: {},
+          scoutComplete: false,
+          provisionalArchetype: null,
+          completedChapters: [],
+          chapterResults: {},
+          nineFacesComplete: false,
+          nineFacesScore: 0,
+          unlocked: false,
+          lead: null,
+          leaderCode: null,
+          fieldReportsSeen: false,
+        });
+      },
     }),
-    { name: "art-of-production-campaign" },
+    { name: CAMPAIGN_STORAGE_KEY },
   ),
 );
+
+/** Any progress worth offering "Start over". */
+export function hasCampaignProgress(state: {
+  scoutComplete: boolean;
+  scoutAnswers: Record<string, number>;
+  completedChapters: ChapterSlug[];
+  nineFacesComplete: boolean;
+  unlocked: boolean;
+}): boolean {
+  return (
+    state.scoutComplete ||
+    state.unlocked ||
+    state.nineFacesComplete ||
+    state.completedChapters.length > 0 ||
+    Object.keys(state.scoutAnswers).length > 0
+  );
+}
+
+/**
+ * Hard start-over: memory wipe + localStorage purge + full navigation.
+ * Server-side NPN leads cannot be unsent (Deep Truth: say so in UI).
+ */
+export function startOverCampaign(): void {
+  const { resetCampaign } = useCampaignStore.getState();
+  resetCampaign();
+
+  try {
+    // Nuclear option — persist middleware can lag a tick after set()
+    localStorage.removeItem(CAMPAIGN_STORAGE_KEY);
+    // Zustand v4/v5 may namespace with a version suffix in some setups
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(CAMPAIGN_STORAGE_KEY)) {
+        localStorage.removeItem(key);
+      }
+    }
+  } catch {
+    /* private mode / blocked storage */
+  }
+
+  try {
+    void useCampaignStore.persist.clearStorage();
+  } catch {
+    /* no-op */
+  }
+
+  // Re-apply empty in case clearStorage rehydrated nothing and left stale
+  resetCampaign();
+
+  // Hard navigation beats SPA race (stale components holding old props)
+  const url = new URL(window.location.origin);
+  url.pathname = "/";
+  url.searchParams.set("fresh", String(Date.now()));
+  window.location.assign(url.toString());
+}
 
 export function requiredProgress(state: {
   completedChapters: ChapterSlug[];

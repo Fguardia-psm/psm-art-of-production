@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
+import {
+  hasCampaignProgress,
+  requiredProgress,
+  useCampaignStore,
+} from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
+import { StartOverControl } from "@/components/start-over";
 
 export function AgentOnlyRibbon({ className }: { className?: string }) {
   return (
@@ -33,6 +38,7 @@ export function CampaignHeader({
   const progress = requiredProgress(state);
   const readiness = computeReadiness(state);
   const ink = tone === "ink";
+  const canReset = hasCampaignProgress(state);
 
   return (
     <header
@@ -102,6 +108,18 @@ export function CampaignHeader({
                 Ready {readiness.score}
               </p>
             ) : null}
+            {canReset ? (
+              <div className="mt-0.5">
+                <StartOverControl
+                  variant="header"
+                  className={
+                    ink
+                      ? "text-parchment/45 hover:text-parchment/80"
+                      : "text-charcoal-soft hover:text-charcoal"
+                  }
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -143,13 +161,28 @@ export function CampaignShell({
       </main>
       <footer
         className={cn(
-          "border-t px-4 py-4 text-center",
+          "border-t px-4 py-4 text-center space-y-2",
           tone === "ink" ? "border-parchment/10" : "border-charcoal/10",
         )}
       >
         <AgentOnlyRibbon
           className={tone === "ink" ? "text-parchment/40" : undefined}
         />
+        <div
+          className={cn(
+            "flex justify-center",
+            tone === "ink" && "[&_button]:text-parchment/45 [&_button]:hover:text-parchment/80",
+          )}
+        >
+          <StartOverControl
+            variant="inline"
+            className={
+              tone === "ink"
+                ? "text-parchment/45 hover:text-parchment/80"
+                : undefined
+            }
+          />
+        </div>
       </footer>
     </div>
   );

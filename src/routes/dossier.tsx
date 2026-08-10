@@ -5,6 +5,7 @@ import {
   ReadinessPlate,
   SectionKicker,
 } from "@/components/shell";
+import { StartOverControl } from "@/components/start-over";
 import { Button } from "@/components/ui/button";
 import {
   ARCHETYPES,
@@ -33,7 +34,6 @@ function DossierPage() {
     leaderCode,
     ensureLeaderCode,
     fieldReportsSeen,
-    resetCampaign,
   } = state;
 
   if (!unlocked || !provisionalArchetype) {
@@ -382,18 +382,7 @@ function DossierPage() {
           </Button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            if (confirm("Reset campaign progress on this device?")) {
-              resetCampaign();
-              window.location.href = "/";
-            }
-          }}
-          className="font-ui text-xs text-charcoal-soft underline underline-offset-2"
-        >
-          Reset campaign
-        </button>
+        <StartOverControl variant="danger" />
       </div>
     </CampaignShell>
   );

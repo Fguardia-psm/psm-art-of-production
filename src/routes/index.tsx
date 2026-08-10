@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { AgentOnlyRibbon } from "@/components/shell";
-import { useCampaignStore } from "@/lib/campaign-store";
+import { StartOverControl } from "@/components/start-over";
+import {
+  hasCampaignProgress,
+  useCampaignStore,
+} from "@/lib/campaign-store";
 import { useHydrated } from "@/lib/use-hydrated";
 import { PSM_PARTNER_URL } from "@/lib/content";
 import { ArrowRight } from "lucide-react";
@@ -12,13 +16,14 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const hydrated = useHydrated();
+  const state = useCampaignStore();
   const {
     scoutComplete,
     unlocked,
     completedChapters,
     nineFacesComplete,
     fieldReportsSeen,
-  } = useCampaignStore();
+  } = state;
 
   const resumeTo = !hydrated
     ? "/scout"
@@ -33,6 +38,8 @@ function LandingPage() {
             ? "/nine-faces"
             : "/map"
           : "/scout";
+
+  const inProgress = hydrated && hasCampaignProgress(state);
 
   const ctaLabel =
     hydrated && unlocked
@@ -50,14 +57,22 @@ function LandingPage() {
           <p className="font-ui text-[11px] uppercase tracking-[0.28em] text-brass-bright/90">
             PSM Brokerage presents
           </p>
-          <a
-            href={PSM_PARTNER_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="font-ui text-[11px] uppercase tracking-[0.18em] text-parchment/50 hover:text-parchment/80 transition-colors"
-          >
-            Partner with PSM
-          </a>
+          <div className="flex items-center gap-4">
+            {inProgress ? (
+              <StartOverControl
+                variant="header"
+                className="text-parchment/45 hover:text-parchment/80"
+              />
+            ) : null}
+            <a
+              href={PSM_PARTNER_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="font-ui text-[11px] uppercase tracking-[0.18em] text-parchment/50 hover:text-parchment/80 transition-colors"
+            >
+              Partner with PSM
+            </a>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col justify-center py-12 sm:py-16">
@@ -85,6 +100,12 @@ function LandingPage() {
             </p>
           </blockquote>
 
+          {inProgress ? (
+            <p className="mt-6 font-ui text-xs text-brass-bright/80 tracking-wide">
+              Campaign in progress on this device — resume or start over.
+            </p>
+          ) : null}
+
           <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button asChild variant="primary" size="xl" className="min-w-[200px]">
               <Link to={resumeTo}>
@@ -92,12 +113,25 @@ function LandingPage() {
                 <ArrowRight className="size-4" strokeWidth={2} />
               </Link>
             </Button>
-            <Button asChild variant="secondary" size="lg">
-              <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
-                Partner with PSM
-              </a>
-            </Button>
+            {inProgress ? (
+              <StartOverControl variant="landing" />
+            ) : (
+              <Button asChild variant="secondary" size="lg">
+                <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
+                  Partner with PSM
+                </a>
+              </Button>
+            )}
           </div>
+          {inProgress ? (
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="text-parchment/55">
+                <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
+                  Partner with PSM
+                </a>
+              </Button>
+            </div>
+          ) : null}
 
           <ul className="mt-14 grid gap-4 sm:grid-cols-3">
             {[
@@ -119,15 +153,15 @@ function LandingPage() {
             ].map((item) => (
               <li
                 key={item.k}
-                className="rounded-lg border border-parchment/10 bg-parchment/[0.03] px-4 py-4"
+                className="rounded-lg border border-parchment/10 bg-parchment/5 px-4 py-4"
               >
-                <p className="font-ui text-[10px] tracking-[0.24em] text-brass-bright/80">
+                <p className="font-ui text-[10px] tracking-[0.22em] text-brass-bright/80">
                   {item.k}
                 </p>
                 <p className="mt-2 font-display text-lg text-parchment">
                   {item.t}
                 </p>
-                <p className="mt-1 font-body text-sm text-parchment/55 leading-relaxed">
+                <p className="mt-1 font-body text-sm text-parchment/55 leading-snug">
                   {item.d}
                 </p>
               </li>
@@ -135,7 +169,9 @@ function LandingPage() {
           </ul>
         </div>
 
-        <AgentOnlyRibbon className="text-parchment/35" />
+        <div className="border-t border-parchment/10 pt-6 pb-2">
+          <AgentOnlyRibbon className="text-parchment/35" />
+        </div>
       </div>
     </div>
   );
