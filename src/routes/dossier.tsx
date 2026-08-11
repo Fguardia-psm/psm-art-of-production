@@ -88,12 +88,25 @@ function DossierPageInner() {
           </h2>
           <p className="mt-4 font-body text-sm text-parchment/65 leading-relaxed max-w-xl">
             Same book. Better ground. Cleaner systems. That is the economic
-            case — not a pep talk. PSM is the council after the campaign:
-            contracts, marketing fire, infrastructure, and leaders who have
-            sealed seasons. Bring your reading (
+            case — not a pep talk. Bring your reading (
             <span className="text-brass-bright/90">{arch.name}</span>
-            ). Ask how to win the next AEP with formation behind you.
+            ) and talk to a field leader about the next season.
           </p>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 max-w-xl">
+            {[
+              "What contracts and markets fit my book?",
+              "What marketing fire can warm my ground before AEP?",
+              "What systems stop me from leaking hours?",
+              "How do producers like me partner without losing independence?",
+            ].map((q) => (
+              <li
+                key={q}
+                className="rounded-md border border-parchment/15 bg-parchment/[0.04] px-3 py-2 font-body text-xs text-parchment/70 leading-snug"
+              >
+                {q}
+              </li>
+            ))}
+          </ul>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="primary" size="xl">
               <a href={counselHref} target="_blank" rel="noreferrer">

@@ -60,12 +60,12 @@ function UnlockPageInner() {
       <div className="mx-auto max-w-lg animate-fade-up">
         <SectionKicker>The seal</SectionKicker>
         <h1 className="mt-3 font-display text-3xl text-charcoal sm:text-4xl">
-          Victory without alliance is temporary
+          Don’t win the next season alone
         </h1>
         <p className="mt-3 font-body text-charcoal-muted leading-relaxed">
-          You have marched the campaign. The last move is not a form — it is
-          whether you stand alone next season, or with a council that already
-          knows how seasons are won.
+          You finished the campaign. Open your dossier for the full reading —
+          then talk with PSM about ground, systems, and fire if you want more
+          than another pep talk.
         </p>
 
         {archPreview ? (

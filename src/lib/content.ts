@@ -265,157 +265,157 @@ strengths: [
 export const SCOUT_QUESTIONS: ScoutQuestion[] = [
   {
     id: "q1",
-    prompt: "Before a heavy season, where does your mind go first?",
+    prompt: "Before AEP or a heavy OEP week, what do you lock first?",
     options: [
       {
-        label: "Maps, carriers, compliance, and the quiet months of prep",
+        label: "Carriers, compliance notes, renewals, and my prep list",
         scores: { cartographer: 3, quartermaster: 1 },
       },
       {
-        label: "How I will listen and guide each client without pressure",
+        label: "How I’ll listen so the client never feels sold",
         scores: { illuminator: 3 },
       },
       {
-        label: "Systems, CRM, templates — so energy does not scatter",
+        label: "CRM clean-up, templates, and a fixed daily schedule",
         scores: { quartermaster: 3, cartographer: 1 },
       },
       {
-        label: "How the team will hold formation when volume rises",
+        label: "How my team will run when volume spikes",
         scores: { "field-marshal": 3 },
       },
       {
-        label: "How visible we will be — mail, ads, community, brand",
+        label: "Visibility — mail, ads, community, brand, follow-up",
         scores: { "fire-bearer": 3 },
       },
     ],
   },
   {
     id: "q2",
-    prompt: "A client raises a sharp objection. Your instinct is to…",
+    prompt: "A client says, “I’m not signing anything today.” You…",
     options: [
       {
-        label: "Inquire beneath it — find the fear or unmet need",
+        label: "Ask what happened before — find the real fear",
         scores: { illuminator: 3 },
       },
       {
-        label: "Return to the plan I prepared for this market and product",
+        label: "Go back to the market plan I already built for them",
         scores: { cartographer: 2, quartermaster: 1 },
       },
       {
-        label: "Lean on process: scripts refined through repetition",
+        label: "Use a process I’ve practiced — same steps every time",
         scores: { quartermaster: 2, cartographer: 1 },
       },
       {
-        label: "Coach my agent on how to handle this type of client",
+        label: "Coach my agent on how to handle this client type",
         scores: { "field-marshal": 3 },
       },
       {
-        label: "Recall that trust should have been warmed before this call",
+        label: "Wish I’d warmed trust before this appointment",
         scores: { "fire-bearer": 2, illuminator: 1 },
       },
     ],
   },
   {
     id: "q3",
-    prompt: "What most multiplies your production today?",
+    prompt: "What multiplies your production most right now?",
     options: [
       {
-        label: "Standing on fertile ground — events, referrals, presence",
+        label: "Where I stand — pharmacies, events, referrals, presence",
         scores: { "fire-bearer": 2, cartographer: 1 },
       },
       {
-        label: "Ordered days: follow-up, appointments, reviews, prep",
+        label: "How I run the day — follow-up, sits, admin, prep",
         scores: { quartermaster: 3 },
       },
       {
-        label: "Deep understanding that dissolves resistance",
+        label: "How well I understand the person across the table",
         scores: { illuminator: 3 },
       },
       {
-        label: "A team that aligns under one banner",
+        label: "A team that runs the same playbook",
         scores: { "field-marshal": 3 },
       },
       {
-        label: "Knowing the terrain better than competitors",
-        scores: { cartographer: 3 },
+        label: "Being known before the first handshake",
+        scores: { "fire-bearer": 3 },
       },
     ],
   },
   {
     id: "q4",
-    prompt: "When the market shifts, you…",
+    prompt: "When carriers or rules change mid-season, you…",
     options: [
       {
-        label: "Flow with it — adapt tactics without clinging to yesterday",
-        scores: { cartographer: 2, illuminator: 1 },
+        label: "Update my plan and tell clients only what still holds",
+        scores: { cartographer: 3 },
       },
       {
-        label: "Update systems and processes first",
-        scores: { quartermaster: 3 },
+        label: "Fix systems first so the team doesn’t freestyle",
+        scores: { quartermaster: 3, "field-marshal": 1 },
       },
       {
-        label: "Retrain the agency and reset expectations",
+        label: "Retrain the team and reset one standard",
         scores: { "field-marshal": 3 },
       },
       {
-        label: "Shift channels — new fires where eyes naturally fall",
+        label: "Shift channels — more fire where eyes already are",
         scores: { "fire-bearer": 3 },
       },
       {
-        label: "Listen harder to what clients now fear and hope",
+        label: "Slow the appointment and re-earn trust in plain words",
         scores: { illuminator: 3 },
       },
     ],
   },
   {
     id: "q5",
-    prompt: "Your definition of victory sounds most like…",
+    prompt: "What does a “win” look like for you in a client meeting?",
     options: [
       {
-        label: "The appointment merely reveals what preparation already won",
-        scores: { cartographer: 3 },
-      },
-      {
-        label: "To win without struggle — all parties leave strengthened",
+        label: "They feel guided — the choice becomes obvious",
         scores: { illuminator: 3 },
       },
       {
-        label: "Momentum that compounds from ordered energy",
+        label: "The prep already did the heavy lift before we sat down",
+        scores: { cartographer: 3 },
+      },
+      {
+        label: "The day stayed in formation — no wasted motion",
         scores: { quartermaster: 3 },
       },
       {
-        label: "An agency that advances unbroken and unified",
+        label: "My agent handled it to standard without me",
         scores: { "field-marshal": 3 },
       },
       {
-        label: "Strangers who already recognize you when you arrive",
+        label: "They already knew my name before the appointment",
         scores: { "fire-bearer": 3 },
       },
     ],
   },
   {
     id: "q6",
-    prompt: "Where are you building next?",
+    prompt: "What do you most want next from a partner or FMO?",
     options: [
       {
-        label: "Sharper personal production and craft",
-        scores: { illuminator: 1, cartographer: 1, quartermaster: 1 },
+        label: "Sharper personal production and craft support",
+        scores: { illuminator: 2, cartographer: 2 },
       },
       {
-        label: "An agency that multiplies others",
+        label: "Agency infrastructure that multiplies my people",
         scores: { "field-marshal": 3 },
       },
       {
-        label: "A louder, warmer presence in the market",
-        scores: { "fire-bearer": 2 },
+        label: "Marketing fire and warmer ground before I dial",
+        scores: { "fire-bearer": 3 },
       },
       {
-        label: "Cleaner intelligence and better ground",
-        scores: { cartographer: 2 },
+        label: "Cleaner intel — carriers, markets, compliance",
+        scores: { cartographer: 3 },
       },
       {
-        label: "Tighter systems so I stop leaking energy",
-        scores: { quartermaster: 2 },
+        label: "Tighter systems so I stop leaking hours",
+        scores: { quartermaster: 3 },
       },
     ],
   },
@@ -430,9 +430,9 @@ export const CHAPTERS: Chapter[] = [
     quote: "To know your production, know your preparation.",
     quoteSub: "The unprepared agent improvises. The prepared agent executes.",
     situation:
-      "AEP descends as a storm — swift and demanding. OEP advances as a measured test. SEP flows unending. Those who greet these seasons lightly soon find themselves pressed on all sides.",
+      "AEP hits hard. OEP tests you. SEP never stops. If you treat the season like a surprise, it owns you.",
     principle:
-      "Success in the season is never forged in the season. It is forged in the quiet months before — records gathered, words sharpened, knowledge strengthened, clutter cleared.",
+      "Wins are built in the quiet months: renewals clean, words sharp, carriers known, clutter gone. Prep is the appointment before the appointment.",
     markWell:
       "When preparation is thorough, fear dissolves. The planning is the victory; the appointment merely reveals it.",
     fieldNote:
@@ -478,9 +478,9 @@ export const CHAPTERS: Chapter[] = [
     quote: "The supreme skill is to win the client without conflict.",
     quoteSub: "Thus, the greatest agents do not sell — they illuminate.",
     situation:
-      "The client sits before you with caution born of past wounds. Force would only harden the ground. The wise agent lays down the weapons of pressure and takes up understanding.",
+      "They’ve been burned. Push and the table freezes. Force feels like a sale. Understanding feels like help.",
     principle:
-      "Listen to currents beneath words. When objections arise, inquire. Every objection hides a truth — a fear, a misunderstanding, a need unmet. Uncover it, and resistance dissolves.",
+      "Objections hide a fear or a need. Ask under the words. When they feel seen, they choose — you don’t drag them.",
     markWell:
       "This is the highest form of victory: to win without struggle, persuade without contention, guide without overpowering.",
     fieldNote:
@@ -537,9 +537,9 @@ export const CHAPTERS: Chapter[] = [
     quote: "Victory comes to those who hold the advantageous ground.",
     quoteSub: "Strengthen your position and demand will rise to meet you.",
     situation:
-      "Your ground is your pipeline. Those who stand on barren ground battle for every inch. Those on fertile ground open their hands to receive abundance.",
+      "Your pipeline is your ground. Cold lists burn hours. Warm ground multiplies every skill you already have.",
     principle:
-      "Position yourself where trust is already sown — community gatherings, pharmacies, referral circles, digital places where eyes naturally fall. Position multiplies every effort.",
+      "Stand where trust already exists: pharmacies, events, referrals, clear digital presence. Location multiplies effort.",
     markWell:
       "The agent who stands where they cannot be seen will struggle regardless of skill. Choose ground carefully, and in choosing, secure triumph.",
     fieldNote:
@@ -596,9 +596,9 @@ export const CHAPTERS: Chapter[] = [
     quote: "Order directs movement. Momentum wins campaigns.",
     quoteSub: "Idle agents blame leads. Master agents command energy.",
     situation:
-      "Energy scattered produces exhaustion. Energy organized produces power. Many labor from dawn to dusk yet stand no closer to their goal — the curse of motion without strategy.",
+      "Busy is not productive. Scatter the day and you end tired with the same book. Order the day and volume gets lighter.",
     principle:
-      "Group tasks as armies move in formation. Morning follow-up. Midday appointments. Afternoon reviews. Evening preparation. Strategy is the art of doing less, but achieving more.",
+      "Run one formation: morning follow-up, midday appointments, afternoon admin, evening prep. Do less thrashing. Get more done.",
     markWell:
       "A productive morning becomes a productive day. A productive day becomes a productive week. A productive week becomes legacy.",
     fieldNote:
@@ -631,9 +631,9 @@ export const CHAPTERS: Chapter[] = [
     quoteSub:
       "A silent agent is invisible. An agent with fire attracts opportunity.",
     situation:
-      "Long before an army advances, fires are lit across the plain. So too does the agent use marketing — not as noise, but as flame that warms the unknown and announces reliability.",
+      "If nobody knows you before the call, every appointment starts cold. Marketing is not noise — it is warmth before the handshake.",
     principle:
-      "Five fires: digital advertising, direct mail, community presence, branding, automated follow-up. With intelligence — data, CRM, compliance, trends — you move with inevitability.",
+      "Tend five fires: digital, mail, community, brand, follow-up. Track cost → conversations → enrollments. Fire without measure is vanity.",
     markWell:
       "Where no fire is lit, cold resistance reigns. Where fire burns, the field yields itself. Intelligence is armor, compass, and supremacy.",
     fieldNote:
@@ -987,7 +987,7 @@ export const FIELD_REPORTS: FieldReport[] = [
 ];
 
 export const FIELD_REPORTS_DISCLAIMER =
-  "Composite Field Reports — representative partner-transition patterns. First-person quotes pending formal permission; replace with consented names anytime.";
+  "Field Reports are composite patterns from partner transitions (names stylized). They show operating leverage — not guaranteed results. Ask a field leader for live references in your market.";
 
 export const RECRUITER_OPENERS: Record<
   ArchetypeId,

@@ -94,9 +94,9 @@ function FieldReportsPageInner() {
             Field Reports
           </h1>
           <p className="mt-3 max-w-xl font-body text-charcoal-muted leading-relaxed">
-            Not a brochure. Three producers — named, regional, and specific —
-            who already believed in their craft and still needed operating
-            leverage.
+            Not a brochure. Three composite patterns of producers who already
+            had craft — and still needed operating leverage: time back, warmer
+            ground, or structure that scales.
           </p>
           {arch ? (
             <p className="mt-3 font-ui text-xs uppercase tracking-[0.18em] text-brass">

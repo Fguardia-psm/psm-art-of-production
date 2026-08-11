@@ -127,9 +127,9 @@ function ScoutPage() {
           How do you win?
         </h1>
         <p className="mt-3 max-w-xl font-body text-charcoal-muted">
-          Six questions about how you actually run a book — not how you wish you
-          sounded. Your reading will name your strengths and where production
-          tends to leak.
+          Six quick questions. Answer how you actually run the book — not the
+          answer that sounds impressive. You’ll get a straight reading: strengths,
+          leaks, and what to focus on this season.
         </p>
 
         <div className="mt-8 flex gap-1.5" aria-hidden>

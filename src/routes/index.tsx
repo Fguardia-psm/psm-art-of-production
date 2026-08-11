@@ -88,10 +88,10 @@ function LandingPage() {
             className="mt-8 max-w-xl font-body text-lg text-parchment/70 leading-relaxed animate-fade-up"
             style={{ ["--motion" as string]: "500ms" }}
           >
-            Insurance is a business of strategy, not chance. Walk an interactive
-            campaign drawn from the manual — discover your producer archetype,
-            master the seasons, and claim your place among those who prepare
-            wisely.
+            Practice how top producers win seasons: prep, conversations, ground,
+            daily order, and marketing fire. Leave with a clear reading of how
+            you win — and a path to talk with PSM about better ground and
+            systems.
           </p>
 
           <blockquote className="mt-10 border-l border-brass/50 pl-5 animate-fade-up">
@@ -137,18 +137,18 @@ function LandingPage() {
             {[
               {
                 k: "01",
-                t: "Scout your archetype",
-                d: "Six questions. One identity that names how you win.",
+                t: "Get your reading",
+                d: "Six questions. How you win — and where production leaks.",
               },
               {
                 k: "02",
-                t: "Walk five campaigns",
-                d: "Preparation, stratagem, ground, energy, and fire.",
+                t: "Practice five campaigns",
+                d: "Prep, no-pressure close, pipeline ground, day order, fire.",
               },
               {
                 k: "03",
-                t: "Proof, then the call",
-                d: "Field Reports earn the conversation. Recruiters close.",
+                t: "Proof, then counsel",
+                d: "Field Reports show leverage. Then talk to a human.",
               },
             ].map((item) => (
               <li
