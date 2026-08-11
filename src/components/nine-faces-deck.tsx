@@ -21,14 +21,14 @@ export function NineFacesDeck({
           <div className="flex items-center gap-2">
             <Scroll className="size-4 shrink-0 text-brass" />
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              The Nine Faces · client languages
+              Nine client types · table reference
             </p>
           </div>
           <p className="mt-2 font-body text-sm text-charcoal leading-relaxed max-w-xl">
-            Nine ways clients walk into the appointment.{" "}
+            Same product. Different person in the chair.{" "}
             <span className="font-medium text-charcoal">
-              Tap a face to open how they show up, what wins, and a line you can
-              use.
+              Tap a type for how they show up, what works, what to avoid, and a
+              line you can use tomorrow.
             </span>
           </p>
         </div>
@@ -99,7 +99,7 @@ export function NineFacesDeck({
                   </div>
                 ) : (
                   <p className="mt-2 font-ui text-[10px] text-charcoal-soft">
-                    Tap to open · cue, approach, field note
+                    Tap to open · how they act · what works · what to avoid
                   </p>
                 )}
               </button>

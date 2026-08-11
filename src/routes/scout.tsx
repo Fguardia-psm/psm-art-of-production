@@ -107,8 +107,8 @@ function ScoutPage() {
             “{archetype.seal}”
           </p>
           <p className="mt-4 font-body text-xs text-parchment/40 text-center leading-relaxed">
-            A reading, not a cage — the campaign will test and refine it. Full
-            Monday move and Nine Faces wait after the path.
+            A reading, not a cage. Walk the campaigns next — you’ll leave with a
+            30-day plan you can run without this screen.
           </p>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">

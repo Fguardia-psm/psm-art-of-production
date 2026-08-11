@@ -149,11 +149,11 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
       "Over-preparation. Waiting for perfect intel while fertile ground sits unvisited. Analysis without feet on the ground.",
     seasonFocus:
       "Pick three fertile territories. Put appointments on the calendar before you polish one more spreadsheet. The map must meet the field.",
-    forecast: {
-      risk: "Analysis before action — the map never meets the field.",
-      breakthrough: "Territory planning plus scheduled client reviews.",
-      mission30: "Book 12 review or renewal appointments on the calendar.",
-      measure: "Appointments booked (not hours prepping).",
+        forecast: {
+      risk: "You prep forever and book too late.",
+      breakthrough: "Fewer spreadsheets. More review appointments on the calendar.",
+      mission30: "Book 12 review or renewal appointments in the next 30 days.",
+      measure: "Appointments on the calendar — not hours spent prepping.",
       target: "3 solid appointments per week for 4 weeks.",
     },
 strengths: [
@@ -183,16 +183,16 @@ strengths: [
       "Pipeline neglect. When the calendar is empty, illumination has nowhere to land — and you blame \"leads\" instead of ground and rhythm.",
     seasonFocus:
       "Protect two non-negotiable appointment blocks daily. Practice three opening lines for three client types (Overwhelmed, Skeptic, Loyalist). Depth plus volume — not depth alone.",
-    forecast: {
-      risk: "Deep conversations without a full pipeline — noble exhaustion.",
-      breakthrough: "Protected appointment blocks + reading each client type (Nine Faces).",
-      mission30: "Hold 16 client sits — name which of the Nine Faces they are, and use that approach.",
-      measure: "Sits completed and next-steps set same day.",
-      target: "4 sits per week; zero “I’ll call you later” with no date.",
+        forecast: {
+      risk: "Great conversations. Empty calendar. You burn out helping one person at a time.",
+      breakthrough: "Protect sit time. Before you pitch, name the client type and match how you open.",
+      mission30: "Hold 16 client sits. After each one, write: type (e.g. Skeptic, Overwhelmed) + one thing you did differently.",
+      measure: "Sits completed with a next step set the same day.",
+      target: "About 4 sits per week. Zero “I’ll call you” with no date on the calendar.",
     },
 strengths: [
       "Highest form of close: understanding, not pressure",
-      "Reads the nine faces of the client",
+      "Reads the person in the chair — not just the product",
       "Turns resistance into recognition",
     ],
     blindSpot:
@@ -201,7 +201,7 @@ strengths: [
       "Grow with PSM mentorship and conversation mastery so every appointment becomes quiet certainty.",
     seal: "The greatest agents do not sell — they illuminate.",
     mondayScript:
-      "Role-play three objections out loud. Record the first question you will ask before any product name.",
+      "Before any product name: write the first question you will ask. Practice three hard objections out loud.",
   },
   quartermaster: {
     id: "quartermaster",
@@ -217,12 +217,12 @@ strengths: [
       "Order without outreach. A perfect system and an empty funnel. Visibility feels \"unsystematic,\" so you under-invest in fire.",
     seasonFocus:
       "Keep the formation — then add one deliberate visibility fire (community, pharmacy, digital) with a measured reply rate.",
-    forecast: {
-      risk: "Perfect systems, quiet funnel — order without outreach.",
-      breakthrough: "Formation plus one deliberate visibility fire.",
-      mission30: "Zero CRM loops older than 48 hours; run formation 5 days/week.",
+        forecast: {
+      risk: "CRM is clean. Pipeline is quiet. Order without outreach.",
+      breakthrough: "Keep your daily rhythm — and add one place people already trust you.",
+      mission30: "Close every CRM loop older than 48 hours. Run your day plan 5 days a week. Add one pharmacy, event, or follow-up channel.",
       measure: "Open loops closed + outbound touches logged.",
-      target: "15 outbound touches/day in formation; inbox zero by Friday.",
+      target: "15 outbound touches a day in your day plan; inbox clear by Friday.",
     },
 strengths: [
       "Systems preserve strength others waste",
@@ -251,12 +251,12 @@ strengths: [
       "Command from the office. Personal production and craft dull while you \"build.\" Chaos returns when culture is only a speech.",
     seasonFocus:
       "One scoreboard. One coaching cadence. One personal production block you will not cancel. Structure that still smells like the field.",
-    forecast: {
-      risk: "Command from the office — structure without personal craft.",
-      breakthrough: "One scoreboard, one coaching cadence, one personal block.",
-      mission30: "Install a weekly huddle and a personal production block you will not cancel.",
-      measure: "Team sits + your personal production hours protected.",
-      target: "1 huddle/week; 8 personal production hours/week.",
+        forecast: {
+      risk: "You build the agency from the office and stop writing business yourself.",
+      breakthrough: "One scoreboard. One weekly huddle. One personal production block you do not cancel.",
+      mission30: "Start a weekly team huddle and protect 8 hours of your own production time each week.",
+      measure: "Team sits this month + your personal production hours kept.",
+      target: "1 huddle per week; 8 personal production hours per week.",
     },
 strengths: [
       "Lays foundations before summoning numbers",
@@ -285,12 +285,12 @@ strengths: [
       "Vanity metrics. Activity without enrollments. Marketing that never hands the baton to a disciplined appointment process.",
     seasonFocus:
       "One fire you will tend weekly. One conversion path from attention to appointment. Measure replies and sits — not likes.",
-    forecast: {
-      risk: "Bright flame, soft close — attention without enrollments.",
-      breakthrough: "One fire tended weekly with a path from reply to sit.",
-      mission30: "Ship 4 value touches and convert replies into booked sits.",
-      measure: "Replies → sits → enrollments (not likes).",
-      target: "10 meaningful replies and 6 sits from fire this month.",
+        forecast: {
+      risk: "Lots of posts and activity. Not enough enrollments.",
+      breakthrough: "One channel you tend every week — with a clear path from reply to booked sit.",
+      mission30: "Send 4 useful messages or posts and turn replies into booked appointments.",
+      measure: "Replies → sits → enrollments. Not likes.",
+      target: "10 real replies and 6 sits from your marketing this month.",
     },
 strengths: [
       "Marketing as strategy, not vanity",

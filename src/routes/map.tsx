@@ -56,9 +56,9 @@ function MapPageInner() {
               Your campaign path
             </h1>
             <p className="mt-2 font-body text-charcoal-muted max-w-lg">
-              Five field campaigns, then the Nine Faces. Each seal means you
-              practiced a production principle — preparation, conversation,
-              ground, energy, and fire.
+              Five field campaigns, then nine client types. Each seal is a
+              production skill you practiced — prep, no-pressure sits, pipeline
+              ground, day order, and marketing.
             </p>
           </div>
           {archetype ? (

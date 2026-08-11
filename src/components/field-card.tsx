@@ -177,7 +177,7 @@ export function FieldCard({
 
           <div className="mt-5 rounded-xl border border-brass/30 bg-gradient-to-br from-brass/12 to-transparent px-4 py-4 sm:px-5">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Production forecast · next 30 days
+              30-day production plan · desk orders
             </p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <div>
@@ -199,7 +199,7 @@ export function FieldCard({
             </div>
             <div className="mt-3 rounded-lg border border-charcoal/10 bg-parchment/90 px-3 py-3">
               <p className="font-ui text-[9px] uppercase tracking-[0.14em] text-brass">
-                Field orders · 30 days
+                Do this in 30 days
               </p>
               <p className="mt-1 font-body text-sm font-medium text-charcoal leading-snug">
                 {arch.forecast.mission30}
@@ -280,9 +280,9 @@ export function FieldCard({
               ))}
             </ul>
             <p className="mt-3 font-body text-[11px] text-charcoal-muted leading-relaxed">
-              When a hard client sits down, open the Nine Faces. Match their type
-              (Overwhelmed, Skeptic, Loyalist…) and use that approach — one
-              language at a time.
+              Hard appointment tip: before you pitch, decide who is in the chair
+              (Overwhelmed, Skeptic, Loyalist, Bargain-Seeker…). Open the way
+              that fits them — not a generic script.
             </p>
           </div>
 

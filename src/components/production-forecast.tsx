@@ -9,10 +9,10 @@ export function ProductionForecastPanel({
 }) {
   const ink = tone === "ink";
   const rows = [
-    { k: "Most likely risk", v: forecast.risk },
-    { k: "Most likely breakthrough", v: forecast.breakthrough },
-    { k: "Next 30-day mission", v: forecast.mission30 },
-    { k: "Measure", v: forecast.measure },
+    { k: "Watch this risk", v: forecast.risk },
+    { k: "Where you break through", v: forecast.breakthrough },
+    { k: "Your 30-day orders", v: forecast.mission30 },
+    { k: "How you’ll know it’s working", v: forecast.measure },
     { k: "Target", v: forecast.target },
   ];
 
@@ -31,7 +31,7 @@ export function ProductionForecastPanel({
             : "font-ui text-[10px] uppercase tracking-[0.22em] text-brass"
         }
       >
-        Production forecast
+        Your 30-day production plan
       </p>
       <p
         className={
@@ -40,7 +40,7 @@ export function ProductionForecastPanel({
             : "mt-1 font-body text-xs text-charcoal-soft"
         }
       >
-        Diagnosis becomes prescription — not a badge.
+        Sticky-note orders — do these without reopening this app.
       </p>
       <ul className="mt-4 space-y-3">
         {rows.map((r) => (
