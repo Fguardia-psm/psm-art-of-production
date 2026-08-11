@@ -6,6 +6,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { AppErrorComponent } from "@/lib/error-component";
+import { IframeResizeReporter } from "@/components/iframe-resize";
 import appCss from "@/styles.css?url";
 
 export const Route = createRootRoute({
@@ -41,6 +42,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
+      <IframeResizeReporter />
       <Outlet />
     </RootDocument>
   );
