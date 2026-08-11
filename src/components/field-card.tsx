@@ -4,7 +4,7 @@ import { Printer } from "lucide-react";
 
 /**
  * Field Seal — premium printable one-pager (campaign commission).
- * Screen: reward + share-worthy. Print: desk reference for 30 days.
+ * Archetype is always the hero identity; personal name is secondary if present.
  */
 export function FieldCard({
   arch,
@@ -24,7 +24,13 @@ export function FieldCard({
   strongestChapter?: string;
 }) {
   const readinessPct = Math.max(0, Math.min(100, readinessScore));
-  const bearer = agentName?.trim();
+  // Never show generic placeholders as the hero title
+  const bearerRaw = agentName?.trim() ?? "";
+  const bearer =
+    bearerRaw &&
+    !/^(producer|agent|user|test|n\/a|na)$/i.test(bearerRaw)
+      ? bearerRaw
+      : "";
   const weekTargets = [
     "Week 1 — set the mission on the calendar",
     "Week 2 — hit measure; adjust ground",
@@ -85,28 +91,25 @@ export function FieldCard({
               <p className="mt-1 font-ui text-[10px] uppercase tracking-[0.2em] text-charcoal-soft">
                 Field Seal · campaign commission · PSM Brokerage
               </p>
+              {/* Archetype is always the hero */}
+              <p className="mt-3 font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
+                Your archetype
+              </p>
+              <h2 className="mt-1 font-display text-3xl sm:text-[2.75rem] text-charcoal tracking-tight leading-[0.95]">
+                {arch.name}
+              </h2>
+              <p className="mt-2 font-display text-base sm:text-lg italic text-brass-dim max-w-md">
+                {arch.epithet}
+              </p>
               {bearer ? (
-                <>
-                  <h2 className="mt-3 font-display text-3xl sm:text-4xl text-charcoal tracking-tight leading-none">
-                    {bearer}
-                  </h2>
-                  <p className="mt-2 font-display text-lg italic text-brass-dim">
-                    {arch.name}
-                    <span className="text-charcoal-soft"> — {arch.epithet}</span>
-                  </p>
-                </>
+                <p className="mt-3 font-ui text-xs text-charcoal-soft">
+                  Bearer ·{" "}
+                  <span className="font-medium text-charcoal">{bearer}</span>
+                </p>
               ) : (
-                <>
-                  <h2 className="mt-3 font-display text-3xl sm:text-4xl text-charcoal tracking-tight leading-none">
-                    {arch.name}
-                  </h2>
-                  <p className="mt-2 font-display text-lg italic text-brass-dim">
-                    {arch.epithet}
-                  </p>
-                  <p className="mt-1 font-ui text-[10px] uppercase tracking-[0.16em] text-charcoal-soft">
-                    Sealed for the bearer of this campaign
-                  </p>
-                </>
+                <p className="mt-3 font-ui text-[10px] uppercase tracking-[0.16em] text-charcoal-soft">
+                  Sealed for the bearer of this campaign
+                </p>
               )}
             </div>
 
@@ -277,8 +280,9 @@ export function FieldCard({
               ))}
             </ul>
             <p className="mt-3 font-body text-[11px] text-charcoal-muted leading-relaxed">
-              When a hard client sits down, open the Nine Faces. One language at
-              a time — the agent who speaks nine wins all.
+              When a hard client sits down, open the Nine Faces. Match their type
+              (Overwhelmed, Skeptic, Loyalist…) and use that approach — one
+              language at a time.
             </p>
           </div>
 

@@ -182,11 +182,11 @@ strengths: [
     whenYouStruggle:
       "Pipeline neglect. When the calendar is empty, illumination has nowhere to land — and you blame \"leads\" instead of ground and rhythm.",
     seasonFocus:
-      "Protect two non-negotiable appointment blocks daily. Practice three opening lines for the Nine Faces. Depth plus volume — not depth alone.",
+      "Protect two non-negotiable appointment blocks daily. Practice three opening lines for three client types (Overwhelmed, Skeptic, Loyalist). Depth plus volume — not depth alone.",
     forecast: {
       risk: "Deep conversations without a full pipeline — noble exhaustion.",
-      breakthrough: "Protected appointment blocks + Nine Faces fluency.",
-      mission30: "Hold 16 client conversations using one Face language per sit.",
+      breakthrough: "Protected appointment blocks + reading each client type (Nine Faces).",
+      mission30: "Hold 16 client sits — name which of the Nine Faces they are, and use that approach.",
       measure: "Sits completed and next-steps set same day.",
       target: "4 sits per week; zero “I’ll call you later” with no date.",
     },
