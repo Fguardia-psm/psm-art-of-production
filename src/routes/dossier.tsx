@@ -130,14 +130,34 @@ function DossierPageInner() {
             {arch.epithet}
           </p>
           <p className="mx-auto mt-6 max-w-lg font-body text-parchment/65 leading-relaxed">
-            {arch.summary}
+            {arch.fieldReading}
           </p>
-          <p className="mt-4 font-ui text-[10px] uppercase tracking-[0.2em] text-parchment/40">
-            Blind spot · we do not flatter
-          </p>
-          <p className="mx-auto mt-2 max-w-md font-body text-sm text-parchment/55">
-            {arch.blindSpot}
-          </p>
+          <div className="mx-auto mt-8 max-w-lg space-y-4 text-left">
+            <div>
+              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
+                At your best
+              </p>
+              <p className="mt-1 font-body text-sm text-parchment/60 leading-relaxed">
+                {arch.atYourBest}
+              </p>
+            </div>
+            <div>
+              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
+                Where production leaks
+              </p>
+              <p className="mt-1 font-body text-sm text-parchment/60 leading-relaxed">
+                {arch.whenYouStruggle}
+              </p>
+            </div>
+            <div>
+              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
+                This season’s focus
+              </p>
+              <p className="mt-1 font-body text-sm text-parchment/70 leading-relaxed">
+                {arch.seasonFocus}
+              </p>
+            </div>
+          </div>
         </section>
 
         <div className="grid gap-4 sm:grid-cols-2">

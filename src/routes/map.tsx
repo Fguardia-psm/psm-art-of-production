@@ -53,11 +53,12 @@ function MapPageInner() {
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-display text-3xl text-charcoal sm:text-4xl">
-              The field before you
+              Your campaign path
             </h1>
             <p className="mt-2 font-body text-charcoal-muted max-w-lg">
-              Ink path through five campaigns and the Nine Faces. Seals mark
-              mastery — not empty XP.
+              Five field campaigns, then the Nine Faces. Each seal means you
+              practiced a production principle — preparation, conversation,
+              ground, energy, and fire.
             </p>
           </div>
           {archetype ? (
@@ -66,6 +67,17 @@ function MapPageInner() {
             </p>
           ) : null}
         </div>
+
+        {archetype ? (
+          <div className="mt-6 rounded-xl border border-brass/25 bg-brass/8 px-4 py-4">
+            <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
+              Your reading · {archetype.name}
+            </p>
+            <p className="mt-2 font-body text-sm text-charcoal leading-relaxed">
+              {archetype.seasonFocus}
+            </p>
+          </div>
+        ) : null}
 
         <div className="mt-6">
           <ReadinessPlate
@@ -191,7 +203,7 @@ function MapPageInner() {
                     <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
                       Master scene
                       {state.nineFacesComplete
-                        ? ` · ${state.nineFacesScore}/9 · face deck unlocked`
+                        ? ` · ${state.nineFacesScore}/9 faces known`
                         : ""}
                     </p>
                     <p className="font-display text-xl text-charcoal">

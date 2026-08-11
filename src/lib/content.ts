@@ -27,6 +27,14 @@ export interface Archetype {
   name: string;
   epithet: string;
   summary: string;
+  /** Producer "horoscope" — how this reading shows up in the book */
+  fieldReading: string;
+  /** How you win when the season is yours */
+  atYourBest: string;
+  /** Pattern that costs production when ignored */
+  whenYouStruggle: string;
+  /** Concrete focus for the next 90 days / AEP runway */
+  seasonFocus: string;
   strengths: string[];
   blindSpot: string;
   psmMove: string;
@@ -123,7 +131,15 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
     epithet: "Maps the field before the first step",
     summary:
       "You win by preparation. Markets, carriers, seasons, and compliance are not obstacles to you — they are terrain you have already measured.",
-    strengths: [
+        fieldReading:
+      "Your book feels safest when the map is complete. You are the agent who studies carrier changes, CMS noise, and pharmacy corridors before peers even open the CRM. Clients trust you because you sound like someone who has already walked the path. In a heavy AEP, you are the calm voice — unless the map becomes a hiding place and the first appointments never book.",
+    atYourBest:
+      "You turn quiet months into advantage: renewals clean, scripts tight, carriers ranked, compliance squared. When others scramble, you execute a plan written in July.",
+    whenYouStruggle:
+      "Over-preparation. Waiting for perfect intel while fertile ground sits unvisited. Analysis without feet on the ground.",
+    seasonFocus:
+      "Pick three fertile territories. Put appointments on the calendar before you polish one more spreadsheet. The map must meet the field.",
+strengths: [
       "Studies the landscape before every campaign",
       "Builds systems that turn chaos into clarity",
       "Moves with intelligence, not guesswork",
@@ -142,7 +158,15 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
     epithet: "Wins the client without conflict",
     summary:
       "You do not push. You listen beneath the words, uncover the hidden truth in every objection, and guide until the path is self-evident.",
-    strengths: [
+        fieldReading:
+      "You win people, not arguments. Objections do not threaten you — they invite you under the surface. Clients leave feeling understood, which is why your retention can outrun producers who \"close harder.\" The risk is noble exhaustion: every conversation is deep, but the week has no formation.",
+    atYourBest:
+      "You convert fear into clarity. The appointment feels like guidance, not pressure. Referrals arrive because families felt seen.",
+    whenYouStruggle:
+      "Pipeline neglect. When the calendar is empty, illumination has nowhere to land — and you blame \"leads\" instead of ground and rhythm.",
+    seasonFocus:
+      "Protect two non-negotiable appointment blocks daily. Practice three opening lines for the Nine Faces. Depth plus volume — not depth alone.",
+strengths: [
       "Highest form of close: understanding, not pressure",
       "Reads the nine faces of the client",
       "Turns resistance into recognition",
@@ -161,7 +185,15 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
     epithet: "Orders energy so momentum compounds",
     summary:
       "You know scattered effort dies. CRM, templates, calendars, and formation of the day turn strength into campaigns that last.",
-    strengths: [
+        fieldReading:
+      "You are allergic to wasted motion. CRM hygiene, templates, and a day in formation are not busywork — they are how you stay strong in October. Teams lean on you for process. The danger is becoming the best-organized agent with the quietest market presence.",
+    atYourBest:
+      "Follow-ups never die. Renewals run like logistics. New producers borrow your systems and suddenly look professional.",
+    whenYouStruggle:
+      "Order without outreach. A perfect system and an empty funnel. Visibility feels \"unsystematic,\" so you under-invest in fire.",
+    seasonFocus:
+      "Keep the formation — then add one deliberate visibility fire (community, pharmacy, digital) with a measured reply rate.",
+strengths: [
       "Systems preserve strength others waste",
       "Maneuvers with intention, not haste",
       "Makes productive mornings into legacy weeks",
@@ -180,7 +212,15 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
     epithet: "Builds structure that multiplies others",
     summary:
       "Ambition without structure breeds chaos. You recruit carefully, train relentlessly, and raise an agency that advances as one.",
-    strengths: [
+        fieldReading:
+      "You think in agencies, not only appointments. Standards, scoreboards, and culture matter to you. You recruit with care when you are at your best — and you feel the weight when structure lags ambition. Others look to you for the plan; they need you on the field too.",
+    atYourBest:
+      "A small team moves as one. Coaching is weekly, not annual. Growth compounds because foundations were laid before headcount.",
+    whenYouStruggle:
+      "Command from the office. Personal production and craft dull while you \"build.\" Chaos returns when culture is only a speech.",
+    seasonFocus:
+      "One scoreboard. One coaching cadence. One personal production block you will not cancel. Structure that still smells like the field.",
+strengths: [
       "Lays foundations before summoning numbers",
       "Culture as shield — honor, integrity, shared success",
       "Growth that compounds instead of collapses",
@@ -199,7 +239,15 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
     epithet: "Warms the field before the first call",
     summary:
       "A silent agent is invisible. You tend digital fire, community presence, branding, and follow-up until strangers become allies.",
-    strengths: [
+        fieldReading:
+      "You refuse to be invisible. Brand, content, community, and follow-up are how strangers become appointments. You understand that trust often starts before the handshake. The risk is a bright flame and a soft close — presence without craft in the room.",
+    atYourBest:
+      "The phone rings warmer. Events and posts turn into conversations. Your name travels the zip codes you serve.",
+    whenYouStruggle:
+      "Vanity metrics. Activity without enrollments. Marketing that never hands the baton to a disciplined appointment process.",
+    seasonFocus:
+      "One fire you will tend weekly. One conversion path from attention to appointment. Measure replies and sits — not likes.",
+strengths: [
       "Marketing as strategy, not vanity",
       "Trust begins before the appointment",
       "A well-tended blaze transforms the landscape",

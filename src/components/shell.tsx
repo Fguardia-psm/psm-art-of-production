@@ -258,7 +258,7 @@ export function ReadinessPlate({
   return (
     <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
       <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-        Campaign readiness · not vanity XP
+        Campaign readiness · how prepared you are to talk to the council
       </p>
       <p className="mt-2 font-display text-4xl text-charcoal tabular-nums">
         {score}

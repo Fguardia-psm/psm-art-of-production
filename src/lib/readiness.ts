@@ -7,7 +7,7 @@ const RESULT_PTS: Record<ChapterResult, number> = {
   lesson: 4,
 };
 
-/** High-protein readiness 0–100 for recruiter brief (not vanity XP). */
+/** Readiness 0–100 — how complete the campaign is for a real field conversation. */
 export function computeReadiness(input: {
   scoutComplete: boolean;
   chapterResults: Record<string, ChapterResult>;
