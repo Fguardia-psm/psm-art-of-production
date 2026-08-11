@@ -686,7 +686,7 @@ export const CHAPTERS: Chapter[] = [
     interaction: {
       type: "fires",
       prompt:
-        "Night plain. Light the beacons. A single flame warms few; a measured blaze transforms the landscape.",
+        "Your book is cold until people know you. Light every channel you will use this season — digital, mail, community, brand, follow-up.",
       need: 4,
       fires: [
         {

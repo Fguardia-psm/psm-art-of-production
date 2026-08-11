@@ -215,11 +215,30 @@ function PrepStorm({
       ) : (
         <div className="space-y-3">
           <ResultBanner result={result} text={text} />
-          {result !== "lesson" ? (
+          {result !== "victory" ? (
+            <div className="rounded-lg border border-brass/30 bg-brass/8 px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
+                Solid prep ranks · stack these
+              </p>
+              <ul className="mt-2 space-y-1">
+                {interaction.options
+                  .filter((o) => o.good)
+                  .map((o) => (
+                    <li key={o.id} className="font-body text-sm text-charcoal">
+                      {o.label}
+                    </li>
+                  ))}
+              </ul>
+              <p className="mt-2 font-body text-xs text-charcoal-muted">
+                Leave busywork off the workbench (scroll without a plan, “figure
+                it out in AEP”).
+              </p>
+            </div>
+          ) : (
             <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass animate-seal">
               Prep sealed · carry this into the season
             </p>
-          ) : null}
+          )}
         </div>
       )}
     </div>
@@ -407,16 +426,35 @@ function GroundSelect({
           Claim this ground
         </Button>
       ) : (
-        <ResultBanner
-          result={result}
-          text={
-            result === "victory"
-              ? "Opportunity flows to you as water flows downhill. Your ground map is sealed — protein for the week."
-              : result === "field-note"
-                ? "Fertile patches found — and barren steps taken. Reposition where trust is already sown."
-                : "Poor ground consumes effort. Stand where eyes naturally fall."
-          }
-        />
+        <div className="space-y-3">
+          <ResultBanner
+            result={result}
+            text={
+              result === "victory"
+                ? "Opportunity flows to you as water flows downhill. Your ground map is sealed."
+                : result === "field-note"
+                  ? "Fertile patches found — and barren steps taken. See fertile ground below."
+                  : "Poor ground consumes effort. See where trust is already sown."
+            }
+          />
+          {result !== "victory" ? (
+            <div className="rounded-lg border border-brass/30 bg-brass/8 px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
+                Fertile ground · plant banners here
+              </p>
+              <ul className="mt-2 space-y-1">
+                {interaction.grounds
+                  .filter((g) => g.fertile)
+                  .map((g) => (
+                    <li key={g.id} className="font-body text-sm text-charcoal">
+                      {g.label}
+                      <span className="text-charcoal-muted"> — {g.note}</span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ) : null}
+        </div>
       )}
     </div>
   );
@@ -506,6 +544,7 @@ function DayFormation({
           {interaction.slots.map((slot) => {
             const taskId = assign[slot.id];
             const task = interaction.tasks.find((t) => t.id === taskId);
+            const rightTask = interaction.tasks.find((t) => t.id === slot.correct);
             const correct = done && taskId === slot.correct;
             const wrong = done && taskId && taskId !== slot.correct;
             return (
@@ -533,6 +572,19 @@ function DayFormation({
                   {task?.label ??
                     (activeTask ? "Tap to place here" : "Waiting for a duty")}
                 </span>
+                {done && wrong && rightTask ? (
+                  <span className="mt-2 block font-ui text-xs text-charcoal leading-snug">
+                    <span className="text-ember">Your placement.</span>{" "}
+                    <span className="text-success">
+                      Correct: {rightTask.label}
+                    </span>
+                  </span>
+                ) : null}
+                {done && correct ? (
+                  <span className="mt-2 block font-ui text-[10px] uppercase tracking-[0.14em] text-success">
+                    Correct placement
+                  </span>
+                ) : null}
               </button>
             );
           })}
@@ -543,16 +595,45 @@ function DayFormation({
           {complete ? "Advance the day" : "Place all four duties to continue"}
         </Button>
       ) : (
-        <ResultBanner
-          result={result}
-          text={
-            result === "victory"
-              ? "Through disciplined movement, labor becomes lighter and the path more direct."
-              : result === "field-note"
-                ? interaction.fieldNote
-                : "Motion without strategy leads to exhaustion. Reorder the stones and advance with purpose."
-          }
-        />
+        <div className="space-y-3">
+          <ResultBanner
+            result={result}
+            text={
+              result === "victory"
+                ? "Through disciplined movement, labor becomes lighter and the path more direct."
+                : result === "field-note"
+                  ? interaction.fieldNote
+                  : "Motion without strategy leads to exhaustion. See the correct formation below."
+            }
+          />
+          {result !== "victory" ? (
+            <div className="rounded-lg border border-brass/30 bg-brass/8 px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
+                Correct formation · doctrine
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {interaction.slots.map((slot) => {
+                  const right = interaction.tasks.find((t) => t.id === slot.correct);
+                  return (
+                    <li
+                      key={slot.id}
+                      className="font-body text-sm text-charcoal leading-snug"
+                    >
+                      <span className="font-ui text-xs uppercase tracking-[0.12em] text-charcoal-soft">
+                        {slot.label}:
+                      </span>{" "}
+                      {right?.label}
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-2 font-body text-xs text-charcoal-muted leading-relaxed">
+                Morning outreach, midday sits, afternoon admin, evening prep —
+                one formation, not task-hopping.
+              </p>
+            </div>
+          ) : null}
+        </div>
       )}
     </div>
   );
@@ -584,9 +665,22 @@ function FiresTend({
     onResolved(r);
   }
 
+  const cold = interaction.fires.filter((f) => !lit.includes(f.id));
+
   return (
     <div className="space-y-5">
       <p className="font-body text-charcoal">{interaction.prompt}</p>
+      <p className="font-ui text-xs text-charcoal leading-relaxed">
+        <span className="font-medium">What this teaches:</span> cold books stay
+        cold. Tap every channel you will actually use this season. Aim for at
+        least {interaction.need} fires — then measure replies and sits, not
+        likes.
+      </p>
+      <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
+        {done
+          ? `${lit.length} of ${interaction.fires.length} lit`
+          : `Tap to light · ${lit.length} selected · need ${interaction.need}+`}
+      </p>
       <div className="grid gap-2 rounded-xl border border-ink/10 bg-ink p-3 sm:p-4">
         {interaction.fires.map((f) => {
           const on = lit.includes(f.id);
@@ -595,11 +689,13 @@ function FiresTend({
               key={f.id}
               type="button"
               onClick={() => toggle(f.id)}
+              disabled={done}
               className={cn(
-                "flex items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors min-h-11",
+                "flex items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors min-h-11 touch-manipulation",
                 on
                   ? "border-ember/50 bg-ember/15 beacon-glow text-parchment"
                   : "border-parchment/15 bg-parchment/5 text-parchment/85 hover:border-ember/30",
+                done && !on && "opacity-50",
               )}
             >
               <Flame
@@ -610,11 +706,18 @@ function FiresTend({
               />
               <span>
                 <span className="font-ui text-sm font-medium">{f.label}</span>
-                {on ? (
+                {on || done ? (
                   <span className="mt-1 block font-body text-xs text-parchment/60">
-                    {f.note} · measure: conversations → enrollments
+                    {f.note}
+                    {on
+                      ? " · track: cost → conversations → enrollments"
+                      : " · left cold this round"}
                   </span>
-                ) : null}
+                ) : (
+                  <span className="mt-1 block font-ui text-[10px] text-parchment/40">
+                    Tap to light this channel
+                  </span>
+                )}
               </span>
             </button>
           );
@@ -627,19 +730,50 @@ function FiresTend({
           disabled={lit.length === 0}
           onClick={commit}
         >
-          Tend the blaze
+          {lit.length === 0
+            ? "Light at least one fire"
+            : lit.length < interaction.need
+              ? `Tend the blaze (${lit.length}/${interaction.need} recommended)`
+              : "Tend the blaze · seal fire plan"}
         </Button>
       ) : (
-        <ResultBanner
-          result={result}
-          text={
-            result === "victory"
-              ? "The ground is no longer cold. Presence before the first call — protein for the pipeline."
-              : result === "field-note"
-                ? "A few flames burn — not yet a landscape. Tend more fires, and measure each one."
-                : "A single flame warms few. Tend more fires before the advance."
-          }
-        />
+        <div className="space-y-3">
+          <ResultBanner
+            result={result}
+            text={
+              result === "victory"
+                ? "The ground is no longer cold. Presence before the first call — and every fire has a measure."
+                : result === "field-note"
+                  ? "A few flames burn — not yet a landscape. Full seasons need multiple channels."
+                  : "A single flame warms few. Light more channels before AEP."
+            }
+          />
+          {result !== "victory" && cold.length > 0 ? (
+            <div className="rounded-lg border border-brass/30 bg-brass/8 px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
+                Still cold · consider lighting next
+              </p>
+              <ul className="mt-2 space-y-1">
+                {cold.map((f) => (
+                  <li key={f.id} className="font-body text-sm text-charcoal">
+                    {f.label}
+                    <span className="text-charcoal-muted"> — {f.note}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 font-body text-xs text-charcoal-muted">
+                Doctrine: light at least {interaction.need} fires, and pair each
+                with cost → conversations → enrollments.
+              </p>
+            </div>
+          ) : null}
+          {result === "victory" ? (
+            <p className="font-body text-xs text-charcoal-muted leading-relaxed">
+              Carry this Monday: pick one primary fire this week and log replies
+              and sits — not vanity metrics.
+            </p>
+          ) : null}
+        </div>
       )}
     </div>
   );
