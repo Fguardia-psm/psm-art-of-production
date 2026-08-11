@@ -92,23 +92,91 @@ function DossierPageInner() {
           <SectionKicker>Field dossier · sealed</SectionKicker>
           <h1 className="mt-2 font-display text-3xl text-charcoal sm:text-4xl">
             {lead?.name
-              ? `${lead.name.split(" ")[0]}, the field is marked`
-              : "The field is marked"}
+              ? `${lead.name.split(" ")[0]}, your reading is ready`
+              : "Your reading is ready"}
           </h1>
           <p className="mt-2 font-body text-charcoal-muted leading-relaxed max-w-xl">
-            You walked the path. Seals pressed. Nine faces known. What remains is
-            not another checklist — it is who you stand with when the season
-            opens.
+            First — who you are on the field. Then your Field Seal. Then how to
+            win the next thirty days with allies who already know the ground.
           </p>
         </div>
 
-        <ReadinessPlate
-          score={readiness.score}
-          label={readiness.label}
-          parts={readiness.parts}
-        />
+        {/* Archetype "horoscope" — identity magic first */}
+        <section className="ink-wash rounded-xl border border-brass/35 px-6 py-10 text-center shadow-[var(--shadow-plate)] sm:px-10">
+          <p className="font-ui text-[11px] uppercase tracking-[0.28em] text-brass-bright/90">
+            Your field reading
+          </p>
+          <h2 className="mt-3 font-display text-4xl text-parchment sm:text-5xl">
+            {arch.name}
+          </h2>
+          <p className="mt-3 font-display text-lg italic text-brass-bright/90">
+            {arch.epithet}
+          </p>
+          <p className="mx-auto mt-6 max-w-lg font-body text-parchment/70 leading-relaxed text-base sm:text-lg">
+            {arch.fieldReading}
+          </p>
+          <div className="mx-auto mt-8 max-w-lg space-y-4 text-left">
+            <div className="rounded-lg border border-parchment/10 bg-parchment/[0.04] px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
+                At your best
+              </p>
+              <p className="mt-1 font-body text-sm text-parchment/65 leading-relaxed">
+                {arch.atYourBest}
+              </p>
+            </div>
+            <div className="rounded-lg border border-parchment/10 bg-parchment/[0.04] px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
+                Where production leaks
+              </p>
+              <p className="mt-1 font-body text-sm text-parchment/65 leading-relaxed">
+                {arch.whenYouStruggle}
+              </p>
+            </div>
+            <div className="rounded-lg border border-brass/30 bg-brass/10 px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright">
+                This season's omen
+              </p>
+              <p className="mt-1 font-body text-sm text-parchment/80 leading-relaxed">
+                {arch.seasonFocus}
+              </p>
+            </div>
+          </div>
+          <p className="mt-8 font-display text-xl italic text-brass-bright/85">
+            “{arch.seal}”
+          </p>
+        </section>
 
-        <ProductionForecastPanel forecast={arch.forecast} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
+            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+              Strengths on the field
+            </p>
+            <ul className="mt-3 space-y-2">
+              {arch.strengths.map((s) => (
+                <li
+                  key={s}
+                  className="font-body text-sm text-charcoal leading-snug"
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
+            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+              Monday move
+            </p>
+            <p className="mt-2 font-body text-sm text-charcoal leading-relaxed">
+              {arch.mondayScript}
+            </p>
+            <p className="mt-4 font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+              Blind spot
+            </p>
+            <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed">
+              {arch.blindSpot}
+            </p>
+          </div>
+        </div>
 
         <FieldCard
           arch={arch}
@@ -118,6 +186,14 @@ function DossierPageInner() {
           agentName={lead?.name}
           weakestChapter={scorecard.weakest}
           strongestChapter={scorecard.strongest}
+        />
+
+        <ProductionForecastPanel forecast={arch.forecast} />
+
+        <ReadinessPlate
+          score={readiness.score}
+          label={readiness.label}
+          parts={readiness.parts}
         />
 
         {/* War council CTA — primary conversion */}
@@ -192,79 +268,6 @@ function DossierPageInner() {
             </a>
           </p>
         </section>
-
-        <section className="ink-wash rounded-xl border border-parchment/10 px-6 py-10 text-center shadow-[var(--shadow-plate)] sm:px-10">
-          <p className="font-ui text-[11px] uppercase tracking-[0.28em] text-brass-bright/90">
-            Producer archetype
-          </p>
-          <h2 className="mt-3 font-display text-4xl text-parchment sm:text-5xl">
-            {arch.name}
-          </h2>
-          <p className="mt-3 font-display text-lg italic text-parchment/70">
-            {arch.epithet}
-          </p>
-          <p className="mx-auto mt-6 max-w-lg font-body text-parchment/65 leading-relaxed">
-            {arch.fieldReading}
-          </p>
-          <div className="mx-auto mt-8 max-w-lg space-y-4 text-left">
-            <div>
-              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
-                At your best
-              </p>
-              <p className="mt-1 font-body text-sm text-parchment/60 leading-relaxed">
-                {arch.atYourBest}
-              </p>
-            </div>
-            <div>
-              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
-                Where production leaks
-              </p>
-              <p className="mt-1 font-body text-sm text-parchment/60 leading-relaxed">
-                {arch.whenYouStruggle}
-              </p>
-            </div>
-            <div>
-              <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright/80">
-                This season’s focus
-              </p>
-              <p className="mt-1 font-body text-sm text-parchment/70 leading-relaxed">
-                {arch.seasonFocus}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
-            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Strengths on the field
-            </p>
-            <ul className="mt-3 space-y-2">
-              {arch.strengths.map((s) => (
-                <li
-                  key={s}
-                  className="font-body text-sm text-charcoal leading-snug"
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
-            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Nine Faces known
-            </p>
-            <p className="mt-2 font-display text-2xl text-charcoal tabular-nums">
-              {nineFacesScore}/9
-            </p>
-            <p className="mt-4 font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Monday move
-            </p>
-            <p className="mt-2 font-body text-sm text-charcoal leading-relaxed">
-              {arch.mondayScript}
-            </p>
-          </div>
-        </div>
 
         <NineFacesDeck score={nineFacesScore} />
 

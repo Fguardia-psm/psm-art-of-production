@@ -25,7 +25,6 @@ export function FieldCard({
   weakestChapter?: string;
   strongestChapter?: string;
 }) {
-  const readinessPct = Math.max(0, Math.min(100, readinessScore));
   // Never show generic placeholders as the hero title
   const bearerRaw = agentName?.trim() ?? "";
   const bearer =
@@ -153,64 +152,75 @@ export function FieldCard({
             </div>
 
             <div
-              className="field-card-seal shrink-0 flex size-[5.5rem] flex-col items-center justify-center rounded-full border-2 border-brass/50 bg-brass/10 text-center shadow-[inset_0_0_0_4px_color-mix(in_oklab,var(--color-parchment)_70%,transparent)]"
+              className="field-card-seal shrink-0 relative flex size-[6.25rem] items-center justify-center"
               aria-hidden
+              title="Campaign commission seal"
             >
-              <span className="font-ui text-[8px] uppercase tracking-[0.2em] text-brass">
-                Field
-              </span>
-              <span className="mt-0.5 font-display text-2xl tabular-nums text-charcoal leading-none">
-                {readinessScore}
-              </span>
-              <span className="font-ui text-[8px] uppercase tracking-[0.14em] text-charcoal-soft">
-                Seal
-              </span>
+              {/* Outer gold ring */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#f0d78c] via-[#c9a227] to-[#8a6a12] p-[3px] shadow-[0_4px_20px_rgba(160,120,30,0.35)]">
+                <div className="h-full w-full rounded-full bg-[var(--color-parchment)] p-[3px]">
+                  <div className="flex h-full w-full flex-col items-center justify-center rounded-full border border-[#c9a227]/50 bg-gradient-to-b from-[#faf3d8] via-[#f0e4b8] to-[#e8d49a]">
+                    {/* Star / general mark */}
+                    <svg
+                      viewBox="0 0 48 48"
+                      className="size-8 text-[#8a6a12]"
+                      fill="currentColor"
+                      aria-hidden
+                    >
+                      <path d="M24 4l3.2 9.8H38l-8.4 6.1 3.2 9.9L24 23.7 15.2 29.8l3.2-9.9L10 13.8h10.8L24 4z" />
+                      <circle cx="24" cy="24" r="3" className="fill-[#c9a227]" />
+                    </svg>
+                    <span className="mt-0.5 font-ui text-[7px] uppercase tracking-[0.22em] text-[#6b5420]">
+                      Commissioned
+                    </span>
+                    <span className="font-ui text-[6px] uppercase tracking-[0.18em] text-[#8a6a12]/90">
+                      Field rank
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 
-          <div className="mt-5 grid gap-4 sm:grid-cols-[1.2fr_1fr]">
-            <div>
-              <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
-                Campaign readiness
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-lg border border-brass/25 bg-brass/8 px-3 py-3 sm:col-span-1">
+              <p className="font-ui text-[9px] uppercase tracking-[0.16em] text-brass">
+                Commission status
               </p>
-              <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-brass/25 bg-charcoal/5">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-brass-dim via-brass to-brass-bright"
-                  style={{ width: `${readinessPct}%` }}
-                />
-              </div>
-              <p className="mt-2 font-body text-xs text-charcoal-muted leading-relaxed">
+              <p className="mt-1.5 font-display text-sm text-charcoal leading-snug">
+                Field sealed
+              </p>
+              <p className="mt-1 font-body text-[11px] text-charcoal-muted leading-snug">
                 {readinessLabel}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-lg border border-brass/20 bg-parchment/80 px-3 py-2.5">
-                <p className="font-ui text-[9px] uppercase tracking-[0.16em] text-brass">
-                  Nine Faces
-                </p>
-                <p className="mt-1 font-display text-2xl tabular-nums text-charcoal leading-none">
-                  {nineFacesScore}
-                  <span className="text-sm text-charcoal-soft">/9</span>
-                </p>
-              </div>
-              <div className="rounded-lg border border-brass/20 bg-parchment/80 px-3 py-2.5">
-                <p className="font-ui text-[9px] uppercase tracking-[0.16em] text-brass">
-                  Scorecard
-                </p>
-                <p className="mt-1 font-body text-[11px] text-charcoal leading-snug">
-                  {strongestChapter ? (
-                    <>
-                      Strong: {strongestChapter}
-                      <br />
-                    </>
-                  ) : null}
-                  {weakestChapter ? (
-                    <>Watch: {weakestChapter}</>
-                  ) : (
-                    "Campaign sealed"
-                  )}
-                </p>
-              </div>
+            <div className="rounded-lg border border-brass/20 bg-parchment/80 px-3 py-3">
+              <p className="font-ui text-[9px] uppercase tracking-[0.16em] text-brass">
+                Faces known
+              </p>
+              <p className="mt-1.5 font-body text-sm text-charcoal leading-snug">
+                {nineFacesScore === 9
+                  ? "Full table — nine client types"
+                  : `${nineFacesScore} of nine faces marked`}
+              </p>
+            </div>
+            <div className="rounded-lg border border-brass/20 bg-parchment/80 px-3 py-3">
+              <p className="font-ui text-[9px] uppercase tracking-[0.16em] text-brass">
+                Field note
+              </p>
+              <p className="mt-1.5 font-body text-[11px] text-charcoal leading-snug">
+                {strongestChapter ? (
+                  <>
+                    Strength: {strongestChapter}
+                    <br />
+                  </>
+                ) : null}
+                {weakestChapter ? (
+                  <>Sharpen: {weakestChapter}</>
+                ) : (
+                  "Path complete"
+                )}
+              </p>
             </div>
           </div>
 
