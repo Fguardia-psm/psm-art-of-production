@@ -2,6 +2,15 @@ import { useEffect } from "react";
 
 const MESSAGE_TYPE = "resize-art-of-production";
 
+function allowedParents(): string[] | null {
+  const raw = import.meta.env.VITE_EMBED_PARENT_ORIGINS as string | undefined;
+  if (!raw?.trim()) return null; // unrestricted (legacy HubSpot embeds)
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 /**
  * When embedded in an iframe (HubSpot / PSM site), post document height
  * so the parent can size the frame. No-op when not in a frame.
@@ -9,11 +18,11 @@ const MESSAGE_TYPE = "resize-art-of-production";
 export function IframeResizeReporter() {
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // Only talk to parent when we are actually embedded
     if (window.parent === window) return;
 
     let raf = 0;
     let last = 0;
+    const parents = allowedParents();
 
     function measure(): number {
       const doc = document.documentElement;
@@ -30,7 +39,19 @@ export function IframeResizeReporter() {
       const height = measure();
       if (!height || Math.abs(height - last) < 2) return;
       last = height;
-      window.parent.postMessage({ type: MESSAGE_TYPE, height }, "*");
+      const payload = { type: MESSAGE_TYPE, height };
+      if (!parents || parents.length === 0) {
+        window.parent.postMessage(payload, "*");
+        return;
+      }
+      // Prefer explicit parent origins when configured
+      for (const origin of parents) {
+        try {
+          window.parent.postMessage(payload, origin);
+        } catch {
+          /* cross-origin mismatch — try next */
+        }
+      }
     }
 
     function schedule() {
@@ -49,12 +70,10 @@ export function IframeResizeReporter() {
       attributes: true,
     });
 
-    // Catch late layout (fonts, images, route transitions)
     const t1 = window.setTimeout(sendHeight, 500);
     const t2 = window.setTimeout(sendHeight, 1000);
     const t3 = window.setTimeout(sendHeight, 2000);
 
-    // Route / SPA navigations change height without full load
     const ro =
       typeof ResizeObserver !== "undefined"
         ? new ResizeObserver(schedule)

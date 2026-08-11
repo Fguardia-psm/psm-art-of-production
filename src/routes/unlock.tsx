@@ -50,6 +50,7 @@ function UnlockPageInner() {
   const [bookStage, setBookStage] = useState<BookStage | "">("");
   const [focus, setFocus] = useState("");
   const [consent, setConsent] = useState(false);
+  const [companyWebsite, setCompanyWebsite] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -120,6 +121,7 @@ function UnlockPageInner() {
         nineFacesScore: state.nineFacesScore,
         chapterResults,
         source: "art-of-production",
+        companyWebsite: companyWebsite || "",
       };
       await submitLead({ data: lead });
       state.unlock({
@@ -134,8 +136,20 @@ function UnlockPageInner() {
         submittedAt: lead.submittedAt,
       });
       navigate({ to: "/dossier" });
-    } catch {
-      setError("Something went wrong. Try again.");
+    } catch (err) {
+      const msg =
+        err instanceof Error && err.message
+          ? err.message
+          : "Something went wrong. Try again.";
+      // Zod / server errors can be noisy — surface clean line
+      setError(
+        msg.includes("Too many") ||
+          msg.includes("unavailable") ||
+          msg.includes("expired") ||
+          msg.includes("valid")
+          ? msg
+          : "Something went wrong. Try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -172,7 +186,23 @@ function UnlockPageInner() {
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-5">
+        <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
+          {/* Honeypot — leave empty; hidden from agents */}
+          <div
+            className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
+            aria-hidden
+          >
+            <label htmlFor="companyWebsite">Company website</label>
+            <input
+              id="companyWebsite"
+              name="companyWebsite"
+              tabIndex={-1}
+              autoComplete="off"
+              value={companyWebsite}
+              onChange={(e) => setCompanyWebsite(e.target.value)}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="name">Full name</Label>
             <Input
@@ -180,6 +210,7 @@ function UnlockPageInner() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoComplete="name"
+              className="min-h-11"
               required
             />
           </div>
@@ -191,6 +222,7 @@ function UnlockPageInner() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+              className="min-h-11"
               required
             />
           </div>
@@ -202,6 +234,7 @@ function UnlockPageInner() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               autoComplete="tel"
+              className="min-h-11"
               required
             />
           </div>
@@ -214,6 +247,7 @@ function UnlockPageInner() {
                 value={npn}
                 onChange={(e) => setNpn(e.target.value)}
                 placeholder="5–10 digits"
+                className="min-h-11"
                 required
               />
             </div>
@@ -261,6 +295,7 @@ function UnlockPageInner() {
               value={focus}
               onChange={(e) => setFocus(e.target.value)}
               placeholder="e.g. AEP systems, agency ramp, market expand"
+              className="min-h-11"
             />
           </div>
 
