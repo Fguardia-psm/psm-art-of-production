@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   createFileRoute,
   Link,
@@ -8,22 +7,14 @@ import {
 import { CampaignShell, SectionKicker } from "@/components/shell";
 import { CampaignGate } from "@/components/campaign-gate";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   ARCHETYPES,
-  BOOK_STAGES,
-  RECRUITER_OPENERS,
-  US_STATES,
-  buildRecruiterBrief,
-  resultLabel,
+  PSM_CONTACT_URL,
   type ArchetypeId,
-  type BookStage,
 } from "@/lib/content";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
-import { submitLead } from "@/lib/leads";
-import { cn } from "@/lib/utils";
+import { ArrowRight, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/unlock")({
   component: UnlockPage,
@@ -41,135 +32,40 @@ function UnlockPageInner() {
   const navigate = useNavigate();
   const state = useCampaignStore();
   const progress = requiredProgress(state);
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [npn, setNpn] = useState("");
-  const [licenseState, setLicenseState] = useState("");
-  const [bookStage, setBookStage] = useState<BookStage | "">("");
-  const [focus, setFocus] = useState("");
-  const [consent, setConsent] = useState(false);
-  const [companyWebsite, setCompanyWebsite] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const readiness = computeReadiness(state);
 
   if (!state.scoutComplete) return <Navigate to="/scout" />;
   if (!progress.readyForGate) return <Navigate to="/map" />;
   if (state.unlocked) return <Navigate to="/dossier" />;
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
+  const archetype = (state.provisionalArchetype ??
+    "cartographer") as ArchetypeId;
+  const archPreview = ARCHETYPES[archetype];
 
-    const cleanNpn = npn.replace(/\D/g, "");
-    if (!name.trim()) return setError("Enter your full name.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-      return setError("Enter a valid work email.");
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 10)
-      return setError("Enter a valid mobile phone number.");
-    if (cleanNpn.length < 5 || cleanNpn.length > 10)
-      return setError("Enter a valid NPN (5–10 digits).");
-    if (!licenseState) return setError("Select your primary license state.");
-    if (!bookStage) return setError("Select your book stage.");
-    if (!consent)
-      return setError("Confirm consent to continue as a licensed agent.");
+  const contactHref = (() => {
+    const u = new URL(PSM_CONTACT_URL);
+    u.searchParams.set("utm_content", "campaign-kit-unlock");
+    u.searchParams.set("archetype", archetype);
+    u.searchParams.set("readiness", String(readiness.score));
+    return u.toString();
+  })();
 
-    const archetype = (state.provisionalArchetype ??
-      "cartographer") as ArchetypeId;
-    const opener = RECRUITER_OPENERS[archetype];
-    const chapterResults = Object.fromEntries(
-      Object.entries(state.chapterResults).map(([k, v]) => [
-        k,
-        resultLabel(v),
-      ]),
-    );
-    const readiness = computeReadiness(state);
-    const recruiterBrief = buildRecruiterBrief({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      phone: digits,
-      npn: cleanNpn,
-      state: licenseState,
-      bookStage: bookStage as string,
-      focus: focus || undefined,
-      archetype,
-      nineFacesScore: state.nineFacesScore,
-      chapterResults,
-      readinessScore: readiness.score,
-      readinessLabel: readiness.label,
-    });
-
-    setSubmitting(true);
-    try {
-      const lead = {
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        phone: digits,
-        npn: cleanNpn,
-        state: licenseState,
-        bookStage: bookStage as BookStage,
-        focus: focus || undefined,
-        consented: true as const,
-        submittedAt: new Date().toISOString(),
-        archetype,
-        recruiterBrief,
-        recruiterOpenWith: opener.openWith,
-        recruiterProofAngle: opener.proofAngle,
-        recruiterAvoid: opener.avoid,
-        nineFacesScore: state.nineFacesScore,
-        chapterResults,
-        source: "art-of-production",
-        companyWebsite: companyWebsite || "",
-      };
-      await submitLead({ data: lead });
-      state.unlock({
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone,
-        npn: lead.npn,
-        state: lead.state,
-        bookStage: lead.bookStage,
-        focus: lead.focus,
-        consented: true,
-        submittedAt: lead.submittedAt,
-      });
-      navigate({ to: "/dossier" });
-    } catch (err) {
-      const msg =
-        err instanceof Error && err.message
-          ? err.message
-          : "Something went wrong. Try again.";
-      // Zod / server errors can be noisy — surface clean line
-      setError(
-        msg.includes("Too many") ||
-          msg.includes("unavailable") ||
-          msg.includes("expired") ||
-          msg.includes("valid")
-          ? msg
-          : "Something went wrong. Try again.",
-      );
-    } finally {
-      setSubmitting(false);
-    }
+  function claimKit() {
+    state.claimKitLocal();
+    navigate({ to: "/dossier" });
   }
-
-  const archPreview = state.provisionalArchetype
-    ? ARCHETYPES[state.provisionalArchetype]
-    : null;
 
   return (
     <CampaignShell>
       <div className="mx-auto max-w-lg animate-fade-up">
         <SectionKicker>Campaign kit</SectionKicker>
         <h1 className="mt-3 font-display text-3xl text-charcoal sm:text-4xl">
-          Unlock your campaign kit
+          Claim your campaign kit
         </h1>
         <p className="mt-3 font-body text-charcoal-muted leading-relaxed">
-          Enter your credentials. Claim your full archetype dossier, Field
-          Reports, and the manual. NPN verifies you walk this field — and routes
-          a recruiter brief with your talk track to the team.
+          Your seals and Nine Faces are ready. In-app NPN lead capture is paused
+          until our CRM connection is live next week — so we do not ask for
+          credentials we cannot route yet.
         </p>
 
         {archPreview ? (
@@ -183,153 +79,68 @@ function UnlockPageInner() {
             <p className="font-body text-sm text-charcoal-muted">
               {archPreview.epithet}
             </p>
+            <p className="mt-2 font-ui text-xs text-charcoal-soft tabular-nums">
+              Campaign readiness {readiness.score}/100 · {readiness.label}
+            </p>
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
-          {/* Honeypot — leave empty; hidden from agents */}
-          <div
-            className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
-            aria-hidden
-          >
-            <label htmlFor="companyWebsite">Company website</label>
-            <input
-              id="companyWebsite"
-              name="companyWebsite"
-              tabIndex={-1}
-              autoComplete="off"
-              value={companyWebsite}
-              onChange={(e) => setCompanyWebsite(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="name">Full name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoComplete="name"
-              className="min-h-11"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Work email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              className="min-h-11"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">Mobile phone</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              autoComplete="tel"
-              className="min-h-11"
-              required
-            />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="npn">NPN</Label>
-              <Input
-                id="npn"
-                inputMode="numeric"
-                value={npn}
-                onChange={(e) => setNpn(e.target.value)}
-                placeholder="5–10 digits"
-                className="min-h-11"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">Primary license state</Label>
-              <select
-                id="state"
-                value={licenseState}
-                onChange={(e) => setLicenseState(e.target.value)}
-                className={cn(
-                  "flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3 font-ui text-sm text-charcoal",
-                )}
-                required
-              >
-                <option value="">Select…</option>
-                {US_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="stage">Book stage</Label>
-            <select
-              id="stage"
-              value={bookStage}
-              onChange={(e) => setBookStage(e.target.value as BookStage | "")}
-              className="flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3 font-ui text-sm text-charcoal"
-              required
-            >
-              <option value="">Select…</option>
-              {BOOK_STAGES.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="focus">What are you building next? (optional)</Label>
-            <Input
-              id="focus"
-              value={focus}
-              onChange={(e) => setFocus(e.target.value)}
-              placeholder="e.g. AEP systems, agency ramp, market expand"
-              className="min-h-11"
-            />
-          </div>
-
-          <label className="flex items-start gap-3 rounded-lg border border-charcoal/10 bg-parchment/60 px-3 py-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={consent}
-              onChange={(e) => setConsent(e.target.checked)}
-              className="mt-1 size-4 accent-[var(--color-brass)]"
-            />
-            <span className="font-body text-sm text-charcoal leading-snug">
-              I am a licensed insurance agent and consent to PSM contacting me
-              about partnership. For Agent Use Only.
+        <div className="mt-8 space-y-4 rounded-xl border border-charcoal/10 bg-parchment/70 p-5 sm:p-6">
+          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+            Want a field conversation?
+          </p>
+          <p className="font-body text-sm text-charcoal-muted leading-relaxed">
+            Reach the PSM team on our Contact page. Mention{" "}
+            <span className="font-medium text-charcoal">
+              The Art of Production
             </span>
-          </label>
+            {archPreview ? (
+              <>
+                {" "}
+                and your reading:{" "}
+                <span className="font-medium text-charcoal">
+                  {archPreview.name}
+                </span>
+              </>
+            ) : null}
+            .
+          </p>
+          <Button asChild variant="paper" size="lg" className="w-full">
+            <a href={contactHref} target="_blank" rel="noreferrer">
+              Contact Us
+              <ExternalLink className="size-4" />
+            </a>
+          </Button>
+          <p className="text-center font-ui text-[11px] text-charcoal-soft">
+            <a
+              href="https://www.psmbrokerage.com/contact"
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 hover:text-charcoal"
+            >
+              www.psmbrokerage.com/contact
+            </a>
+          </p>
+        </div>
 
-          {error ? (
-            <p className="font-ui text-sm text-ember" role="alert">
-              {error}
-            </p>
-          ) : null}
-
+        <div className="mt-6 space-y-3">
           <Button
-            type="submit"
-            variant="paper"
+            type="button"
+            variant="outline"
             size="lg"
             className="w-full"
-            disabled={submitting}
+            onClick={claimKit}
           >
-            {submitting ? "Sealing…" : "Unlock campaign kit"}
+            Open dossier & face deck
+            <ArrowRight className="size-4" />
           </Button>
-        </form>
+          <p className="text-center font-body text-xs text-charcoal-soft leading-relaxed">
+            Opens your kit on this device only — no NPN stored with us until
+            lead capture returns.
+          </p>
+        </div>
 
-        <p className="mt-6 text-center">
+        <p className="mt-8 text-center">
           <Link
             to="/map"
             className="font-ui text-xs text-charcoal-soft underline underline-offset-2"

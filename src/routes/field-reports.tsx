@@ -221,8 +221,8 @@ function FieldReportsPageInner() {
               : "Review all three reports — then take the call."}
           </h3>
           <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
-            When you unlocked with NPN, your recruiter brief — archetype, open
-            line, and proof angle — was already attached for the field team.
+            Copy your recruiter brief from the dossier — archetype, open
+            line, and proof angle — then use Contact Us for the handoff.
             This page is the evidence they will discuss with you.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

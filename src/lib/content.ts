@@ -1046,11 +1046,16 @@ export function buildRecruiterBrief(input: {
 export const PSM_PARTNER_URL =
   "https://www.psmbrokerage.com/?utm_source=art-of-production&utm_medium=campaign&utm_campaign=recruiting";
 
+/** Contact Us — primary handoff while NPN webhook is offline */
+export const PSM_CONTACT_URL =
+  "https://www.psmbrokerage.com/contact?utm_source=art-of-production&utm_medium=campaign&utm_campaign=recruiting";
+
 export const PDF_URL =
   "https://www.psmbrokerage.com/hubfs/THE%20ART%20OF%20PRODUCTION.pdf";
 
 export function fieldLeaderUrl(archetype?: ArchetypeId | null, name?: string) {
-  const u = new URL(PSM_PARTNER_URL);
+  // Until LEAD_WEBHOOK_URL is live, send agents to Contact Us
+  const u = new URL(PSM_CONTACT_URL);
   u.searchParams.set("utm_content", "field-leader");
   if (archetype) u.searchParams.set("archetype", archetype);
   if (name) u.searchParams.set("agent", name);

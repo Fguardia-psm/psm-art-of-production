@@ -1,3 +1,8 @@
+## Temporary (webhook offline)
+
+Unlock form redirects to **Contact Us**: https://www.psmbrokerage.com/contact
+Kit can still be claimed locally without NPN.
+
 # Beta ops notes — The Art of Production
 
 ## Required before inviting agents on Vercel

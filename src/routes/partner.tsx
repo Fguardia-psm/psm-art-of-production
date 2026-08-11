@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   PARTNER_PROOF,
   PARTNER_STORIES,
+  PSM_CONTACT_URL,
   PSM_PARTNER_URL,
   SUPPORT_MODEL,
   fieldLeaderUrl,
@@ -112,7 +113,7 @@ function PartnerPage() {
             The conversation
           </p>
           <h2 className="mt-2 font-display text-2xl text-parchment">
-            Talk to a field leader
+            Contact Us
           </h2>
           <p className="mt-2 font-body text-sm text-parchment/60 leading-relaxed">
             Bring your archetype, NPN, and book stage. We map contracts,
@@ -122,13 +123,13 @@ function PartnerPage() {
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="primary" size="xl">
               <a href={leaderHref} target="_blank" rel="noreferrer">
-                Talk to a field leader
+                Contact Us
                 <ArrowRight className="size-4" />
               </a>
             </Button>
             <Button asChild variant="secondary" size="lg">
-              <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
-                Partner with PSM
+              <a href={PSM_CONTACT_URL} target="_blank" rel="noreferrer">
+                Contact Us
               </a>
             </Button>
           </div>

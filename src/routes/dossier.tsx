@@ -300,7 +300,7 @@ function DossierPageInner() {
 
         <aside className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Recruiter brief · auto-filed on NPN
+            Recruiter brief · bring this to Contact Us
           </p>
           <p className="mt-3 font-display text-xl text-parchment leading-snug">
             {opener.openWith}
@@ -321,6 +321,20 @@ function DossierPageInner() {
             <Copy className="size-3.5" />
             Copy recruiter brief
           </Button>
+          {!lead ? (
+            <p className="mt-3 font-body text-xs text-parchment/45 leading-relaxed">
+              NPN capture is paused. Use{" "}
+              <a
+                href="https://www.psmbrokerage.com/contact"
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-2 text-brass-bright/80"
+              >
+                Contact Us
+              </a>{" "}
+              to reach a field leader with your archetype.
+            </p>
+          ) : null}
         </aside>
 
         <aside className="rounded-xl border border-brass/30 bg-brass/8 p-5 sm:p-6">

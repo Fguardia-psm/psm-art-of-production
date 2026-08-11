@@ -38,7 +38,9 @@ interface CampaignState {
   completeScout: () => void;
   completeChapter: (slug: ChapterSlug, result: ChapterResult) => void;
   completeNineFaces: (score: number) => void;
-  unlock: (lead: LeadProfile) => void;
+  unlock: (lead: LeadProfile | null) => void;
+  /** Claim kit without NPN (webhook offline — contact PSM separately) */
+  claimKitLocal: () => void;
   markFieldReportsSeen: () => void;
   ensureLeaderCode: () => string;
   /** Wipe all campaign progress in memory (persist writes on next tick). */
@@ -98,6 +100,12 @@ export const useCampaignStore = create<CampaignState>()(
         set((s) => ({
           unlocked: true,
           lead,
+          leaderCode: s.leaderCode ?? makeLeaderCode(),
+        })),
+      claimKitLocal: () =>
+        set((s) => ({
+          unlocked: true,
+          lead: s.lead,
           leaderCode: s.leaderCode ?? makeLeaderCode(),
         })),
       markFieldReportsSeen: () => set({ fieldReportsSeen: true }),
