@@ -1,4 +1,5 @@
 import { track } from "@/lib/analytics";
+import { CounselHandoff } from "@/components/counsel-handoff";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
@@ -243,20 +244,39 @@ function FieldReportsPageInner() {
             You have the proof. The next move is counsel — stand with a team
             that already wins seasons. This page is the evidence they will discuss with you.
           </p>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Button asChild variant="paper" size="lg">
-              <a href={leaderHref}
-                onClick={() => track("counsel_click", { source: "field-reports" })} target="_blank" rel="noreferrer">
-                Request counsel · win the field
-                <ArrowRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/partner">Enter the war council</Link>
-            </Button>
-            <Button asChild variant="ghost" size="lg">
-              <Link to="/dossier">Back to dossier</Link>
-            </Button>
+          <div className="mt-5 space-y-4">
+            {provisionalArchetype ? (
+              <CounselHandoff
+                source="field-reports"
+                archetype={provisionalArchetype}
+                readinessScore={readiness.score}
+                readinessLabel={readiness.label}
+                nineFacesScore={nineFacesScore}
+                chaptersDone={scorecard.done}
+                weakestChapter={scorecard.weakest}
+                strongestChapter={scorecard.strongest}
+                fieldReportsSeen
+                chapterResults={chapterResults}
+                defaultName={lead?.name}
+                defaultEmail={lead?.email}
+                defaultPhone={lead?.phone}
+              />
+            ) : (
+              <Button asChild variant="paper" size="lg">
+                <a href={leaderHref} target="_blank" rel="noreferrer">
+                  Request counsel · win the field
+                  <ArrowRight className="size-4" />
+                </a>
+              </Button>
+            )}
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Button asChild variant="outline" size="lg">
+                <Link to="/partner">Enter the war council</Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg">
+                <Link to="/dossier">Back to dossier</Link>
+              </Button>
+            </div>
           </div>
           <p className="mt-4 font-ui text-[11px] text-charcoal-soft tabular-nums">
             Reports reviewed: {Math.min(read.length, FIELD_REPORTS.length)}/

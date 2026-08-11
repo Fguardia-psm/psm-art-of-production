@@ -279,6 +279,7 @@ const CounselIntentSchema = z.object({
   recruiterBrief: z.string().max(12000).optional(),
   wholesalerHeadline: z.string().max(500).optional(),
   wholesalerTalkTrack: z.string().max(4000).optional(),
+  consented: z.literal(true),
   /** full flat packet from client (trusted structure, size-capped) */
   packet: z.record(z.string(), z.unknown()).optional(),
   companyWebsite: z.string().max(0).optional().or(z.literal("")),

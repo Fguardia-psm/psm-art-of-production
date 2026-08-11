@@ -1,4 +1,5 @@
 import { track } from "@/lib/analytics";
+import { CounselHandoff } from "@/components/counsel-handoff";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CampaignShell, SectionKicker } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -139,20 +140,35 @@ function PartnerPage() {
           <h2 className="mt-2 font-display text-2xl text-parchment">
             Request counsel · win the field
           </h2>
-          <p className="mt-2 font-body text-sm text-parchment/60 leading-relaxed">
+          <p className="mt-2 font-body text-sm text-parchment/60 leading-relaxed mb-5">
             Bring your archetype and what you are building. We map contracts,
-            marketing fire, and formation — not a generic pitch deck. The
-            campaign earned the seat; the council helps you hold the ground.
+            marketing fire, and formation — not a generic pitch deck.
           </p>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+          {provisionalArchetype ? (
+            <CounselHandoff
+              tone="ink"
+              source="partner"
+              archetype={provisionalArchetype}
+              readinessScore={readiness.score}
+              readinessLabel={readiness.label}
+              nineFacesScore={nineFacesScore}
+              chaptersDone={scorecard.done}
+              weakestChapter={scorecard.weakest}
+              strongestChapter={scorecard.strongest}
+              fieldReportsSeen={fieldReportsSeen}
+              chapterResults={chapterResults}
+              defaultName={lead?.name}
+              defaultEmail={lead?.email}
+              defaultPhone={lead?.phone}
+            />
+          ) : (
             <Button asChild variant="primary" size="xl">
-              <a href={leaderHref}
-              onClick={() => track("counsel_click", { source: "partner" })} target="_blank" rel="noreferrer">
+              <a href={leaderHref} target="_blank" rel="noreferrer">
                 Request counsel · win the field
                 <ArrowRight className="size-4" />
               </a>
             </Button>
-          </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">

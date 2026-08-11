@@ -3,9 +3,13 @@ import { Button } from "@/components/ui/button";
 import { submitCounselIntent } from "@/lib/leads";
 import { buildWholesalerPacket } from "@/lib/wholesaler-payload";
 import { track } from "@/lib/analytics";
-import { fieldLeaderUrl, type ArchetypeId } from "@/lib/content";
-import type { ChapterResult } from "@/lib/content";
-import { ArrowRight, Loader2 } from "lucide-react";
+import {
+  PSM_CONTACT_URL,
+  fieldLeaderUrl,
+  type ArchetypeId,
+  type ChapterResult,
+} from "@/lib/content";
+import { ArrowRight, ExternalLink, Loader2 } from "lucide-react";
 
 type Props = {
   archetype: ArchetypeId;
@@ -22,13 +26,12 @@ type Props = {
   defaultName?: string;
   defaultEmail?: string;
   defaultPhone?: string;
-  /** ink = parchment-on-dark panel */
   tone?: "paper" | "ink";
 };
 
 /**
- * Soft counsel gate: name + email (+ phone) → Zapier webhook with full
- * wholesaler intelligence, then open PSM contact with query intel.
+ * Soft counsel gate → Zapier/HubSpot with full wholesaler intelligence.
+ * Success-first (no surprise tab). Consent required.
  */
 export function CounselHandoff(props: Props) {
   const [name, setName] = useState(props.defaultName ?? "");
@@ -36,9 +39,11 @@ export function CounselHandoff(props: Props) {
   const [phone, setPhone] = useState(
     (props.defaultPhone ?? "").replace(/\D/g, ""),
   );
+  const [consented, setConsented] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [contactHref, setContactHref] = useState(PSM_CONTACT_URL);
 
   const ink = props.tone === "ink";
 
@@ -48,6 +53,10 @@ export function CounselHandoff(props: Props) {
     const cleanPhone = phone.replace(/\D/g, "");
     if (!name.trim() || !email.trim()) {
       setError("Name and email are required so a field leader can reach you.");
+      return;
+    }
+    if (!consented) {
+      setError("Please confirm we may contact you about partnership.");
       return;
     }
     if (cleanPhone && (cleanPhone.length < 10 || cleanPhone.length > 15)) {
@@ -101,6 +110,7 @@ export function CounselHandoff(props: Props) {
           recruiterBrief: packet.recruiter_brief,
           wholesalerHeadline: packet.wholesaler_headline,
           wholesalerTalkTrack: packet.wholesaler_talk_track,
+          consented: true,
           packet: packet as Record<string, unknown>,
         },
       });
@@ -111,8 +121,6 @@ export function CounselHandoff(props: Props) {
         readiness: props.readinessScore,
         webhook: true,
       });
-
-      setSent(true);
 
       const href = fieldLeaderUrl({
         archetype: props.archetype,
@@ -127,12 +135,13 @@ export function CounselHandoff(props: Props) {
         mission: packet.mission_30,
         utmContent: `${props.source}-counsel`,
       });
-      window.open(href, "_blank", "noopener,noreferrer");
+      setContactHref(href);
+      setSent(true);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Could not submit. Try again or use Contact Us.",
+          : "Could not reach the field team system. Use Contact Us or try again.",
       );
     } finally {
       setBusy(false);
@@ -140,45 +149,53 @@ export function CounselHandoff(props: Props) {
   }
 
   const label = ink ? "text-parchment/55" : "text-charcoal-soft";
-  const input = ink
-    ? "w-full rounded-md border border-parchment/20 bg-parchment/5 px-3 py-2.5 font-body text-sm text-parchment placeholder:text-parchment/35 focus:outline-none focus:ring-2 focus:ring-brass/50"
-    : "w-full rounded-md border border-charcoal/15 bg-parchment px-3 py-2.5 font-body text-sm text-charcoal placeholder:text-charcoal-soft focus:outline-none focus:ring-2 focus:ring-brass/40";
+  const inputBase = ink
+    ? "w-full rounded-md border border-parchment/20 bg-parchment/5 px-3 py-2.5 font-body text-sm text-parchment placeholder:text-parchment/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/60"
+    : "w-full rounded-md border border-charcoal/15 bg-parchment px-3 py-2.5 font-body text-sm text-charcoal placeholder:text-charcoal-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/50";
 
   if (sent) {
     return (
       <div
         className={
           ink
-            ? "rounded-lg border border-brass/35 bg-brass/10 px-4 py-4"
-            : "rounded-lg border border-brass/30 bg-brass/8 px-4 py-4"
+            ? "rounded-lg border border-brass/35 bg-brass/10 px-4 py-5 space-y-4"
+            : "rounded-lg border border-brass/30 bg-brass/8 px-4 py-5 space-y-4"
         }
+        role="status"
       >
-        <p
-          className={
-            ink
-              ? "font-display text-lg text-parchment"
-              : "font-display text-lg text-charcoal"
-          }
-        >
-          Request sent to the field team
-        </p>
-        <p
-          className={
-            ink
-              ? "mt-2 font-body text-sm text-parchment/65 leading-relaxed"
-              : "mt-2 font-body text-sm text-charcoal-muted leading-relaxed"
-          }
-        >
-          Your archetype, readiness, and 30-day plan went with it. A contact
-          page also opened so you can add anything else. Typical follow-up is
-          1–2 business days.
-        </p>
+        <div>
+          <p
+            className={
+              ink
+                ? "font-display text-lg text-parchment"
+                : "font-display text-lg text-charcoal"
+            }
+          >
+            Request received
+          </p>
+          <p
+            className={
+              ink
+                ? "mt-2 font-body text-sm text-parchment/65 leading-relaxed"
+                : "mt-2 font-body text-sm text-charcoal-muted leading-relaxed"
+            }
+          >
+            A field leader has your name, archetype, readiness score, and 30-day
+            plan. Expect outreach within 1–2 business days.
+          </p>
+        </div>
+        <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
+          <a href={contactHref} target="_blank" rel="noreferrer">
+            Add more on Contact Us
+            <ExternalLink className="size-4" />
+          </a>
+        </Button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 max-w-xl">
+    <form onSubmit={onSubmit} className="space-y-3 max-w-xl" noValidate>
       <p className={`font-ui text-[10px] uppercase tracking-[0.18em] ${label}`}>
         Request counsel
       </p>
@@ -190,53 +207,91 @@ export function CounselHandoff(props: Props) {
         }
       >
         Leave your name and email. We send your campaign reading (archetype,
-        score, 30-day mission, talk tracks) to a PSM field leader so the call
-        starts warm — not cold.
+        readiness, 30-day plan, talk tracks) to a PSM field leader so the
+        conversation starts with context — not a cold pitch.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block sm:col-span-1">
+        <label className="block">
           <span className={`font-ui text-[10px] uppercase tracking-[0.14em] ${label}`}>
-            Name
+            Full name
           </span>
           <input
-            className={`mt-1 ${input}`}
+            className={`mt-1 ${inputBase}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="name"
             required
             maxLength={120}
+            aria-invalid={Boolean(error && !name.trim())}
           />
         </label>
-        <label className="block sm:col-span-1">
+        <label className="block">
           <span className={`font-ui text-[10px] uppercase tracking-[0.14em] ${label}`}>
             Email
           </span>
           <input
             type="email"
-            className={`mt-1 ${input}`}
+            className={`mt-1 ${inputBase}`}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             required
             maxLength={200}
+            aria-describedby="counsel-email-hint"
           />
+          <span
+            id="counsel-email-hint"
+            className={`mt-1 block font-ui text-[10px] ${label}`}
+          >
+            Used only so a field leader can reach you
+          </span>
         </label>
         <label className="block sm:col-span-2">
           <span className={`font-ui text-[10px] uppercase tracking-[0.14em] ${label}`}>
-            Phone (optional)
+            Mobile (optional)
           </span>
           <input
             type="tel"
-            className={`mt-1 ${input}`}
+            className={`mt-1 ${inputBase}`}
             value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 15))}
+            onChange={(e) =>
+              setPhone(e.target.value.replace(/\D/g, "").slice(0, 15))
+            }
             autoComplete="tel"
             inputMode="numeric"
             placeholder="10-digit mobile"
           />
         </label>
       </div>
-      {/* honeypot */}
+
+      <label className="flex items-start gap-2.5 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={consented}
+          onChange={(e) => setConsented(e.target.checked)}
+          className="mt-1 size-4 shrink-0 rounded border-brass/50 accent-[var(--color-brass)]"
+          required
+        />
+        <span
+          className={
+            ink
+              ? "font-body text-xs text-parchment/70 leading-relaxed"
+              : "font-body text-xs text-charcoal-muted leading-relaxed"
+          }
+        >
+          I agree that PSM Brokerage may contact me about training, markets, and
+          partnership.{" "}
+          <a
+            href="https://www.psmbrokerage.com/privacy-policy"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2"
+          >
+            Privacy
+          </a>
+        </span>
+      </label>
+
       <input
         type="text"
         name="companyWebsite"
@@ -245,11 +300,13 @@ export function CounselHandoff(props: Props) {
         className="absolute -left-[9999px] h-0 w-0 opacity-0"
         aria-hidden
       />
+
       {error ? (
         <p className="font-body text-sm text-ember" role="alert">
           {error}
         </p>
       ) : null}
+
       <Button type="submit" variant="primary" size="xl" disabled={busy}>
         {busy ? (
           <>
@@ -264,9 +321,8 @@ export function CounselHandoff(props: Props) {
         )}
       </Button>
       <p className={`font-ui text-[11px] leading-relaxed ${label}`}>
-        Includes: archetype, readiness, Nine Faces score, chapter scorecard,
-        30-day mission, Monday move, and open/proof/avoid talk tracks for your
-        wholesaler.
+        Your wholesaler receives: archetype, readiness, Nine Faces score,
+        chapter scorecard, 30-day mission, Monday move, and call talk tracks.
       </p>
     </form>
   );
