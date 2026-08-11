@@ -8,6 +8,7 @@ import { useHydrated } from "@/lib/use-hydrated";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 const CONFIRM_COPY =
   "Start over from the beginning?\n\nThis clears scout answers, seals, Nine Faces, dossier, and leader code on this device only.\n\nIf you already submitted an NPN, that lead stays with the team — we cannot unsend it.\n\nYou cannot undo this.";
@@ -35,6 +36,7 @@ export function StartOverControl({
     if (busy) return;
     if (!window.confirm(CONFIRM_COPY)) return;
     setBusy(true);
+    track("start_over");
     startOverCampaign();
   }
 

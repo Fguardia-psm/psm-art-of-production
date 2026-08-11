@@ -1,3 +1,4 @@
+import { track } from "@/lib/analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { AgentOnlyRibbon } from "@/components/shell";
@@ -88,7 +89,7 @@ function LandingPage() {
             className="mt-8 max-w-xl font-body text-lg text-parchment/70 leading-relaxed animate-fade-up"
             style={{ ["--motion" as string]: "500ms" }}
           >
-            About 30 minutes. Five strategic campaigns. Nine client languages.
+            About 30 minutes. Five strategic campaigns. Nine client types.
             One personal producer dossier with a production forecast. Built to
             make you better at the table — not to pitch you a deck.
           </p>
@@ -107,7 +108,14 @@ function LandingPage() {
 
           <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button asChild variant="primary" size="xl" className="min-w-[200px]">
-              <Link to={resumeTo}>
+              <Link
+                to={resumeTo}
+                onClick={() =>
+                  track(inProgress ? "map_view" : "campaign_start", {
+                    resume: inProgress,
+                  })
+                }
+              >
                 {ctaLabel}
                 <ArrowRight className="size-4" strokeWidth={2} />
               </Link>

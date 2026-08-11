@@ -1,3 +1,4 @@
+import { track } from "@/lib/analytics";
 import { useState } from "react";
 import {
   createFileRoute,
@@ -73,6 +74,7 @@ function ChapterPageInner() {
 
   function onResolved(result: ChapterResult) {
     completeChapter(chapter!.slug, result);
+    track("chapter_seal", { slug: chapter!.slug, result });
     setResolved(true);
   }
 

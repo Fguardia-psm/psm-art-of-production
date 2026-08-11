@@ -1,3 +1,4 @@
+import { track } from "@/lib/analytics";
 import {
   createFileRoute,
   Link,

@@ -1,3 +1,4 @@
+import { track } from "@/lib/analytics";
 import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { CampaignShell, SectionKicker } from "@/components/shell";
@@ -48,6 +49,9 @@ function ScoutPage() {
       return;
     }
     completeScout();
+    const arch =
+      useCampaignStore.getState().provisionalArchetype ?? "unknown";
+    track("scout_complete", { archetype: arch });
     setRevealed(true);
   }
 

@@ -1032,7 +1032,7 @@ export const FIELD_REPORTS: FieldReport[] = [
 ];
 
 export const FIELD_REPORTS_DISCLAIMER =
-  "Field Reports are composite patterns from partner transitions (names stylized). They show operating leverage — not guaranteed results. Ask a field leader for live references in your market.";
+  "Hybrid proof: these Field Reports are composite patterns from recurring partner transitions (names stylized for teaching). They show operating leverage — not guaranteed results. Live, permissioned producer stories are added as they clear. Ask a field leader for references in your market.";
 
 export const RECRUITER_OPENERS: Record<
   ArchetypeId,
@@ -1156,6 +1156,7 @@ export type RecruiterIntel = {
   weakestChapter?: string;
   strongestChapter?: string;
   fieldReportsSeen?: boolean;
+  mission?: string;
   utmContent?: string;
 };
 
@@ -1176,6 +1177,7 @@ export function fieldLeaderUrl(
     u.searchParams.set("archetype", intel.archetype);
     const arch = ARCHETYPES[intel.archetype];
     u.searchParams.set("archetype_name", arch.name);
+    u.searchParams.set("monday", arch.mondayScript.slice(0, 120));
   }
   if (intel.name) u.searchParams.set("agent", intel.name);
   if (intel.readiness !== undefined)
@@ -1192,6 +1194,8 @@ export function fieldLeaderUrl(
     u.searchParams.set("strongest", intel.strongestChapter);
   if (intel.fieldReportsSeen)
     u.searchParams.set("field_reports", "seen");
+  if (intel.mission)
+    u.searchParams.set("mission", intel.mission.slice(0, 180));
   return u.toString();
 }
 
@@ -1209,6 +1213,7 @@ export function recruiterIntelSummary(intel: RecruiterIntel): string {
     intel.weakestChapter ? `Watch: ${intel.weakestChapter}` : null,
     intel.strongestChapter ? `Strength: ${intel.strongestChapter}` : null,
     intel.fieldReportsSeen ? "Field Reports reviewed" : null,
+    intel.mission ? `Mission: ${intel.mission}` : null,
   ].filter(Boolean);
   return parts.join(" · ");
 }

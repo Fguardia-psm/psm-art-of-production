@@ -1,7 +1,9 @@
+import { track } from "@/lib/analytics";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CampaignShell, SectionKicker } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
+  ARCHETYPES,
   PARTNER_PROOF,
   PARTNER_STORIES,
   SUPPORT_MODEL,
@@ -31,6 +33,9 @@ function PartnerPage() {
     weakestChapter: scorecard.weakest,
     strongestChapter: scorecard.strongest,
     fieldReportsSeen,
+    mission: provisionalArchetype
+      ? undefined // filled below if arch available
+      : undefined,
     utmContent: "partner-counsel",
   });
 
@@ -47,6 +52,15 @@ function PartnerPage() {
             table. This page is the handoff to a human conversation — not a
             hard close.
           </p>
+          <div className="mt-4 rounded-lg border border-brass/30 bg-brass/10 px-4 py-3">
+            <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass-bright">
+              What happens next
+            </p>
+            <p className="mt-2 font-body text-xs text-parchment/65 leading-relaxed">
+              Contact opens a human at PSM. Your campaign intel travels with the
+              link. Expect follow-up within 1–2 business days.
+            </p>
+          </div>
           {unlocked && !fieldReportsSeen ? (
             <div className="mt-4 rounded-lg border border-brass/40 bg-brass/10 px-4 py-3">
               <p className="font-body text-sm text-parchment/80">
@@ -132,7 +146,8 @@ function PartnerPage() {
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="primary" size="xl">
-              <a href={leaderHref} target="_blank" rel="noreferrer">
+              <a href={leaderHref}
+              onClick={() => track("counsel_click", { source: "partner" })} target="_blank" rel="noreferrer">
                 Request counsel · win the field
                 <ArrowRight className="size-4" />
               </a>

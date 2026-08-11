@@ -1,3 +1,4 @@
+import { track } from "@/lib/analytics";
 import { useMemo, useRef, useState } from "react";
 import { useScrollToTopOnChange } from "@/components/scroll-to-top";
 import {
@@ -87,6 +88,7 @@ function NineFacesPageInner() {
       return;
     }
     completeNineFaces(scoreRef.current);
+    track("faces_complete", { score: scoreRef.current });
     setFinished(true);
   }
 

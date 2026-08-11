@@ -2,13 +2,24 @@ import { useEffect } from "react";
 
 const MESSAGE_TYPE = "resize-art-of-production";
 
+/** Default allowlist for PSM / HubSpot embeds. Override with VITE_EMBED_PARENT_ORIGINS (comma list). Use * to allow any. */
+const DEFAULT_PARENTS = [
+  "https://www.psmbrokerage.com",
+  "https://psmbrokerage.com",
+  "https://www.psm.brokerage",
+  "https://psm.brokerage",
+];
+
 function allowedParents(): string[] | null {
   const raw = import.meta.env.VITE_EMBED_PARENT_ORIGINS as string | undefined;
-  if (!raw?.trim()) return null; // unrestricted (legacy HubSpot embeds)
-  return raw
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  if (raw?.trim() === "*") return null; // explicit unrestricted
+  if (raw?.trim()) {
+    return raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return DEFAULT_PARENTS;
 }
 
 /**
@@ -44,8 +55,17 @@ export function IframeResizeReporter() {
         window.parent.postMessage(payload, "*");
         return;
       }
-      // Prefer explicit parent origins when configured
-      for (const origin of parents) {
+      const targets = new Set(parents);
+      try {
+        const ref = document.referrer ? new URL(document.referrer).origin : "";
+        if (ref && parents.some((p) => ref === p || ref.endsWith(".hubspot.com") || ref.includes("hs-sites"))) {
+          targets.add(ref);
+        }
+      } catch {
+        /* ignore */
+      }
+      // HubSpot preview / CMS often use *.hubspot.com or hs-sites.com
+      for (const origin of targets) {
         try {
           window.parent.postMessage(payload, origin);
         } catch {

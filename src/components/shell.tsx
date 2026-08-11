@@ -162,13 +162,49 @@ export function CampaignShell({
       </main>
       <footer
         className={cn(
-          "border-t px-4 py-4 text-center space-y-2",
+          "border-t px-4 py-5 text-center space-y-2.5",
           tone === "ink" ? "border-parchment/10" : "border-charcoal/10",
         )}
       >
         <AgentOnlyRibbon
           className={tone === "ink" ? "text-parchment/40" : undefined}
         />
+        <p
+          className={cn(
+            "mx-auto max-w-md font-body text-[11px] leading-relaxed",
+            tone === "ink" ? "text-parchment/35" : "text-charcoal-soft",
+          )}
+        >
+          Progress saves on this device only (browser storage). Start over anytime.
+          Counsel opens PSM Contact — no NPN is collected in this campaign until
+          you choose to share it with a human.
+        </p>
+        <p
+          className={cn(
+            "font-ui text-[10px] tracking-wide",
+            tone === "ink" ? "text-parchment/30" : "text-charcoal-soft",
+          )}
+        >
+          <a
+            href="https://www.psmbrokerage.com/privacy-policy"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 hover:opacity-80"
+          >
+            Privacy
+          </a>
+          <span className="mx-2 opacity-40">·</span>
+          <a
+            href="https://www.psmbrokerage.com/contact"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 hover:opacity-80"
+          >
+            Contact
+          </a>
+          <span className="mx-2 opacity-40">·</span>
+          PSM Brokerage
+        </p>
         <div
           className={cn(
             "flex justify-center",

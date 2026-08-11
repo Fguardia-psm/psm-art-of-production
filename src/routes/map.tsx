@@ -1,3 +1,5 @@
+import { track } from "@/lib/analytics";
+import { useEffect } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
   CampaignShell,
@@ -31,6 +33,9 @@ function MapPage() {
 
 function MapPageInner() {
   const state = useCampaignStore();
+  useEffect(() => {
+    track("map_view");
+  }, []);
   if (!state.scoutComplete) {
     return <Navigate to="/scout" />;
   }

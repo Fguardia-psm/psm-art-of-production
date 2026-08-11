@@ -1,6 +1,7 @@
 import type { Archetype } from "@/lib/content";
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Printer, Share2 } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 /**
  * Field Seal — premium printable one-pager (campaign commission).
@@ -50,16 +51,53 @@ export function FieldCard({
             seal — for you and for counsel.
           </p>
         </div>
-        <Button
-          type="button"
-          variant="paper"
-          size="lg"
-          className="shrink-0"
-          onClick={() => window.print()}
-        >
-          <Printer className="size-4" />
-          Print Field Seal
-        </Button>
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <Button
+            type="button"
+            variant="paper"
+            size="lg"
+            onClick={() => {
+              track("field_seal_print", { archetype: arch.id });
+              window.print();
+            }}
+          >
+            <Printer className="size-4" />
+            Print Field Seal
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={async () => {
+              const text = [
+                `Field Seal · The Art of Production`,
+                arch.name,
+                arch.epithet,
+                `Readiness ${readinessScore}/100`,
+                `Nine Faces ${nineFacesScore}/9`,
+                `30-day plan: ${arch.forecast.mission30}`,
+                `Monday: ${arch.mondayScript}`,
+                `PSM counsel: https://www.psmbrokerage.com/contact`,
+              ].join("\n");
+              track("field_seal_share", { archetype: arch.id });
+              try {
+                if (navigator.share) {
+                  await navigator.share({
+                    title: `${arch.name} · Field Seal`,
+                    text,
+                  });
+                } else {
+                  window.print();
+                }
+              } catch {
+                /* user cancelled share */
+              }
+            }}
+          >
+            <Share2 className="size-4" />
+            Share seal
+          </Button>
+        </div>
       </div>
 
       <article

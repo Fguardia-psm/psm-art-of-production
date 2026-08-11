@@ -1,3 +1,4 @@
+import { track } from "@/lib/analytics";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
@@ -61,6 +62,7 @@ function FieldReportsPageInner() {
   useEffect(() => {
     setRead((prev) => (prev.includes(activeId) ? prev : [...prev, activeId]));
     markFieldReportsSeen();
+    track("field_report_open", { report_id: activeId, via: "view" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -86,6 +88,7 @@ function FieldReportsPageInner() {
     weakestChapter: scorecard.weakest,
     strongestChapter: scorecard.strongest,
     fieldReportsSeen: true,
+    mission: arch?.forecast.mission30,
     utmContent: "field-reports-counsel",
   });
 
@@ -97,6 +100,7 @@ function FieldReportsPageInner() {
   function selectReport(r: FieldReport) {
     setActiveId(r.id);
     markRead(r.id);
+    track("field_report_open", { report_id: r.id, via: "select" });
   }
 
   return (
@@ -108,9 +112,10 @@ function FieldReportsPageInner() {
             Field Reports
           </h1>
           <p className="mt-3 max-w-xl font-body text-charcoal-muted leading-relaxed">
-            Not a brochure. Three composite patterns of producers who already
-            had craft — and still needed operating leverage: time back, warmer
-            ground, or structure that scales.
+            Not a brochure. Hybrid proof: composite patterns of producers who
+            already had craft and still needed operating leverage — time back,
+            warmer ground, or structure that scales. Live names land as
+            permissions clear.
           </p>
           {arch ? (
             <p className="mt-3 font-ui text-xs uppercase tracking-[0.18em] text-brass">
@@ -240,7 +245,8 @@ function FieldReportsPageInner() {
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Button asChild variant="paper" size="lg">
-              <a href={leaderHref} target="_blank" rel="noreferrer">
+              <a href={leaderHref}
+                onClick={() => track("counsel_click", { source: "field-reports" })} target="_blank" rel="noreferrer">
                 Request counsel · win the field
                 <ArrowRight className="size-4" />
               </a>

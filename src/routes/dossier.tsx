@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
   CampaignShell,
@@ -17,6 +18,7 @@ import {
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
+import { track } from "@/lib/analytics";
 import { NineFacesDeck } from "@/components/nine-faces-deck";
 import { ProductionForecastPanel } from "@/components/production-forecast";
 import { FieldCard } from "@/components/field-card";
@@ -47,14 +49,25 @@ function DossierPageInner() {
     chapterResults,
   } = state;
 
+  const canView = Boolean(unlocked && provisionalArchetype);
+  const readiness = computeReadiness(state);
+  const scorecard = chapterScorecard(chapterResults);
+
+  useEffect(() => {
+    if (!canView || !provisionalArchetype) return;
+    track("dossier_view", {
+      archetype: provisionalArchetype,
+      readiness: readiness.score,
+      nine_faces: nineFacesScore,
+    });
+  }, [canView, provisionalArchetype, readiness.score, nineFacesScore]);
+
   if (!unlocked || !provisionalArchetype) {
     return <Navigate to="/unlock" />;
   }
 
   const arch = ARCHETYPES[provisionalArchetype];
   const opener = RECRUITER_OPENERS[provisionalArchetype];
-  const readiness = computeReadiness(state);
-  const scorecard = chapterScorecard(chapterResults);
   const intel = {
     archetype: provisionalArchetype,
     name: lead?.name?.split(" ")[0],
@@ -65,6 +78,7 @@ function DossierPageInner() {
     weakestChapter: scorecard.weakest,
     strongestChapter: scorecard.strongest,
     fieldReportsSeen,
+    mission: arch.forecast.mission30,
     utmContent: "dossier-counsel",
   };
   const counselHref = fieldLeaderUrl(intel);
@@ -135,9 +149,36 @@ function DossierPageInner() {
               </li>
             ))}
           </ul>
+          <div className="mt-5 rounded-lg border border-brass/30 bg-brass/10 px-4 py-3 max-w-xl">
+            <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass-bright">
+              What happens next
+            </p>
+            <ul className="mt-2 space-y-1.5 font-body text-xs text-parchment/70 leading-relaxed">
+              <li>Opens PSM Contact — a human, not a spam sequence.</li>
+              <li>
+                Your archetype, readiness, and 30-day plan travel with the link
+                so the conversation starts warm.
+              </li>
+              <li>
+                Expect a field leader to follow up within 1–2 business days (ask
+                for same-day if AEP is live).
+              </li>
+            </ul>
+          </div>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="primary" size="xl">
-              <a href={counselHref} target="_blank" rel="noreferrer">
+              <a
+                href={counselHref}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() =>
+                  track("counsel_click", {
+                    source: "dossier",
+                    archetype: provisionalArchetype,
+                    readiness: readiness.score,
+                  })
+                }
+              >
                 Request counsel · win the field
                 <ArrowRight className="size-4" />
               </a>
@@ -149,7 +190,7 @@ function DossierPageInner() {
             </Button>
           </div>
           <p className="mt-4 rounded-md border border-parchment/15 bg-parchment/[0.05] px-3 py-2 font-ui text-[11px] text-parchment/55 leading-relaxed">
-            <span className="text-brass-bright/90">Recruiter intelligence rides with this link: </span>
+            <span className="text-brass-bright/90">What your field leader sees: </span>
             {intelLine}
           </p>
           <p className="mt-3 font-ui text-[11px] text-parchment/40">
