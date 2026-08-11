@@ -14,6 +14,7 @@ import { Route as DossierRouteImport } from './routes/dossier'
 import { Route as FieldReportsRouteImport } from './routes/field-reports'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as NineFacesRouteImport } from './routes/nine-faces'
+import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as ScoutRouteImport } from './routes/scout'
 import { Route as UnlockRouteImport } from './routes/unlock'
 import { Route as ChapterSlugRouteImport } from './routes/chapter.$slug'
@@ -43,6 +44,11 @@ const NineFacesRoute = NineFacesRouteImport.update({
   path: '/nine-faces',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartnerRoute = PartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScoutRoute = ScoutRouteImport.update({
   id: '/scout',
   path: '/scout',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/field-reports': typeof FieldReportsRoute
   '/map': typeof MapRoute
   '/nine-faces': typeof NineFacesRoute
+  '/partner': typeof PartnerRoute
   '/scout': typeof ScoutRoute
   '/unlock': typeof UnlockRoute
   '/chapter/$slug': typeof ChapterSlugRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/field-reports': typeof FieldReportsRoute
   '/map': typeof MapRoute
   '/nine-faces': typeof NineFacesRoute
+  '/partner': typeof PartnerRoute
   '/scout': typeof ScoutRoute
   '/unlock': typeof UnlockRoute
   '/chapter/$slug': typeof ChapterSlugRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/field-reports': typeof FieldReportsRoute
   '/map': typeof MapRoute
   '/nine-faces': typeof NineFacesRoute
+  '/partner': typeof PartnerRoute
   '/scout': typeof ScoutRoute
   '/unlock': typeof UnlockRoute
   '/chapter/$slug': typeof ChapterSlugRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/field-reports'
     | '/map'
     | '/nine-faces'
+    | '/partner'
     | '/scout'
     | '/unlock'
     | '/chapter/$slug'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/field-reports'
     | '/map'
     | '/nine-faces'
+    | '/partner'
     | '/scout'
     | '/unlock'
     | '/chapter/$slug'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/field-reports'
     | '/map'
     | '/nine-faces'
+    | '/partner'
     | '/scout'
     | '/unlock'
     | '/chapter/$slug'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   FieldReportsRoute: typeof FieldReportsRoute
   MapRoute: typeof MapRoute
   NineFacesRoute: typeof NineFacesRoute
+  PartnerRoute: typeof PartnerRoute
   ScoutRoute: typeof ScoutRoute
   UnlockRoute: typeof UnlockRoute
   ChapterSlugRoute: typeof ChapterSlugRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NineFacesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partner': {
+      id: '/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/scout': {
       id: '/scout'
       path: '/scout'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   FieldReportsRoute: FieldReportsRoute,
   MapRoute: MapRoute,
   NineFacesRoute: NineFacesRoute,
+  PartnerRoute: PartnerRoute,
   ScoutRoute: ScoutRoute,
   UnlockRoute: UnlockRoute,
   ChapterSlugRoute: ChapterSlugRoute,
