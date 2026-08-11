@@ -106,17 +106,21 @@ function UnlockPageInner() {
 
         <div className="mt-8 rounded-xl border border-charcoal/10 bg-ink px-5 py-6 text-parchment">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Those who win AEP do not improvise alone
+            Next
           </p>
           <p className="mt-3 font-display text-xl leading-snug">
-            Request counsel. Bring your reading. Ask how to win the ground
-            before the enrollment storm.
+            Open your dossier for the Field Seal and 30-day plan — then request
+            counsel with your full reading attached.
           </p>
-          <Button asChild variant="primary" size="lg" className="mt-5 w-full">
-            <a href={counselHref} target="_blank" rel="noreferrer">
-              Request counsel · win the field
-              <ArrowRight className="size-4" />
-            </a>
+          <Button
+            type="button"
+            variant="primary"
+            size="lg"
+            className="mt-5 w-full"
+            onClick={enterDossier}
+          >
+            Enter dossier · then request counsel
+            <ArrowRight className="size-4" />
           </Button>
         </div>
 
