@@ -29,7 +29,7 @@ export function ChapterInteractionPanel({
   return <ReflectPick interaction={interaction} onResolved={onResolved} />;
 }
 
-/** Night Before AEP — rising storm meter; stack high-protein prep on the workbench */
+/** Night Before AEP — rising storm meter; stack prep on the workbench */
 function PrepStorm({
   interaction,
   onResolved,
@@ -41,7 +41,8 @@ function PrepStorm({
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<ChapterResult>("lesson");
   const [storm, setStorm] = useState(0);
-  const [started, setStarted] = useState(false);
+  // Options active immediately — no "begin" gate blocking taps
+  const started = true;
 
   useEffect(() => {
     if (!started || done) return;
@@ -72,7 +73,7 @@ function PrepStorm({
   );
 
   function toggle(id: string) {
-    if (done || !started) return;
+    if (done) return;
     setSelected((s) =>
       s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
     );
@@ -84,8 +85,12 @@ function PrepStorm({
     if (goodCount >= interaction.need && !hasBad) r = "victory";
     else if (goodCount >= interaction.need - 1 || (goodCount >= 2 && hasBad))
       r = "field-note";
-    // Late auto-seal: slightly harsher if storm finished without enough prep
-    if (auto && r === "victory" && storm >= 100 && goodCount === interaction.need)
+    if (
+      auto &&
+      r === "victory" &&
+      storm >= 100 &&
+      goodCount === interaction.need
+    )
       r = "field-note";
     setResult(r);
     setDone(true);
@@ -100,22 +105,28 @@ function PrepStorm({
         : interaction.failure;
 
   return (
-    <div className={cn("space-y-5 rounded-xl p-1", started && "storm-field")}>
+    <div className={cn("space-y-5 rounded-xl p-1", "storm-field")}>
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
+        <div className="min-w-0 flex-1">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-ember">
-            Set-piece · The Night Before AEP
+            Field exercise · The night before AEP
           </p>
           <p className="mt-1 font-body text-charcoal">{interaction.prompt}</p>
+          {!done ? (
+            <p className="mt-2 font-ui text-xs font-medium text-charcoal leading-relaxed">
+              Tap the cards below to build your prep list — they work right away.
+              Then seal to continue.
+            </p>
+          ) : null}
         </div>
-        {started ? (
-          <p className="font-ui text-xs tabular-nums text-charcoal-soft">
-            Storm {Math.min(100, Math.round(storm))}%
+        {!done ? (
+          <p className="font-ui text-xs tabular-nums text-charcoal-soft shrink-0">
+            Season pressure {Math.min(100, Math.round(storm))}%
           </p>
         ) : null}
       </div>
 
-      {started ? (
+      {!done ? (
         <div
           className="h-2 overflow-hidden rounded-full border border-charcoal/10 bg-charcoal/5"
           aria-hidden
@@ -129,12 +140,12 @@ function PrepStorm({
 
       <div className="rounded-lg border border-dashed border-brass/35 bg-parchment/50 px-3 py-3">
         <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass mb-2">
-          Workbench · stack what multiplies production
+          Your prep list · {selected.length} selected
         </p>
         <div className="flex min-h-12 flex-wrap gap-2">
           {selected.length === 0 ? (
             <span className="font-body text-xs text-charcoal-soft">
-              Empty — the unprepared improvise when the storm breaks.
+              Nothing stacked yet — tap the cards below.
             </span>
           ) : (
             selected.map((id) => {
@@ -159,41 +170,54 @@ function PrepStorm({
             <button
               key={opt.id}
               type="button"
-              disabled={!started || done}
+              disabled={done}
               onClick={() => toggle(opt.id)}
               className={cn(
-                "rounded-lg border px-4 py-3 text-left font-ui text-sm transition-colors min-h-11",
+                "rounded-lg border px-4 py-3.5 text-left font-ui text-sm transition-colors min-h-12 cursor-pointer touch-manipulation select-none",
                 on
-                  ? "border-brass bg-brass/10 text-ink"
-                  : "border-charcoal/12 bg-parchment/60 hover:border-brass/40",
-                (!started || done) && "opacity-70",
+                  ? "border-brass bg-brass/15 text-ink shadow-[0_0_0_1px_rgba(184,148,74,0.35)]"
+                  : "border-charcoal/15 bg-parchment hover:border-brass/50 hover:bg-brass/5 active:scale-[0.99]",
+                done && "cursor-default opacity-80",
               )}
             >
-              {opt.label}
+              <span className="flex items-start gap-2">
+                <span
+                  className={cn(
+                    "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border text-[10px] leading-none",
+                    on
+                      ? "border-brass bg-brass text-ink"
+                      : "border-charcoal/25 text-charcoal/20",
+                  )}
+                  aria-hidden
+                >
+                  {on ? "✓" : ""}
+                </span>
+                <span>{opt.label}</span>
+              </span>
             </button>
           );
         })}
       </div>
 
-      {!started ? (
-        <Button variant="paper" size="lg" onClick={() => setStarted(true)}>
-          Begin the quiet watch
-        </Button>
-      ) : !done ? (
+      {!done ? (
         <Button
+          type="button"
           variant="paper"
           size="lg"
+          className="w-full sm:w-auto min-h-12"
           disabled={selected.length === 0}
           onClick={() => commit(false)}
         >
-          Seal preparation before the storm
+          {selected.length === 0
+            ? "Select prep actions above"
+            : "Seal preparation · continue"}
         </Button>
       ) : (
         <div className="space-y-3">
           <ResultBanner result={result} text={text} />
           {result !== "lesson" ? (
             <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass animate-seal">
-              Prep checklist sealed · high-protein residue for Monday
+              Prep sealed · carry this into the season
             </p>
           ) : null}
         </div>

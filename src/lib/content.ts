@@ -440,7 +440,7 @@ export const CHAPTERS: Chapter[] = [
     interaction: {
       type: "prep-storm",
       prompt:
-        "The night before AEP. The storm meter rises. Stack only what multiplies production on the workbench — empty calories leave you exposed.",
+        "The night before AEP. Season pressure is rising. Tap the prep moves that actually protect production — leave the busywork off your list.",
       need: 3,
       options: [
         { id: "crm", label: "Order CRM and renewal records", good: true },
