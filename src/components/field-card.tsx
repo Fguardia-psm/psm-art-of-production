@@ -2,6 +2,7 @@ import type { Archetype } from "@/lib/content";
 import { Button } from "@/components/ui/button";
 import { Printer, Share2 } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { printFieldSeal } from "@/lib/print-field-seal";
 
 /**
  * Field Seal — premium printable one-pager (campaign commission).
@@ -40,7 +41,7 @@ export function FieldCard({
   ];
 
   return (
-    <section className="space-y-3 print:space-y-0">
+    <section className="print-seal-root space-y-3 print:space-y-0">
       <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
         <div>
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
@@ -58,7 +59,7 @@ export function FieldCard({
             size="lg"
             onClick={() => {
               track("field_seal_print", { archetype: arch.id });
-              window.print();
+              printFieldSeal(document.getElementById("field-card"));
             }}
           >
             <Printer className="size-4" />
@@ -87,7 +88,7 @@ export function FieldCard({
                     text,
                   });
                 } else {
-                  window.print();
+                  printFieldSeal(document.getElementById("field-card"));
                 }
               } catch {
                 /* user cancelled share */
@@ -299,7 +300,7 @@ export function FieldCard({
             </div>
           </div>
 
-          <div className="mt-5 rounded-xl border border-dashed border-brass/40 bg-parchment/50 px-4 py-4">
+          <div className="mt-5 rounded-xl border border-dashed border-brass/40 bg-parchment/50 px-4 py-4 print-compact-hide">
             <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
               30-day check-in
             </p>
