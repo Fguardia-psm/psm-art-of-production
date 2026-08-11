@@ -10,7 +10,6 @@ import { StartOverControl } from "@/components/start-over";
 import { Button } from "@/components/ui/button";
 import {
   ARCHETYPES,
-  CLIENT_FACES,
   PDF_URL,
   PSM_CONTACT_URL,
   RECRUITER_OPENERS,
@@ -18,7 +17,8 @@ import {
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
-import { ArrowRight, BookOpen, Scroll } from "lucide-react";
+import { NineFacesDeck } from "@/components/nine-faces-deck";
+import { ArrowRight, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/dossier")({
   component: DossierPage,
@@ -193,33 +193,7 @@ function DossierPageInner() {
           </div>
         </div>
 
-        <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5 sm:p-6">
-          <div className="flex items-center gap-2">
-            <Scroll className="size-4 text-brass" />
-            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              The Nine Faces · know the enemy of confusion
-            </p>
-          </div>
-          <p className="mt-2 font-body text-sm text-charcoal-muted">
-            Nine client languages. Read them. Use them at the table — not as a
-            script file, as doctrine.
-          </p>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {CLIENT_FACES.map((f) => (
-              <li
-                key={f.id}
-                className="rounded-lg border border-charcoal/10 bg-parchment px-3 py-3"
-              >
-                <p className="font-ui text-[10px] uppercase tracking-[0.16em] text-brass">
-                  {f.name}
-                </p>
-                <p className="mt-1 font-display text-sm italic text-charcoal leading-snug">
-                  {f.openingLine}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <NineFacesDeck score={nineFacesScore} />
 
         <aside className="rounded-xl border border-brass/30 bg-brass/8 p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
