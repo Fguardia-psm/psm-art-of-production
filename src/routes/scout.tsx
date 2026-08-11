@@ -6,6 +6,7 @@ import { ARCHETYPES, SCOUT_QUESTIONS } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
 import { cn } from "@/lib/utils";
 import { ProductionForecastPanel } from "@/components/production-forecast";
+import { useScrollToTopOnChange } from "@/components/scroll-to-top";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/scout")({
@@ -23,6 +24,7 @@ function ScoutPage() {
   } = useCampaignStore();
   const [step, setStep] = useState(0);
   const [revealed, setRevealed] = useState(scoutComplete);
+  useScrollToTopOnChange(revealed ? "reveal" : `scout-${step}`);
 
   const q = SCOUT_QUESTIONS[step];
   const answered = scoutAnswers[q?.id ?? ""] !== undefined;

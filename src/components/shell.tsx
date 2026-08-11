@@ -138,6 +138,7 @@ export function CampaignShell({
 }) {
   return (
     <div
+      data-campaign-shell
       className={cn(
         "min-h-dvh flex flex-col",
         tone === "ink" ? "ink-wash text-parchment" : "parchment-field text-charcoal",

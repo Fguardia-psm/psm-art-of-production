@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { AppErrorComponent } from "@/lib/error-component";
 import { IframeResizeReporter } from "@/components/iframe-resize";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import appCss from "@/styles.css?url";
 
 export const Route = createRootRoute({
@@ -42,6 +43,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
+      <ScrollToTop />
       <IframeResizeReporter />
       <Outlet />
     </RootDocument>

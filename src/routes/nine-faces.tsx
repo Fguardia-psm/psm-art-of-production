@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { useScrollToTopOnChange } from "@/components/scroll-to-top";
 import {
   createFileRoute,
   Link,
@@ -47,6 +48,7 @@ function NineFacesPageInner() {
   const scoreRef = useRef(0);
   const [picked, setPicked] = useState<"right" | "wrong" | null>(null);
   const [finished, setFinished] = useState(nineFacesComplete);
+  useScrollToTopOnChange(finished ? "faces-done" : `face-${index}`);
 
   const requiredDone = REQUIRED_CHAPTER_SLUGS.every((s) =>
     completedChapters.includes(s),

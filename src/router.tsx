@@ -6,6 +6,7 @@ export function getRouter() {
   const router = createRouter({
     routeTree,
     scrollRestoration: true,
+    defaultViewTransition: false,
     defaultErrorComponent: AppErrorComponent,
     defaultPreload: "intent",
   });

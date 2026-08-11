@@ -22,6 +22,7 @@ import {
   type ChapterSlug,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
+import { useScrollToTopOnChange } from "@/components/scroll-to-top";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/chapter/$slug")({
