@@ -9,6 +9,7 @@
 export type FunnelEvent =
   | "campaign_start"
   | "scout_complete"
+  | "stage_selected"
   | "chapter_seal"
   | "faces_complete"
   | "dossier_view"

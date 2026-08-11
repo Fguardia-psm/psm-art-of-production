@@ -7,9 +7,13 @@ import {
   PSM_CONTACT_URL,
   fieldLeaderUrl,
   type ArchetypeId,
+  type BookStage,
   type ChapterResult,
 } from "@/lib/content";
+import { useCampaignStore } from "@/lib/campaign-store";
+import { STAGE_OPTIONS } from "@/lib/field-leader-brief";
 import { ArrowRight, ExternalLink, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   archetype: ArchetypeId;
@@ -30,15 +34,17 @@ type Props = {
 };
 
 /**
- * Soft counsel gate → Zapier/HubSpot with full wholesaler intelligence.
- * Success-first (no surprise tab). Consent required.
+ * Soft counsel gate → Field Leader Brief visible in counsel workflow (webhook/CRM).
  */
 export function CounselHandoff(props: Props) {
+  const storeStage = useCampaignStore((s) => s.bookStage);
+  const setBookStage = useCampaignStore((s) => s.setBookStage);
   const [name, setName] = useState(props.defaultName ?? "");
   const [email, setEmail] = useState(props.defaultEmail ?? "");
   const [phone, setPhone] = useState(
     (props.defaultPhone ?? "").replace(/\D/g, ""),
   );
+  const [stage, setStage] = useState<BookStage | null>(storeStage);
   const [consented, setConsented] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +61,10 @@ export function CounselHandoff(props: Props) {
       setError("Name and email are required so a field leader can reach you.");
       return;
     }
+    if (!stage) {
+      setError("Tell us which field you’re standing in — it shapes the brief.");
+      return;
+    }
     if (!consented) {
       setError("Please confirm we may contact you about partnership.");
       return;
@@ -66,12 +76,15 @@ export function CounselHandoff(props: Props) {
 
     setBusy(true);
     try {
+      if (stage !== storeStage) setBookStage(stage);
+
       const packet = buildWholesalerPacket({
         kind: "counsel_request",
         source: props.source,
         name: name.trim(),
         email: email.trim(),
         phone: cleanPhone || undefined,
+        bookStage: stage,
         archetype: props.archetype,
         readinessScore: props.readinessScore,
         readinessLabel: props.readinessLabel,
@@ -91,6 +104,7 @@ export function CounselHandoff(props: Props) {
           phone: cleanPhone || "",
           archetype: props.archetype,
           source: props.source,
+          bookStage: stage,
           readinessScore: props.readinessScore,
           readinessLabel: props.readinessLabel,
           nineFacesScore: props.nineFacesScore,
@@ -118,6 +132,7 @@ export function CounselHandoff(props: Props) {
       track("counsel_click", {
         source: props.source,
         archetype: props.archetype,
+        stage,
         readiness: props.readinessScore,
         webhook: true,
       });
@@ -180,8 +195,9 @@ export function CounselHandoff(props: Props) {
                 : "mt-2 font-body text-sm text-charcoal-muted leading-relaxed"
             }
           >
-            A field leader has your name, archetype, readiness score, and 30-day
-            plan. Expect outreach within 1–2 business days.
+            A field leader has your reading: archetype, field, exposed flank,
+            and next mission — so the conversation starts warm. Expect outreach
+            within 1–2 business days.
           </p>
         </div>
         <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
@@ -206,9 +222,9 @@ export function CounselHandoff(props: Props) {
             : "font-body text-sm text-charcoal-muted leading-relaxed"
         }
       >
-        Leave your name and email. We send your campaign reading (archetype,
-        readiness, 30-day plan, talk tracks) to a PSM field leader so the
-        conversation starts with context — not a cold pitch.
+        Leave your name and email. We send a Field Leader Brief (your archetype,
+        field, next mission, and how to open the call) so follow-up starts with
+        context — not a cold pitch.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
@@ -222,7 +238,6 @@ export function CounselHandoff(props: Props) {
             autoComplete="name"
             required
             maxLength={120}
-            aria-invalid={Boolean(error && !name.trim())}
           />
         </label>
         <label className="block">
@@ -237,14 +252,7 @@ export function CounselHandoff(props: Props) {
             autoComplete="email"
             required
             maxLength={200}
-            aria-describedby="counsel-email-hint"
           />
-          <span
-            id="counsel-email-hint"
-            className={`mt-1 block font-ui text-[10px] ${label}`}
-          >
-            Used only so a field leader can reach you
-          </span>
         </label>
         <label className="block sm:col-span-2">
           <span className={`font-ui text-[10px] uppercase tracking-[0.14em] ${label}`}>
@@ -263,6 +271,36 @@ export function CounselHandoff(props: Props) {
           />
         </label>
       </div>
+
+      {!storeStage ? (
+        <fieldset>
+          <legend className={`font-ui text-[10px] uppercase tracking-[0.14em] ${label}`}>
+            Which field are you standing in?
+          </legend>
+          <ul className="mt-2 space-y-2">
+            {STAGE_OPTIONS.map((opt) => (
+              <li key={opt.id}>
+                <button
+                  type="button"
+                  onClick={() => setStage(opt.id)}
+                  className={cn(
+                    "w-full rounded-md border px-3 py-2.5 text-left font-body text-sm transition",
+                    stage === opt.id
+                      ? ink
+                        ? "border-brass bg-brass/15 text-parchment"
+                        : "border-brass bg-brass/10 text-charcoal"
+                      : ink
+                        ? "border-parchment/20 text-parchment/70 hover:border-brass/40"
+                        : "border-charcoal/15 text-charcoal-muted hover:border-brass/40",
+                  )}
+                >
+                  {opt.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
+      ) : null}
 
       <label className="flex items-start gap-2.5 cursor-pointer">
         <input
@@ -321,8 +359,8 @@ export function CounselHandoff(props: Props) {
         )}
       </Button>
       <p className={`font-ui text-[11px] leading-relaxed ${label}`}>
-        Your wholesaler receives: archetype, readiness, Nine Faces score,
-        chapter scorecard, 30-day mission, Monday move, and call talk tracks.
+        Your field leader receives: archetype, stage, field leak, open / avoid /
+        ask / offer / proof, and next mission.
       </p>
     </form>
   );

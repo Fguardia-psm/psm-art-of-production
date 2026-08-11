@@ -1,4 +1,4 @@
-import type { Archetype } from "@/lib/content";
+import type { Archetype, ProductionForecast } from "@/lib/content";
 import { Button } from "@/components/ui/button";
 import { Printer, Share2 } from "lucide-react";
 import { track } from "@/lib/analytics";
@@ -16,6 +16,7 @@ export function FieldCard({
   agentName,
   weakestChapter,
   strongestChapter,
+  forecast: forecastProp,
 }: {
   arch: Archetype;
   readinessScore: number;
@@ -24,7 +25,9 @@ export function FieldCard({
   agentName?: string;
   weakestChapter?: string;
   strongestChapter?: string;
+  forecast?: ProductionForecast;
 }) {
+  const forecast = forecastProp ?? arch.forecast;
   // Never show generic placeholders as the hero title
   const bearerRaw = agentName?.trim() ?? "";
   const bearer =
@@ -75,7 +78,7 @@ export function FieldCard({
                 arch.epithet,
                 `Readiness ${readinessScore}/100`,
                 `Nine Faces ${nineFacesScore}/9`,
-                `30-day plan: ${arch.forecast.mission30}`,
+                `30-day plan: ${forecast.mission30}`,
                 `Monday: ${arch.mondayScript}`,
                 `PSM counsel: https://www.psmbrokerage.com/contact`,
               ].join("\n");
@@ -234,7 +237,7 @@ export function FieldCard({
                   Watch this risk
                 </p>
                 <p className="mt-0.5 font-body text-sm text-charcoal leading-snug">
-                  {arch.forecast.risk}
+                  {forecast.risk}
                 </p>
               </div>
               <div>
@@ -242,7 +245,7 @@ export function FieldCard({
                   Breakthrough path
                 </p>
                 <p className="mt-0.5 font-body text-sm text-charcoal leading-snug">
-                  {arch.forecast.breakthrough}
+                  {forecast.breakthrough}
                 </p>
               </div>
             </div>
@@ -251,16 +254,16 @@ export function FieldCard({
                 30-day mission
               </p>
               <p className="mt-1 font-body text-sm font-medium text-charcoal leading-snug">
-                {arch.forecast.mission30}
+                {forecast.mission30}
               </p>
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-body text-xs text-charcoal-muted">
                 <span>
                   <span className="text-brass">Measure · </span>
-                  {arch.forecast.measure}
+                  {forecast.measure}
                 </span>
                 <span>
                   <span className="text-brass">Target · </span>
-                  {arch.forecast.target}
+                  {forecast.target}
                 </span>
               </div>
             </div>

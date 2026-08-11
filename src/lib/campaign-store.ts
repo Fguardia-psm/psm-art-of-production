@@ -34,6 +34,9 @@ interface CampaignState {
   lead: LeadProfile | null;
   leaderCode: string | null;
   fieldReportsSeen: boolean;
+  /** Stage signal — adjusts mission language only */
+  bookStage: BookStage | null;
+  setBookStage: (stage: BookStage) => void;
   setScoutAnswer: (questionId: string, optionIndex: number) => void;
   completeScout: () => void;
   completeChapter: (slug: ChapterSlug, result: ChapterResult) => void;
@@ -69,12 +72,14 @@ export const EMPTY_CAMPAIGN = {
   lead: null as LeadProfile | null,
   leaderCode: null as string | null,
   fieldReportsSeen: false,
+  bookStage: null as BookStage | null,
 };
 
 export const useCampaignStore = create<CampaignState>()(
   persist(
     (set, get) => ({
       ...EMPTY_CAMPAIGN,
+      setBookStage: (stage) => set({ bookStage: stage }),
       setScoutAnswer: (questionId, optionIndex) =>
         set((s) => ({
           scoutAnswers: { ...s.scoutAnswers, [questionId]: optionIndex },

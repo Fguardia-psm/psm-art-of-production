@@ -262,6 +262,7 @@ const CounselIntentSchema = z.object({
     .or(z.literal("")),
   archetype: z.string().trim().min(1).max(40),
   source: z.string().max(80).optional(),
+  bookStage: z.string().max(40).optional(),
   readinessScore: z.number().int().min(0).max(100).optional(),
   readinessLabel: z.string().max(120).optional(),
   nineFacesScore: z.number().int().min(0).max(9).optional(),

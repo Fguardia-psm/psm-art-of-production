@@ -18,6 +18,10 @@ import {
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
+import {
+  getStageAdjustedForecast,
+  getSuspectedFieldLeak,
+} from "@/lib/field-leader-brief";
 import { track } from "@/lib/analytics";
 import { NineFacesDeck } from "@/components/nine-faces-deck";
 import { ProductionForecastPanel } from "@/components/production-forecast";
@@ -48,6 +52,7 @@ function DossierPageInner() {
     nineFacesScore,
     fieldReportsSeen,
     chapterResults,
+    bookStage,
   } = state;
 
   const canView = Boolean(unlocked && provisionalArchetype);
@@ -79,7 +84,7 @@ function DossierPageInner() {
     weakestChapter: scorecard.weakest,
     strongestChapter: scorecard.strongest,
     fieldReportsSeen,
-    mission: arch.forecast.mission30,
+    mission: getStageAdjustedForecast(provisionalArchetype, state.bookStage).mission30,
     utmContent: "dossier-counsel",
   };
   const counselHref = fieldLeaderUrl(intel);
@@ -114,6 +119,12 @@ function DossierPageInner() {
           </p>
           <p className="mx-auto mt-6 max-w-lg font-body text-parchment/70 leading-relaxed text-base sm:text-lg">
             {arch.fieldReading}
+          </p>
+          <p className="mx-auto mt-5 max-w-lg rounded-lg border border-brass/30 bg-brass/10 px-4 py-3 text-left font-body text-sm text-parchment/85 leading-relaxed">
+            <span className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass-bright block mb-1">
+              Exposed flank this season
+            </span>
+            {getSuspectedFieldLeak(provisionalArchetype)}
           </p>
           <div className="mx-auto mt-8 max-w-lg space-y-4 text-left">
             <div className="rounded-lg border border-parchment/10 bg-parchment/[0.04] px-4 py-3">
@@ -188,7 +199,7 @@ function DossierPageInner() {
           strongestChapter={scorecard.strongest}
         />
 
-        <ProductionForecastPanel forecast={arch.forecast} />
+        <ProductionForecastPanel forecast={getStageAdjustedForecast(provisionalArchetype, bookStage)} />
 
         <ReadinessPlate
           score={readiness.score}
