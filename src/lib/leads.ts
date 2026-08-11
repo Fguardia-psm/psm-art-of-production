@@ -3,6 +3,8 @@ import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { mkdir, appendFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
+import { buildWholesalerPacket } from "@/lib/wholesaler-payload";
+import type { ArchetypeId } from "@/lib/content";
 
 const LeadSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -141,9 +143,32 @@ export const submitLead = createServerFn({ method: "POST" })
     }
 
     const { companyWebsite: _hp, ...clean } = data;
+    let packet: Record<string, unknown> = {};
+    try {
+      packet = buildWholesalerPacket({
+        kind: "full_lead",
+        source: data.source ?? "art-of-production",
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        npn: data.npn,
+        state: data.state,
+        bookStage: data.bookStage,
+        focus: data.focus,
+        archetype: data.archetype as ArchetypeId,
+        readinessScore: undefined,
+        nineFacesScore: data.nineFacesScore,
+        chapterResults: data.chapterResults,
+      }) as unknown as Record<string, unknown>;
+    } catch {
+      /* archetype unknown — fall back */
+    }
     const record = {
+      ...packet,
       ...clean,
       kind: "art-of-production-lead",
+      event: "full_lead",
+      event_source: "art_of_production",
       source: data.source ?? "art-of-production",
       recruiterContext: {
         archetype: data.archetype,
@@ -153,6 +178,11 @@ export const submitLead = createServerFn({ method: "POST" })
         nineFacesScore: data.nineFacesScore,
         brief: data.recruiterBrief,
       },
+      recruiter_brief: data.recruiterBrief,
+      wholesaler_talk_track:
+        typeof packet.wholesaler_talk_track === "string"
+          ? packet.wholesaler_talk_track
+          : data.recruiterBrief,
     };
 
     let fileOk = false;
@@ -218,5 +248,98 @@ export const submitLead = createServerFn({ method: "POST" })
         : fileOk
           ? "stored_local_only"
           : "set_LEAD_WEBHOOK_URL",
+    };
+  });
+
+const CounselIntentSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(200),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\d{10,15}$/)
+    .optional()
+    .or(z.literal("")),
+  archetype: z.string().trim().min(1).max(40),
+  source: z.string().max(80).optional(),
+  readinessScore: z.number().int().min(0).max(100).optional(),
+  readinessLabel: z.string().max(120).optional(),
+  nineFacesScore: z.number().int().min(0).max(9).optional(),
+  chaptersDone: z.number().int().min(0).max(20).optional(),
+  weakestChapter: z.string().max(80).optional(),
+  strongestChapter: z.string().max(80).optional(),
+  fieldReportsSeen: z.boolean().optional(),
+  chapterResults: z.record(z.string(), z.string()).optional(),
+  leaderCode: z.string().max(40).optional().nullable(),
+  mission30: z.string().max(400).optional(),
+  mondayScript: z.string().max(400).optional(),
+  recruiterOpenWith: z.string().max(500).optional(),
+  recruiterProofAngle: z.string().max(500).optional(),
+  recruiterAvoid: z.string().max(500).optional(),
+  recruiterBrief: z.string().max(12000).optional(),
+  wholesalerHeadline: z.string().max(500).optional(),
+  wholesalerTalkTrack: z.string().max(4000).optional(),
+  /** full flat packet from client (trusted structure, size-capped) */
+  packet: z.record(z.string(), z.unknown()).optional(),
+  companyWebsite: z.string().max(0).optional().or(z.literal("")),
+});
+
+/**
+ * Soft counsel handoff — email + campaign intelligence for wholesalers.
+ * Posts to LEAD_WEBHOOK_URL (Zapier Catch Hook).
+ */
+export const submitCounselIntent = createServerFn({ method: "POST" })
+  .validator((data: unknown) => CounselIntentSchema.parse(data))
+  .handler(async ({ data }) => {
+    if (data.companyWebsite) {
+      return { ok: true as const, durable: true as const, webhook: { delivered: true as const } };
+    }
+
+    const rl = rateLimit(clientKey());
+    if (!rl.ok) {
+      throw new Error(`Too many requests. Try again in ${rl.retryAfterSec}s.`);
+    }
+
+    const { companyWebsite: _hp, packet, ...rest } = data;
+    const packetObj =
+      packet && typeof packet === "object"
+        ? (packet as Record<string, unknown>)
+        : {};
+    const record = {
+      kind: "art-of-production-counsel",
+      event: "counsel_request",
+      event_source: "art_of_production",
+      submittedAt: new Date().toISOString(),
+      ...packetObj,
+      ...rest,
+      phone: rest.phone || "",
+      name: rest.name,
+      email: rest.email,
+      archetype: rest.archetype,
+    };
+
+    const webhook = await deliverWebhook(record);
+    const durable = Boolean(webhook.delivered);
+
+    if (!durable && isProdLike() && process.env.ALLOW_EPHEMERAL_LEADS !== "1") {
+      console.error("[counsel] webhook not delivered", {
+        email: redactEmail(data.email),
+        archetype: data.archetype,
+      });
+      throw new Error(
+        "Could not reach the field team system. Open Contact Us or try again in a moment.",
+      );
+    }
+
+    console.info("[counsel] intent", {
+      email: redactEmail(data.email),
+      archetype: data.archetype,
+      webhookDelivered: webhook.delivered,
+    });
+
+    return {
+      ok: true as const,
+      durable,
+      webhook,
     };
   });

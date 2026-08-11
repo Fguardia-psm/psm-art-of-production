@@ -22,6 +22,7 @@ import { track } from "@/lib/analytics";
 import { NineFacesDeck } from "@/components/nine-faces-deck";
 import { ProductionForecastPanel } from "@/components/production-forecast";
 import { FieldCard } from "@/components/field-card";
+import { CounselHandoff } from "@/components/counsel-handoff";
 import { chapterScorecard } from "@/lib/readiness";
 import { recruiterIntelSummary } from "@/lib/content";
 import { ArrowRight, BookOpen } from "lucide-react";
@@ -149,45 +150,34 @@ function DossierPageInner() {
               </li>
             ))}
           </ul>
-          <div className="mt-5 rounded-lg border border-brass/30 bg-brass/10 px-4 py-3 max-w-xl">
-            <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass-bright">
-              What happens next
-            </p>
-            <ul className="mt-2 space-y-1.5 font-body text-xs text-parchment/70 leading-relaxed">
-              <li>You’ll open the PSM contact page to reach a field leader.</li>
-              <li>
-                Your archetype, readiness score, and 30-day plan are included so
-                the conversation can start with context.
-              </li>
-              <li>A field leader typically follows up within 1–2 business days.</li>
-            </ul>
+          <div className="mt-6">
+            <CounselHandoff
+              tone="ink"
+              source="dossier"
+              archetype={provisionalArchetype}
+              readinessScore={readiness.score}
+              readinessLabel={readiness.label}
+              nineFacesScore={nineFacesScore}
+              chaptersDone={scorecard.done}
+              weakestChapter={scorecard.weakest}
+              strongestChapter={scorecard.strongest}
+              fieldReportsSeen={fieldReportsSeen}
+              chapterResults={chapterResults}
+              leaderCode={state.leaderCode}
+              defaultName={lead?.name}
+              defaultEmail={lead?.email}
+              defaultPhone={lead?.phone}
+            />
           </div>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="primary" size="xl">
-              <a
-                href={counselHref}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() =>
-                  track("counsel_click", {
-                    source: "dossier",
-                    archetype: provisionalArchetype,
-                    readiness: readiness.score,
-                  })
-                }
-              >
-                Request counsel · win the field
-                <ArrowRight className="size-4" />
-              </a>
-            </Button>
+          <div className="mt-4">
             <Button asChild variant="secondary" size="lg">
               <Link to="/field-reports">
-                {fieldReportsSeen ? "Revisit Field Reports" : "Study Field Reports"}
+                {fieldReportsSeen ? "Revisit Field Reports" : "Study Field Reports first"}
               </Link>
             </Button>
           </div>
           <p className="mt-4 rounded-md border border-parchment/15 bg-parchment/[0.05] px-3 py-2 font-ui text-[11px] text-parchment/55 leading-relaxed">
-            <span className="text-brass-bright/90">This link includes: </span>
+            <span className="text-brass-bright/90">What your wholesaler receives: </span>
             {intelLine}
           </p>
           <p className="mt-3 font-ui text-[11px] text-parchment/40">
