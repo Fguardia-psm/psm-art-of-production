@@ -36,7 +36,11 @@ interface CampaignState {
   fieldReportsSeen: boolean;
   /** Stage signal — adjusts mission language only */
   bookStage: BookStage | null;
+  /** Counsel form submitted on this device — post-submit UX across pages */
+  counselRequested: boolean;
+  counselRequestedAt: string | null;
   setBookStage: (stage: BookStage) => void;
+  markCounselRequested: () => void;
   setScoutAnswer: (questionId: string, optionIndex: number) => void;
   completeScout: () => void;
   completeChapter: (slug: ChapterSlug, result: ChapterResult) => void;
@@ -73,6 +77,8 @@ export const EMPTY_CAMPAIGN = {
   leaderCode: null as string | null,
   fieldReportsSeen: false,
   bookStage: null as BookStage | null,
+  counselRequested: false,
+  counselRequestedAt: null as string | null,
 };
 
 export const useCampaignStore = create<CampaignState>()(
@@ -80,6 +86,11 @@ export const useCampaignStore = create<CampaignState>()(
     (set, get) => ({
       ...EMPTY_CAMPAIGN,
       setBookStage: (stage) => set({ bookStage: stage }),
+      markCounselRequested: () =>
+        set({
+          counselRequested: true,
+          counselRequestedAt: new Date().toISOString(),
+        }),
       setScoutAnswer: (questionId, optionIndex) =>
         set((s) => ({
           scoutAnswers: { ...s.scoutAnswers, [questionId]: optionIndex },
@@ -135,6 +146,9 @@ export const useCampaignStore = create<CampaignState>()(
           lead: null,
           leaderCode: null,
           fieldReportsSeen: false,
+          bookStage: null,
+          counselRequested: false,
+          counselRequestedAt: null,
         });
       },
     }),

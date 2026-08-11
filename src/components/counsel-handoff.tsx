@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { submitCounselIntent } from "@/lib/leads";
 import { buildWholesalerPacket } from "@/lib/wholesaler-payload";
@@ -34,11 +35,14 @@ type Props = {
 };
 
 /**
- * Soft counsel gate → Field Leader Brief visible in counsel workflow (webhook/CRM).
+ * Soft counsel gate → Field Leader Brief in counsel workflow.
+ * After submit: persisted post-submit state so dossier/reports/partner stop asking.
  */
 export function CounselHandoff(props: Props) {
   const storeStage = useCampaignStore((s) => s.bookStage);
   const setBookStage = useCampaignStore((s) => s.setBookStage);
+  const counselRequested = useCampaignStore((s) => s.counselRequested);
+  const markCounselRequested = useCampaignStore((s) => s.markCounselRequested);
   const [name, setName] = useState(props.defaultName ?? "");
   const [email, setEmail] = useState(props.defaultEmail ?? "");
   const [phone, setPhone] = useState(
@@ -48,10 +52,10 @@ export function CounselHandoff(props: Props) {
   const [consented, setConsented] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
-  const [contactHref, setContactHref] = useState(PSM_CONTACT_URL);
+  const [justSent, setJustSent] = useState(false);
 
   const ink = props.tone === "ink";
+  const done = counselRequested || justSent;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -137,21 +141,8 @@ export function CounselHandoff(props: Props) {
         webhook: true,
       });
 
-      const href = fieldLeaderUrl({
-        archetype: props.archetype,
-        name: name.trim().split(" ")[0],
-        readiness: props.readinessScore,
-        readinessLabel: props.readinessLabel,
-        nineFacesScore: props.nineFacesScore,
-        chaptersDone: props.chaptersDone,
-        weakestChapter: props.weakestChapter,
-        strongestChapter: props.strongestChapter,
-        fieldReportsSeen: props.fieldReportsSeen,
-        mission: packet.mission_30,
-        utmContent: `${props.source}-counsel`,
-      });
-      setContactHref(href);
-      setSent(true);
+      markCounselRequested();
+      setJustSent(true);
     } catch (err) {
       setError(
         err instanceof Error
@@ -168,7 +159,7 @@ export function CounselHandoff(props: Props) {
     ? "w-full rounded-md border border-parchment/20 bg-parchment/5 px-3 py-2.5 font-body text-sm text-parchment placeholder:text-parchment/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/60"
     : "w-full rounded-md border border-charcoal/15 bg-parchment px-3 py-2.5 font-body text-sm text-charcoal placeholder:text-charcoal-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brass/50";
 
-  if (sent) {
+  if (done) {
     return (
       <div
         className={
@@ -182,11 +173,20 @@ export function CounselHandoff(props: Props) {
           <p
             className={
               ink
-                ? "font-display text-lg text-parchment"
-                : "font-display text-lg text-charcoal"
+                ? "font-ui text-[10px] uppercase tracking-[0.2em] text-brass-bright"
+                : "font-ui text-[10px] uppercase tracking-[0.2em] text-brass"
             }
           >
-            Request received
+            Counsel requested
+          </p>
+          <p
+            className={
+              ink
+                ? "mt-2 font-display text-lg text-parchment"
+                : "mt-2 font-display text-lg text-charcoal"
+            }
+          >
+            Your field brief is ready for the follow-up conversation
           </p>
           <p
             className={
@@ -195,17 +195,34 @@ export function CounselHandoff(props: Props) {
                 : "mt-2 font-body text-sm text-charcoal-muted leading-relaxed"
             }
           >
-            A field leader has your reading: archetype, field, exposed flank,
-            and next mission — so the conversation starts warm. Expect outreach
-            within 1–2 business days.
+            Your Field Leader Brief has been sent to PSM so the conversation can
+            start with context. Bring your Field Seal and 30-day plan. Expect
+            outreach within 1–2 business days.
           </p>
         </div>
-        <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
-          <a href={contactHref} target="_blank" rel="noreferrer">
-            Add more on Contact Us
-            <ExternalLink className="size-4" />
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
+            <Link to="/dossier">View my dossier</Link>
+          </Button>
+          <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
+            <a href="/dossier#field-seal">Print Field Seal</a>
+          </Button>
+          <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
+            <Link to="/field-reports">Review Field Reports</Link>
+          </Button>
+        </div>
+        <p className={`font-ui text-[11px] leading-relaxed ${label}`}>
+          Need to add something?{" "}
+          <a
+            href={PSM_CONTACT_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2"
+          >
+            Contact Us
+            <ExternalLink className="ml-1 inline size-3 align-text-bottom" />
           </a>
-        </Button>
+        </p>
       </div>
     );
   }
@@ -317,8 +334,8 @@ export function CounselHandoff(props: Props) {
               : "font-body text-xs text-charcoal-muted leading-relaxed"
           }
         >
-          I agree that PSM Brokerage may contact me about training, market support, and
-          partnership opportunities.{" "}
+          I agree that PSM Brokerage may contact me about training, market
+          support, and partnership opportunities.{" "}
           <a
             href="https://www.psmbrokerage.com/privacy-policy"
             target="_blank"
