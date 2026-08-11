@@ -84,7 +84,7 @@ function PartnerPage() {
               key={p.stat}
               className="rounded-lg border border-parchment/10 bg-parchment/[0.04] px-4 py-4"
             >
-              <p className="font-display text-3xl text-brass-bright">{p.stat}</p>
+              <p className="font-display text-xl sm:text-2xl text-brass-bright leading-snug">{p.stat}</p>
               <p className="mt-2 font-body text-xs text-parchment/55 leading-relaxed">
                 {p.label}
               </p>
@@ -135,10 +135,10 @@ function PartnerPage() {
 
         <div className="rounded-xl border border-brass/30 bg-brass/10 px-5 py-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            The war council
+            Field counsel
           </p>
           <h2 className="mt-2 font-display text-2xl text-parchment">
-            Request counsel · win the field
+            Request counsel · bring my field plan
           </h2>
           <p className="mt-2 font-body text-sm text-parchment/60 leading-relaxed mb-5">
             Bring your archetype and what you are building. We map contracts,
@@ -164,7 +164,7 @@ function PartnerPage() {
           ) : (
             <Button asChild variant="primary" size="xl">
               <a href={leaderHref} target="_blank" rel="noreferrer">
-                Request counsel · win the field
+                Request counsel · bring my field plan
                 <ArrowRight className="size-4" />
               </a>
             </Button>

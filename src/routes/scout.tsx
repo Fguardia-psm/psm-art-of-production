@@ -204,7 +204,7 @@ function ScoutPage() {
           How do you win?
         </h1>
         <p className="mt-2 font-body text-charcoal-muted leading-relaxed max-w-xl">
-          Six questions. No traps. We find how you tend to win on the field —
+          Six questions. No traps. We find how you tend to win in the field —
           then give you a next mission, not a label to wear.
         </p>
 
@@ -244,7 +244,7 @@ function ScoutPage() {
               disabled={scoutAnswers[q?.id ?? ""] === undefined}
               onClick={next}
             >
-              {step < SCOUT_QUESTIONS.length - 1 ? "Next" : "See your reading"}
+              {step < SCOUT_QUESTIONS.length - 1 ? "Continue" : "See your reading"}
               <ArrowRight className="size-4" />
             </Button>
           </div>

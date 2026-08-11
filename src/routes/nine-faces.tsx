@@ -114,7 +114,7 @@ function NineFacesPageInner() {
           </p>
           <p className="mt-6 font-body text-charcoal-muted leading-relaxed">
             The agent who speaks one language wins one type of client. The agent
-            who speaks nine languages wins all.
+            who reads the person in the chair wins trust faster.
           </p>
           <div className="mt-6 text-left">
             <MarkWell>
@@ -156,7 +156,7 @@ function NineFacesPageInner() {
 
         <QuotePlate
           quote="Each client type demands its own approach."
-          sub="The agent who speaks nine languages wins all."
+          sub="The agent who reads the person in the chair wins trust faster."
         />
 
         <section className="rounded-xl border border-charcoal/10 bg-parchment/80 p-5 sm:p-6 shadow-[var(--shadow-card)]">

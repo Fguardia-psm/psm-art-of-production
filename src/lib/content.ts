@@ -300,7 +300,7 @@ strengths: [
     blindSpot:
       "Flame without craft burns cold when the conversation begins. Sharpen the appointment itself.",
     psmMove:
-      "Ignite with PSM’s Marketing Hub, customized materials, and exclusive lead programs.",
+      "Ignite with PSM’s Marketing Hub, customized materials, and lead programs and field support.",
     seal: "Marketing ignites the field before the first call is made.",
     mondayScript:
       "Ship one piece of value content and one community touch. Measure replies, not vanity.",
@@ -317,11 +317,11 @@ export const SCOUT_QUESTIONS: ScoutQuestion[] = [
         scores: { cartographer: 3, quartermaster: 1 },
       },
       {
-        label: "How I’ll listen so the client never feels sold",
+        label: "How I’ll listen so the client feels guided, not sold",
         scores: { illuminator: 3 },
       },
       {
-        label: "CRM clean-up, templates, and a fixed daily schedule",
+        label: "CRM cleanup, templates, and a fixed daily rhythm",
         scores: { quartermaster: 3, cartographer: 1 },
       },
       {
@@ -521,7 +521,7 @@ export const CHAPTERS: Chapter[] = [
     title: "Win Without Conflict",
     spacedTitle: "W i n  W i t h o u t  C o n f l i c t",
     quote: "The supreme skill is to win the client without conflict.",
-    quoteSub: "Thus, the greatest agents do not sell — they illuminate.",
+    quoteSub: "The greatest agents do not force. They make the right path clear.",
     situation:
       "They’ve been burned. Push and the table freezes. Force feels like a sale. Understanding feels like help.",
     principle:
@@ -532,7 +532,7 @@ export const CHAPTERS: Chapter[] = [
       "Master’s note: Silence after a hard truth is not failure — it is processing. Do not fill every pause with product.",
     interaction: {
       type: "objection",
-      prompt: "Dialogue at the table. Tension rises if you force. Choose the path that forges trust.",
+      prompt: "Dialogue at the table. Choose all responses that lower pressure and keep trust alive.",
       clientLine:
         "“I’ve been burned by agents before. I’m not signing anything today.”",
       options: [
@@ -591,7 +591,7 @@ export const CHAPTERS: Chapter[] = [
       "Master’s note: Employer groups and faith communities can be fertile ground too — if you enter as a servant of the community, not a pitch.",
     interaction: {
       type: "ground",
-      prompt: "Unfurl the parchment map. Plant banners only on fertile ground.",
+      prompt: "Choose the places where trust can already begin. Avoid ground that burns time without warming the field.",
       need: 3,
       grounds: [
         {
@@ -650,7 +650,7 @@ export const CHAPTERS: Chapter[] = [
       "Master’s note: Rural producers may reverse midday/afternoon. The principle is formation — not a universal clock. Protect deep work; batch the rest.",
     interaction: {
       type: "day-formation",
-      prompt: "Place each duty on its proper stone across the river of the day.",
+      prompt: "Place each duty into the part of the day where it creates the most control.",
       fieldNote:
         "If your market demands different hours, keep the principle: one formation, not task-hopping.",
       slots: [
@@ -678,16 +678,16 @@ export const CHAPTERS: Chapter[] = [
     situation:
       "If nobody knows you before the call, every appointment starts cold. Marketing is not noise — it is warmth before the handshake.",
     principle:
-      "Tend five fires: digital, mail, community, brand, follow-up. Track cost → conversations → enrollments. Fire without measure is vanity.",
+      "Tend one or two fires well: digital, mail, community, brand, follow-up. Track cost → conversations → enrollments. Fire without measure is vanity.",
     markWell:
-      "Where no fire is lit, cold resistance reigns. Where fire burns, the field yields itself. Intelligence is armor, compass, and supremacy.",
+      "Where no fire is lit, cold resistance reigns. Where fire burns, the field yields itself. Intelligence is armor, compass, and timing.",
     fieldNote:
       "Master’s note: Fire without tracking is vanity. Pair every channel with a simple measure: cost, conversations, enrollments.",
     interaction: {
       type: "fires",
       prompt:
-        "Your book is cold until people know you. Light every channel you will use this season — digital, mail, community, brand, follow-up.",
-      need: 4,
+        "Choose at least two fires you will actually tend this season — not five you will forget.",
+      need: 2,
       fires: [
         {
           id: "digital",
@@ -736,7 +736,7 @@ export const CHAPTERS: Chapter[] = [
     optional: true,
     interaction: {
       type: "reflect",
-      prompt: "What foundations must stand before you summon numbers?",
+      prompt: "What must be true before you add more agents? Choose the foundations that scale without creating chaos.",
       need: 3,
       options: [
         {
@@ -772,13 +772,13 @@ export const CHAPTERS: Chapter[] = [
     number: "VII",
     title: "The Use of Intelligence",
     spacedTitle: "T h e  U s e  o f  I n t e l l i g e n c e",
-    quote: "He who knows the market before others acts without hesitation.",
+    quote: "He who knows the market before others moves without hesitation.",
     quoteSub:
       "The greatest agents appear lucky. What they possess is information.",
     situation:
       "To move without intelligence is to stumble in darkness. Patterns rise from CRM history, compliance bulletins, carrier shifts, and client feedback.",
     principle:
-      "Study your own history — which words persuade, which errors repeat, which clients return. Watch carriers for reasons, not only changes. Intelligence is armor, compass, and supremacy.",
+      "Study your own history — which words persuade, which errors repeat, which clients return. Watch carriers for reasons, not only changes. Intelligence is armor, compass, and timing.",
     markWell:
       "With intelligence comes foresight. With foresight comes confidence. With confidence comes decisive action.",
     fieldNote:
@@ -823,7 +823,7 @@ export const CLIENT_FACES: ClientFace[] = [
   {
     id: "overwhelmed",
     name: "The Overwhelmed",
-    cue: "Papers everywhere. Too many plan names. Eyes dart.",
+    cue: "Papers everywhere. Too many plan names. The table is crowded.",
     approach: "Become calm. Slow the pace. One clear path.",
     wrong: "Flood them with more options and jargon.",
     right: "Simplify. One decision at a time. Steady voice.",
@@ -992,7 +992,7 @@ export const FIELD_REPORTS: FieldReport[] = [
     switchReason:
       "Needed an FMO that matched craft — not cheerleading. Wanted fire (marketing) and intelligence without babysitting.",
     leverage:
-      "Marketing Hub materials, exclusive lead programs, and field mentorship that respects a producer who already knows how to close.",
+      "Marketing Hub materials, lead programs and field support, and field mentorship that respects a producer who already knows how to close.",
     result:
       "More warm ground before first call. Less improvisation on carrier change weeks. Same craft — higher throughput.",
     economics: [
@@ -1220,17 +1220,16 @@ export function recruiterIntelSummary(intel: RecruiterIntel): string {
 
 export const PARTNER_PROOF = [
   {
-    stat: "63%",
-    label:
-      "of agents report better client acquisition & retention via exclusive lead vendors",
+    stat: "Warmer ground",
+    label: "Market support and field programs that open conversations before the sit",
   },
   {
-    stat: "82%",
-    label: "feel more informed on changes and regulations",
+    stat: "Clearer counsel",
+    label: "Compliance-first guidance so production moves without guesswork",
   },
   {
-    stat: "76%",
-    label: "gain productivity on back-office tasks",
+    stat: "More capacity",
+    label: "Systems and back-office leverage that free hours for the chair",
   },
 ];
 
@@ -1303,6 +1302,89 @@ export function scoreArchetype(
 export function getChapter(slug: string): Chapter | undefined {
   return CHAPTERS.find((c) => c.slug === slug);
 }
+
+
+/** Per-chapter archetype watchpoint — same path, different mirror (not a new route). */
+export const CHAPTER_WATCHPOINTS: Partial<
+  Record<ChapterSlug, Partial<Record<ArchetypeId, string>>>
+> = {
+  "quiet-months": {
+    "fire-bearer":
+      "Do not mistake attention for preparation. Your fire works best when the calendar is already clean.",
+    cartographer:
+      "The map is not the appointment. Book review sits before you polish one more list.",
+    illuminator:
+      "Depth needs a calendar. Protect sits now — not only after the season opens.",
+    quartermaster:
+      "Order the quiet months into a weekly rhythm, then add one outbound channel.",
+    "field-marshal":
+      "Structure the off-season for the team — and keep your own production block.",
+  },
+  "without-conflict": {
+    "fire-bearer":
+      "Warmth opens the door. Do not rush from attention into pressure.",
+    cartographer:
+      "You already know the product. Lead with the person in the chair.",
+    illuminator:
+      "You win without force — still set a next step with a date on the calendar.",
+    quartermaster:
+      "Log the client type same day. Process preserves what empathy opened.",
+    "field-marshal":
+      "Coach this open on the huddle. Model the soft path with a firm next step.",
+  },
+  "choose-ground": {
+    "fire-bearer":
+      "Light fewer places better. One warm channel beats noise across five.",
+    cartographer:
+      "Pick three fertile territories. Leave barren ground off the map.",
+    illuminator:
+      "Warm ground multiplies listening. Cold lists waste your best skill.",
+    quartermaster:
+      "One channel the system can support weekly — not a scatter of experiments.",
+    "field-marshal":
+      "Claim ground the team can hold. Do not expand where culture cannot follow.",
+  },
+  "command-energy": {
+    "fire-bearer":
+      "Protect the hours that turn replies into appointments.",
+    cartographer:
+      "Formation beats endless prep. Midday is for sits, not spreadsheets.",
+    illuminator:
+      "Guard appointment blocks like a promise — not a hope.",
+    quartermaster:
+      "This is your craft. Run the day plan five days; cut thrashing.",
+    "field-marshal":
+      "Personal production hours stay on the board. Leadership does not cancel them.",
+  },
+  "light-field": {
+    "fire-bearer":
+      "Choose one primary fire and one support channel. Measure replies and sits, not likes.",
+    cartographer:
+      "Visibility is not vanity when it fills the calendar you already planned.",
+    illuminator:
+      "Fire without sits is noise. Pair every channel with a booked next step.",
+    quartermaster:
+      "One channel logged and measured — then let the system run it.",
+    "field-marshal":
+      "Team fire needs a conversion path. Coach reply → sit, not content volume.",
+  },
+  "agency-march": {
+    "field-marshal":
+      "Foundations before headcount. One scoreboard. One standard you will not bend.",
+    cartographer:
+      "Map the agency systems before you recruit into chaos.",
+    "fire-bearer":
+      "Culture and fire scale only when training and SOPs stand first.",
+  },
+  intelligence: {
+    cartographer:
+      "Intelligence is timing. Know the change — then book the review.",
+    "fire-bearer":
+      "Market signal without a sit is still cold. Act on what you learn this week.",
+    illuminator:
+      "Client feedback after appointments is high-grade intel — capture it.",
+  },
+};
 
 export const REQUIRED_CHAPTERS = CHAPTERS.filter((c) => !c.optional);
 export const OPTIONAL_CHAPTERS = CHAPTERS.filter((c) => c.optional);

@@ -117,7 +117,7 @@ function MapPageInner() {
                       </span>
                       <div>
                         <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
-                          Chapter {chapter.number} · fog of war
+                          Chapter {chapter.number} · locked
                         </p>
                         <p className="font-display text-xl text-charcoal">
                           {chapter.title}
@@ -173,7 +173,7 @@ function MapPageInner() {
                   </span>
                   <div>
                     <p className="font-ui text-[10px] tracking-[0.2em] text-charcoal-soft">
-                      Master scene · fog of war
+                      Master scene · opens next
                     </p>
                     <p className="font-display text-xl text-charcoal">
                       The Nine Faces
@@ -226,8 +226,8 @@ function MapPageInner() {
           <div className="mt-10">
             <SectionKicker>Deep campaigns · optional</SectionKicker>
             <p className="mt-2 font-body text-sm text-charcoal-muted max-w-lg">
-              High-protein for Field Marshals and Cartographers. Not required
-              for the kit.
+              Optional deep campaigns for builders and strategic planners.
+              Not required for your field kit.
             </p>
             <ol className="mt-4 space-y-3">
               {OPTIONAL_CHAPTERS.map((chapter) => {

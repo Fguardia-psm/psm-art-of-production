@@ -96,13 +96,14 @@ function LandingPage() {
 
           <blockquote className="mt-10 border-l border-brass/50 pl-5 animate-fade-up">
             <p className="font-display text-xl text-parchment/90 italic sm:text-2xl">
-              “To know your production, know your preparation.”
+              “Production is not luck. It is preparation made visible.”
             </p>
           </blockquote>
 
           {inProgress ? (
             <p className="mt-6 font-ui text-xs text-brass-bright/80 tracking-wide">
-              Campaign in progress on this device — resume or start over.
+              Your campaign is saved on this device. Resume your dossier or
+              start over anytime.
             </p>
           ) : null}
 
@@ -121,22 +122,25 @@ function LandingPage() {
               </Link>
             </Button>
             {inProgress ? (
-              <StartOverControl variant="landing" />
-            ) : (
               <Button asChild variant="secondary" size="lg">
                 <a href={PSM_CONTACT_URL} target="_blank" rel="noreferrer">
                   Request counsel
                 </a>
               </Button>
+            ) : (
+              <Button asChild variant="secondary" size="lg">
+                <a href={PSM_CONTACT_URL} target="_blank" rel="noreferrer">
+                  Already know you want counsel?
+                </a>
+              </Button>
             )}
           </div>
           {inProgress ? (
-            <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="text-parchment/55">
-                <a href={PSM_CONTACT_URL} target="_blank" rel="noreferrer">
-                  Request counsel
-                </a>
-              </Button>
+            <div className="mt-4">
+              <StartOverControl
+                variant="header"
+                className="text-parchment/40 hover:text-parchment/70"
+              />
             </div>
           ) : null}
 

@@ -67,7 +67,7 @@ function UnlockPageInner() {
         <p className="mt-3 font-body text-charcoal-muted leading-relaxed">
           You finished the campaign. Open your dossier for the full reading —
           then talk with PSM about ground, systems, and fire if you want more
-          than another pep talk.
+          than another generic pitch.
         </p>
 
         {archPreview ? (
@@ -82,7 +82,7 @@ function UnlockPageInner() {
               {archPreview.epithet}
             </p>
             <p className="mt-3 font-ui text-xs text-charcoal-soft tabular-nums">
-              Readiness {readiness.score}/100 · {readiness.label}
+              {readiness.label}
             </p>
           </div>
         ) : null}
@@ -99,30 +99,15 @@ function UnlockPageInner() {
             <ArrowRight className="size-4" />
           </Button>
           <p className="text-center font-body text-xs text-charcoal-soft leading-relaxed">
-            Archetype, Monday move, Nine Faces, and the path to the council —
+            Archetype, Monday move, Nine Faces, and the path to a field leader —
             sealed on this device.
           </p>
         </div>
 
-        <div className="mt-8 rounded-xl border border-charcoal/10 bg-ink px-5 py-6 text-parchment">
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Next
-          </p>
-          <p className="mt-3 font-display text-xl leading-snug">
-            Open your dossier for the Field Seal and 30-day plan — then request
-            counsel with your full reading attached.
-          </p>
-          <Button
-            type="button"
-            variant="primary"
-            size="lg"
-            className="mt-5 w-full"
-            onClick={enterDossier}
-          >
-            Enter dossier · then request counsel
-            <ArrowRight className="size-4" />
-          </Button>
-        </div>
+        <p className="mt-6 text-center font-body text-sm text-charcoal-muted leading-relaxed max-w-md mx-auto">
+          Inside: your Field Seal, 30-day mission, Field Reports, and counsel
+          request — so a field leader starts with context, not a cold pitch.
+        </p>
 
         <p className="mt-8 text-center">
           <Link

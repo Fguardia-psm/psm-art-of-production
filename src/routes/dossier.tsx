@@ -106,8 +106,28 @@ function DossierPageInner() {
           </p>
         </div>
 
+        <nav
+          className="flex flex-wrap gap-2 sm:hidden sticky top-12 z-20 -mx-1 px-1 py-2 bg-[var(--color-parchment)]/95 backdrop-blur-sm border-b border-charcoal/5"
+          aria-label="Dossier sections"
+        >
+          {[
+            ["#field-reading", "Reading"],
+            ["#field-seal", "Seal"],
+            ["#field-plan", "Plan"],
+            ["#field-counsel", "Counsel"],
+          ].map(([href, label]) => (
+            <a
+              key={href}
+              href={href}
+              className="rounded-full border border-charcoal/12 bg-parchment px-3 py-1.5 font-ui text-[10px] uppercase tracking-[0.14em] text-charcoal-soft"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+
         {/* Archetype "horoscope" — identity magic first */}
-        <section className="ink-wash rounded-xl border border-brass/35 px-6 py-10 text-center shadow-[var(--shadow-plate)] sm:px-10">
+        <section id="field-reading" className="ink-wash rounded-xl border border-brass/35 px-6 py-10 text-center shadow-[var(--shadow-plate)] sm:px-10">
           <p className="font-ui text-[11px] uppercase tracking-[0.28em] text-brass-bright/90">
             Your field reading
           </p>
@@ -189,6 +209,7 @@ function DossierPageInner() {
           </div>
         </div>
 
+        <div id="field-seal">
         <FieldCard
           arch={arch}
           readinessScore={readiness.score}
@@ -205,10 +226,12 @@ function DossierPageInner() {
           score={readiness.score}
           label={readiness.label}
           parts={readiness.parts}
+          band={readiness.band}
         />
+        </div>
 
-        {/* War council CTA — primary conversion */}
-        <section className="ink-wash rounded-xl border border-brass/40 px-6 py-8 shadow-[var(--shadow-plate)] sm:px-8">
+        {/* Counsel — primary conversion */}
+        <section id="field-counsel" className="ink-wash rounded-xl border border-brass/40 px-6 py-8 shadow-[var(--shadow-plate)] sm:px-8">
           <p className="font-ui text-[10px] uppercase tracking-[0.28em] text-brass-bright/90">
             The art of winning · not alone
           </p>
@@ -218,7 +241,7 @@ function DossierPageInner() {
           </h2>
           <p className="mt-4 font-body text-sm text-parchment/65 leading-relaxed max-w-xl">
             Same book. Better ground. Cleaner systems. That is the economic
-            case — not a pep talk. Bring your reading (
+            case — not a generic pitch. Bring your reading (
             <span className="text-brass-bright/90">{arch.name}</span>
             ) and talk to a field leader about the next season.
           </p>
@@ -321,7 +344,7 @@ function DossierPageInner() {
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button asChild variant="paper" size="lg">
             <a href={counselHref} target="_blank" rel="noreferrer">
-              Request counsel · win the field
+              Request counsel · bring my field plan
               <ArrowRight className="size-4" />
             </a>
           </Button>

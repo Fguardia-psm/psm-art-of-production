@@ -317,8 +317,8 @@ export function CounselHandoff(props: Props) {
               : "font-body text-xs text-charcoal-muted leading-relaxed"
           }
         >
-          I agree that PSM Brokerage may contact me about training, markets, and
-          partnership.{" "}
+          I agree that PSM Brokerage may contact me about training, market support, and
+          partnership opportunities.{" "}
           <a
             href="https://www.psmbrokerage.com/privacy-policy"
             target="_blank"
@@ -353,7 +353,7 @@ export function CounselHandoff(props: Props) {
           </>
         ) : (
           <>
-            Request counsel · win the field
+            Request counsel · bring my field plan
             <ArrowRight className="size-4" />
           </>
         )}

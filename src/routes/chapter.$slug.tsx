@@ -17,6 +17,7 @@ import { ChapterInteractionPanel } from "@/components/chapter-interactions";
 import { Button } from "@/components/ui/button";
 import {
   ARCHETYPES,
+  CHAPTER_WATCHPOINTS,
   REQUIRED_CHAPTERS,
   getChapter,
   type ChapterResult,
@@ -108,10 +109,12 @@ function ChapterPageInner() {
         {archTip ? (
           <aside className="rounded-lg border border-brass/25 bg-brass/8 px-4 py-3">
             <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
-              As {archTip.name} · watch for this
+              {archTip.name} · watchpoint
             </p>
             <p className="mt-1 font-body text-sm text-charcoal leading-relaxed">
-              {archTip.seasonFocus}
+              {CHAPTER_WATCHPOINTS[chapter.slug as ChapterSlug]?.[
+                provisionalArchetype!
+              ] ?? archTip.seasonFocus}
             </p>
           </aside>
         ) : null}

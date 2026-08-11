@@ -378,6 +378,9 @@ function GroundSelect({
       <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
         Plant banners · avoid barren tiles
       </p>
+      <p className="font-body text-xs text-charcoal-muted">
+        Choose warm ground only — plant banners where trust can begin.
+      </p>
       <div className="parchment-map book-chrome grid grid-cols-2 gap-2 rounded-xl p-3 sm:p-4 sm:grid-cols-3">
         {interaction.grounds.map((g) => {
           const on = selected.includes(g.id);
@@ -404,7 +407,7 @@ function GroundSelect({
                 </span>
               ) : (
                 <span className="mt-2 block font-ui text-[10px] text-charcoal-soft">
-                  open ground
+                  {g.fertile ? "warm ground" : g.id === "obscurity" ? "no ground" : "barren ground"}
                 </span>
               )}
               {done && on ? (
@@ -673,7 +676,7 @@ function FiresTend({
       <p className="font-ui text-xs text-charcoal leading-relaxed">
         <span className="font-medium">What this teaches:</span> cold books stay
         cold. Tap every channel you will actually use this season. Aim for at
-        least {interaction.need} fires — then measure replies and sits, not
+        least {interaction.need} fires you will actually tend — measure replies and sits, not
         likes.
       </p>
       <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
@@ -727,13 +730,13 @@ function FiresTend({
         <Button
           variant="ember"
           size="lg"
-          disabled={lit.length === 0}
+          disabled={lit.length < interaction.need}
           onClick={commit}
         >
           {lit.length === 0
-            ? "Light at least one fire"
+            ? `Light at least ${interaction.need} fire${interaction.need === 1 ? "" : "s"}`
             : lit.length < interaction.need
-              ? `Tend the blaze (${lit.length}/${interaction.need} recommended)`
+              ? `Choose ${interaction.need - lit.length} more (${lit.length}/${interaction.need})`
               : "Tend the blaze · seal fire plan"}
         </Button>
       ) : (
@@ -855,7 +858,7 @@ function ReflectPick({
             result === "victory"
               ? "Foundations chosen with care. The march can begin without collapse."
               : result === "field-note"
-                ? "Some foundations stand — reinforce the rest before you summon numbers or move in darkness."
+                ? "Some foundations stand — reinforce the rest before you add agents or expand the map."
                 : "Ambition without the right foundations becomes chaos. Choose again with discipline."
           }
         />

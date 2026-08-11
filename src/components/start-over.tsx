@@ -11,7 +11,7 @@ import { RotateCcw } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 const CONFIRM_COPY =
-  "Start over from the beginning?\n\nThis clears your progress on this device only: scout answers, seals, Nine Faces, and dossier.\n\nThis cannot be undone.";
+  "Start over? This clears your saved campaign on this device.\n\nSeals, scout answers, Nine Faces, and dossier progress will be wiped.\n\nThis cannot be undone.";
 
 type Variant = "header" | "inline" | "landing" | "danger";
 

@@ -76,7 +76,7 @@ export function FieldCard({
                 `Field Seal · The Art of Production`,
                 arch.name,
                 arch.epithet,
-                `Readiness ${readinessScore}/100`,
+                `Campaign: ${readinessLabel}`,
                 `Nine Faces ${nineFacesScore}/9`,
                 `30-day plan: ${forecast.mission30}`,
                 `Monday: ${arch.mondayScript}`,

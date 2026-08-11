@@ -126,15 +126,12 @@ function FieldReportsPageInner() {
         </div>
 
         <QuotePlate
-          quote="Changing FMOs is a major decision. Proof earns the conversation — the recruiter closes."
+          quote="Changing FMOs is a major decision. Proof earns the conversation. Fit earns the move."
           sub="Your job here is curiosity with evidence, not a signature today."
         />
 
         <div className="flex flex-wrap gap-2">
           {ranked.map((r) => {
-            const matched =
-              provisionalArchetype &&
-              r.forArchetypes.includes(provisionalArchetype);
             const isRead = read.includes(r.id);
             return (
               <button
@@ -153,7 +150,6 @@ function FieldReportsPageInner() {
                 ) : null}
                 <span>{r.agentName}</span>
                 <span className="opacity-60">· {r.codename.replace("The ", "")}</span>
-                {matched ? <span className="opacity-70">· match</span> : null}
               </button>
             );
           })}
@@ -237,7 +233,7 @@ function FieldReportsPageInner() {
           </p>
           <h3 className="mt-2 font-display text-2xl text-charcoal">
             {allRead
-              ? "Evidence reviewed. Request counsel · win the field."
+              ? "Evidence reviewed. Request counsel · bring my field plan."
               : "Review all three reports — then take the call."}
           </h3>
           <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
@@ -264,14 +260,14 @@ function FieldReportsPageInner() {
             ) : (
               <Button asChild variant="paper" size="lg">
                 <a href={leaderHref} target="_blank" rel="noreferrer">
-                  Request counsel · win the field
+                  Request counsel · bring my field plan
                   <ArrowRight className="size-4" />
                 </a>
               </Button>
             )}
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Button asChild variant="outline" size="lg">
-                <Link to="/partner">Enter the war council</Link>
+                <Link to="/partner">Request field counsel</Link>
               </Button>
               <Button asChild variant="ghost" size="lg">
                 <Link to="/dossier">Back to dossier</Link>

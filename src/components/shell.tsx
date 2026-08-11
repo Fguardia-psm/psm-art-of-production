@@ -100,12 +100,18 @@ export function CampaignHeader({
             {state.scoutComplete ? (
               <p
                 className={cn(
-                  "font-ui text-[10px] tabular-nums",
+                  "font-ui text-[10px]",
                   ink ? "text-brass-bright/70" : "text-brass",
                 )}
                 title={readiness.label}
               >
-                Ready {readiness.score}
+                {readiness.band === "campaign-sealed"
+                  ? "Campaign sealed"
+                  : readiness.band === "field-ready"
+                    ? "Field-ready"
+                    : readiness.band === "ready"
+                      ? "Rising"
+                      : "Forming"}
               </p>
             ) : null}
             {canReset ? (
@@ -175,8 +181,8 @@ export function CampaignShell({
             tone === "ink" ? "text-parchment/35" : "text-charcoal-soft",
           )}
         >
-          Your progress saves on this device only. Start over anytime.
-          Requesting counsel opens the PSM contact page.
+          Your progress saves on this device only. Requesting counsel sends
+          your field brief to PSM so the follow-up starts with context.
         </p>
         <p
           className={cn(
@@ -286,31 +292,40 @@ export function ReadinessPlate({
   score,
   label,
   parts,
+  band,
 }: {
   score: number;
   label: string;
   parts: { label: string; pts: number; max: number }[];
+  band?: string;
 }) {
+  const status =
+    band === "campaign-sealed"
+      ? "Campaign sealed"
+      : band === "field-ready"
+        ? "Field-ready"
+        : band === "ready"
+          ? "Rising"
+          : "Forming";
   return (
     <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
       <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-        Campaign readiness · how prepared you are to talk to the council
+        Campaign state · before talking with a field leader
       </p>
-      <p className="mt-2 font-display text-4xl text-charcoal tabular-nums">
-        {score}
-        <span className="text-lg text-charcoal-soft"> / 100</span>
-      </p>
+      <p className="mt-2 font-display text-3xl text-charcoal">{status}</p>
       <p className="mt-1 font-body text-sm text-charcoal-muted">{label}</p>
       <ul className="mt-4 space-y-2">
         {parts.map((p) => (
           <li key={p.label} className="flex items-center justify-between gap-3">
             <span className="font-ui text-xs text-charcoal-soft">{p.label}</span>
-            <span className="font-ui text-xs tabular-nums text-charcoal">
-              {p.pts}/{p.max}
+            <span className="font-ui text-xs text-charcoal">
+              {p.pts >= p.max ? "Complete" : p.pts > 0 ? "In progress" : "Not started"}
             </span>
           </li>
         ))}
       </ul>
+      {/* score kept off agent ritual — internal only via Field Leader Brief */}
+      <span className="sr-only">Internal readiness score {score}</span>
     </div>
   );
 }
