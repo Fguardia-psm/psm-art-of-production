@@ -296,21 +296,81 @@
   }
 }
 
-/* Field card print — clean one-pager */
+/* Field card — decorative corners + seal */
+.field-card-corner {
+  pointer-events: none;
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: color-mix(in oklab, var(--color-brass) 65%, transparent);
+  z-index: 2;
+}
+.field-card-corner-tl {
+  top: 12px;
+  left: 12px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.field-card-corner-tr {
+  top: 12px;
+  right: 12px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+.field-card-corner-bl {
+  bottom: 12px;
+  left: 12px;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+.field-card-corner-br {
+  bottom: 12px;
+  right: 12px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+.field-card-seal {
+  transform: rotate(-6deg);
+}
+
+/* Field card print — one letter-size page */
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    size: letter;
+    margin: 0.45in;
   }
+
+  html,
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
   #field-card,
   #field-card * {
-    visibility: visible;
+    visibility: visible !important;
   }
+
   #field-card {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    border: none !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print\:hidden {
+    display: none !important;
+    visibility: hidden !important;
   }
 }

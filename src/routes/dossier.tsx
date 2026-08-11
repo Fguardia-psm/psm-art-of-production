@@ -101,6 +101,8 @@ function DossierPageInner() {
           readinessLabel={readiness.label}
           nineFacesScore={nineFacesScore}
           agentName={lead?.name}
+          weakestChapter={scorecard.weakest}
+          strongestChapter={scorecard.strongest}
         />
 
         {/* War council CTA — primary conversion */}
