@@ -7,7 +7,7 @@ import {
   useCampaignStore,
 } from "@/lib/campaign-store";
 import { useHydrated } from "@/lib/use-hydrated";
-import { PSM_PARTNER_URL } from "@/lib/content";
+import { PSM_CONTACT_URL } from "@/lib/content";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -65,12 +65,12 @@ function LandingPage() {
               />
             ) : null}
             <a
-              href={PSM_PARTNER_URL}
+              href={PSM_CONTACT_URL}
               target="_blank"
               rel="noreferrer"
               className="font-ui text-[11px] uppercase tracking-[0.18em] text-parchment/50 hover:text-parchment/80 transition-colors"
             >
-              Partner with PSM
+              Request counsel
             </a>
           </div>
         </div>
@@ -117,8 +117,8 @@ function LandingPage() {
               <StartOverControl variant="landing" />
             ) : (
               <Button asChild variant="secondary" size="lg">
-                <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
-                  Partner with PSM
+                <a href={PSM_CONTACT_URL} target="_blank" rel="noreferrer">
+                  Request counsel
                 </a>
               </Button>
             )}
@@ -126,8 +126,8 @@ function LandingPage() {
           {inProgress ? (
             <div className="mt-3">
               <Button asChild variant="ghost" size="sm" className="text-parchment/55">
-                <a href={PSM_PARTNER_URL} target="_blank" rel="noreferrer">
-                  Partner with PSM
+                <a href={PSM_CONTACT_URL} target="_blank" rel="noreferrer">
+                  Request counsel
                 </a>
               </Button>
             </div>

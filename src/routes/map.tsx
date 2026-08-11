@@ -257,14 +257,14 @@ function MapPageInner() {
           ) : state.unlocked ? (
             <Button asChild variant="paper" size="lg">
               <Link to="/dossier">
-                Open your dossier
+                Enter your field dossier
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
           ) : (
             <Button asChild variant="paper" size="lg">
               <Link to="/unlock">
-                Unlock campaign kit
+                Seal the campaign
                 <ArrowRight className="size-4" />
               </Link>
             </Button>

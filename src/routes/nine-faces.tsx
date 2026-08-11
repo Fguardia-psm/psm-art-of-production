@@ -114,7 +114,7 @@ function NineFacesPageInner() {
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button variant="paper" size="lg" onClick={finishAndGo}>
-              {unlocked ? "Open dossier" : "Unlock campaign kit"}
+              {unlocked ? "Enter your field dossier" : "Seal the campaign"}
               <ArrowRight className="size-4" />
             </Button>
             <Button asChild variant="outline" size="lg">

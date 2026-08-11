@@ -12,13 +12,13 @@ import {
   ARCHETYPES,
   CLIENT_FACES,
   PDF_URL,
+  PSM_CONTACT_URL,
   RECRUITER_OPENERS,
   fieldLeaderUrl,
-  resultLabel,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
-import { ArrowRight, Copy, Download, Share2, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Scroll } from "lucide-react";
 
 export const Route = createFileRoute("/dossier")({
   component: DossierPage,
@@ -39,9 +39,6 @@ function DossierPageInner() {
     provisionalArchetype,
     lead,
     nineFacesScore,
-    chapterResults,
-    leaderCode,
-    ensureLeaderCode,
     fieldReportsSeen,
   } = state;
 
@@ -51,116 +48,26 @@ function DossierPageInner() {
 
   const arch = ARCHETYPES[provisionalArchetype];
   const opener = RECRUITER_OPENERS[provisionalArchetype];
-  const code = leaderCode ?? ensureLeaderCode();
-  fieldLeaderUrl(provisionalArchetype, lead?.name?.split(" ")[0]);
   const readiness = computeReadiness(state);
-
-  const scorecard = Object.entries(chapterResults)
-    .map(([slug, r]) => `${slug}: ${resultLabel(r)}`)
-    .join("\n");
-
-  async function shareBanner() {
-    const text = `${arch.name} — ${arch.epithet}\n“${arch.seal}”\nNine Faces: ${nineFacesScore}/9\nReadiness: ${readiness.score}/100\nThe Art of Production · PSM Brokerage`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: arch.name, text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        alert("Banner text copied.");
-      }
-    } catch {
-      /* cancelled */
-    }
-  }
-
-  async function copyLeader() {
-    const origin =
-      typeof window !== "undefined" ? window.location.origin : "";
-    const link = `${origin}/?ref=${code}`;
-    const text = `Walk The Art of Production with me.\nLeader code: ${code}\n${link}`;
-    try {
-      await navigator.clipboard.writeText(text);
-      alert("Downline invite copied.");
-    } catch {
-      alert(text);
-    }
-  }
-
-  async function copyRecruiterBrief() {
-    const text = [
-      `RECRUITER BRIEF — The Art of Production`,
-      `Agent: ${lead?.name ?? ""}`,
-      `NPN: ${lead?.npn ?? ""} · ${lead?.state ?? ""}`,
-      `Stage: ${lead?.bookStage ?? ""}`,
-      `Archetype: ${arch.name}`,
-      `Readiness: ${readiness.score}/100 — ${readiness.label}`,
-      ``,
-      `Open with: ${opener.openWith}`,
-      `Proof angle: ${opener.proofAngle}`,
-      `Avoid: ${opener.avoid}`,
-      ``,
-      `Nine Faces: ${nineFacesScore}/9`,
-      `Field reports: ${fieldReportsSeen ? "reviewed" : "pending"}`,
-    ].join("\n");
-    try {
-      await navigator.clipboard.writeText(text);
-      alert("Recruiter brief copied.");
-    } catch {
-      alert(text);
-    }
-  }
-
-  function downloadScripts() {
-    const lines = [
-      `THE ART OF PRODUCTION — Nine Faces Loot Deck + Script Pack`,
-      `Agent: ${lead?.name ?? ""}`,
-      `Archetype: ${arch.name}`,
-      `Nine Faces: ${nineFacesScore}/9`,
-      `Campaign readiness: ${readiness.score}/100`,
-      ``,
-      `MONDAY MOVE`,
-      arch.mondayScript,
-      ``,
-      `RECRUITER OPEN`,
-      opener.openWith,
-      opener.proofAngle,
-      ``,
-      `NINE FACES — LOOT DECK (opening lines)`,
-      ...CLIENT_FACES.flatMap((f) => [
-        ``,
-        `══ ${f.name} ══`,
-        `Cue: ${f.cue}`,
-        `Approach: ${f.approach}`,
-        `Open: ${f.openingLine}`,
-        `Note: ${f.fieldNote}`,
-      ]),
-      ``,
-      `CHAPTER SCORECARD`,
-      scorecard,
-      ``,
-      `For Agent Use Only · PSM Brokerage · High-protein residue from the campaign`,
-    ];
-    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "art-of-production-face-deck.txt";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  const counselHref = fieldLeaderUrl(
+    provisionalArchetype,
+    lead?.name?.split(" ")[0],
+  );
 
   return (
     <CampaignShell>
       <div className="space-y-10 animate-fade-up">
         <div>
-          <SectionKicker>Your campaign kit</SectionKicker>
+          <SectionKicker>Field dossier · sealed</SectionKicker>
           <h1 className="mt-2 font-display text-3xl text-charcoal sm:text-4xl">
             {lead?.name
-              ? `${lead.name.split(" ")[0]}, your dossier`
-              : "Your dossier"}
+              ? `${lead.name.split(" ")[0]}, the field is marked`
+              : "The field is marked"}
           </h1>
-          <p className="mt-2 font-body text-charcoal-muted">
-            Seals pressed. Face deck unlocked. Manual ready. Proof next.
+          <p className="mt-2 font-body text-charcoal-muted leading-relaxed max-w-xl">
+            You walked the path. Seals pressed. Nine faces known. What remains is
+            not another checklist — it is who you stand with when the season
+            opens.
           </p>
         </div>
 
@@ -170,44 +77,46 @@ function DossierPageInner() {
           parts={readiness.parts}
         />
 
-        <section className="rounded-xl border border-brass/35 bg-brass/10 p-5 sm:p-6">
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Post-kit path · cooperate over extract
+        {/* War council CTA — primary conversion */}
+        <section className="ink-wash rounded-xl border border-brass/40 px-6 py-8 shadow-[var(--shadow-plate)] sm:px-8">
+          <p className="font-ui text-[10px] uppercase tracking-[0.28em] text-brass-bright/90">
+            The art of winning · not alone
           </p>
-          <ol className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 font-ui text-xs text-charcoal-muted">
-            <li className="text-brass font-medium">1. Dossier + loot</li>
-            <li className="hidden sm:inline opacity-40">→</li>
-            <li
-              className={
-                fieldReportsSeen ? "text-brass font-medium" : "text-charcoal"
-              }
-            >
-              2. Field Reports
-            </li>
-            <li className="hidden sm:inline opacity-40">→</li>
-            <li>3. Field leader</li>
-          </ol>
-          <h2 className="mt-4 font-display text-2xl text-charcoal">
-            {fieldReportsSeen
-              ? "Proof reviewed — take the conversation"
-              : "Take your loot, then read the Field Reports"}
+          <h2 className="mt-3 font-display text-2xl sm:text-3xl text-parchment leading-snug">
+            Supreme excellence is to win before the battle — and with allies who
+            already know the ground.
           </h2>
-          <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
-            High-protein path: face deck for Monday, Field Reports for the
-            economics of a switch, then a human who already has your brief.
+          <p className="mt-4 font-body text-sm text-parchment/65 leading-relaxed max-w-xl">
+            PSM is the council after the campaign: contracts, marketing fire,
+            systems, and field leaders who have sealed seasons — not a pitch
+            deck. Bring your reading (
+            <span className="text-brass-bright/90">{arch.name}</span>
+            ). Ask how to win the next AEP with formation behind you.
           </p>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="paper" size="lg">
-              <Link to="/field-reports">
-                {fieldReportsSeen ? "Revisit Field Reports" : "Open Field Reports"}
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Button asChild variant="primary" size="xl">
+              <a href={counselHref} target="_blank" rel="noreferrer">
+                Request counsel · win the field
                 <ArrowRight className="size-4" />
+              </a>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <Link to="/field-reports">
+                {fieldReportsSeen ? "Revisit Field Reports" : "Study Field Reports"}
               </Link>
             </Button>
-            <Button type="button" variant="outline" size="lg" onClick={downloadScripts}>
-              <Download className="size-4" />
-              Download face deck
-            </Button>
           </div>
+          <p className="mt-4 font-ui text-[11px] text-parchment/40">
+            Or open{" "}
+            <a
+              href={PSM_CONTACT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 hover:text-parchment/70"
+            >
+              psmbrokerage.com/contact
+            </a>
+          </p>
         </section>
 
         <section className="ink-wash rounded-xl border border-parchment/10 px-6 py-10 text-center shadow-[var(--shadow-plate)] sm:px-10">
@@ -224,7 +133,7 @@ function DossierPageInner() {
             {arch.summary}
           </p>
           <p className="mt-4 font-ui text-[10px] uppercase tracking-[0.2em] text-parchment/40">
-            Blind spot (we do not flatter)
+            Blind spot · we do not flatter
           </p>
           <p className="mx-auto mt-2 max-w-md font-body text-sm text-parchment/55">
             {arch.blindSpot}
@@ -234,7 +143,7 @@ function DossierPageInner() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Strengths
+              Strengths on the field
             </p>
             <ul className="mt-3 space-y-2">
               {arch.strengths.map((s) => (
@@ -249,7 +158,7 @@ function DossierPageInner() {
           </div>
           <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Nine Faces · loot
+              Nine Faces known
             </p>
             <p className="mt-2 font-display text-2xl text-charcoal tabular-nums">
               {nineFacesScore}/9
@@ -264,12 +173,15 @@ function DossierPageInner() {
         </div>
 
         <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5 sm:p-6">
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Face deck · high-protein residue
-          </p>
+          <div className="flex items-center gap-2">
+            <Scroll className="size-4 text-brass" />
+            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+              The Nine Faces · know the enemy of confusion
+            </p>
+          </div>
           <p className="mt-2 font-body text-sm text-charcoal-muted">
-            Cards earned from the master scene. Not vanity XP — lines you can
-            use at the table Monday.
+            Nine client languages. Read them. Use them at the table — not as a
+            script file, as doctrine.
           </p>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {CLIENT_FACES.map((f) => (
@@ -286,116 +198,53 @@ function DossierPageInner() {
               </li>
             ))}
           </ul>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="mt-4"
-            onClick={downloadScripts}
-          >
-            <Download className="size-4" />
-            Download full face deck
-          </Button>
         </section>
-
-        <aside className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-5 sm:p-6">
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
-            Recruiter brief · bring this to Contact Us
-          </p>
-          <p className="mt-3 font-display text-xl text-parchment leading-snug">
-            {opener.openWith}
-          </p>
-          <p className="mt-3 font-body text-sm text-parchment/60 leading-relaxed">
-            Proof angle: {opener.proofAngle}
-          </p>
-          <p className="mt-2 font-body text-xs text-parchment/40">
-            Avoid: {opener.avoid}
-          </p>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="mt-4"
-            onClick={copyRecruiterBrief}
-          >
-            <Copy className="size-3.5" />
-            Copy recruiter brief
-          </Button>
-          {!lead ? (
-            <p className="mt-3 font-body text-xs text-parchment/45 leading-relaxed">
-              NPN capture is paused. Use{" "}
-              <a
-                href="https://www.psmbrokerage.com/contact"
-                target="_blank"
-                rel="noreferrer"
-                className="underline underline-offset-2 text-brass-bright/80"
-              >
-                Contact Us
-              </a>{" "}
-              to reach a field leader with your archetype.
-            </p>
-          ) : null}
-        </aside>
 
         <aside className="rounded-xl border border-brass/30 bg-brass/8 p-5 sm:p-6">
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Sealed reward · the manual (canon)
+            Sealed reward · the manual
           </p>
           <p className="mt-2 font-body text-charcoal leading-relaxed">
             This campaign complements the article — it does not replace it. The
-            PDF remains the high-protein primary source. Walk the path; own the
-            manual.
+            PDF remains the primary source. Walk the path; own the manual.
           </p>
           <p className="mt-4 font-display text-lg italic text-charcoal">
             “{arch.seal}”
           </p>
           <Button asChild variant="paper" size="lg" className="mt-4">
             <a href={PDF_URL} target="_blank" rel="noreferrer">
-              <Download className="size-4" />
-              Download the manual
+              <BookOpen className="size-4" />
+              Open the manual
             </a>
           </Button>
         </aside>
 
-        <section className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
-          <div className="flex items-start gap-3">
-            <Users className="size-5 text-brass shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-                Leader mode · downline invite
-              </p>
-              <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed">
-                Assign this campaign before AEP. Same seals. Same face deck.
-              </p>
-              <p className="mt-3 font-display text-2xl tracking-widest text-charcoal">
-                {code}
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-3"
-                onClick={copyLeader}
-              >
-                <Copy className="size-3.5" />
-                Copy invite
-              </Button>
-            </div>
-          </div>
-        </section>
+        <aside className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-5 sm:p-6">
+          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
+            How the council will meet you
+          </p>
+          <p className="mt-3 font-display text-xl text-parchment leading-snug">
+            {opener.openWith}
+          </p>
+          <p className="mt-3 font-body text-sm text-parchment/60 leading-relaxed">
+            Proof they respect: {opener.proofAngle}
+          </p>
+          <p className="mt-2 font-body text-xs text-parchment/40">
+            What wastes the hour: {opener.avoid}
+          </p>
+        </aside>
 
         <QuotePlate quote="Walk the path with discipline, and the path will rise to meet you." />
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button asChild variant="paper" size="lg">
-            <Link to="/field-reports">
-              Field Reports
+            <a href={counselHref} target="_blank" rel="noreferrer">
+              Request counsel · win the field
               <ArrowRight className="size-4" />
-            </Link>
+            </a>
           </Button>
-          <Button type="button" variant="outline" size="lg" onClick={shareBanner}>
-            <Share2 className="size-4" />
-            Share your banner
+          <Button asChild variant="outline" size="lg">
+            <Link to="/field-reports">Field Reports</Link>
           </Button>
           <Button asChild variant="ghost" size="lg">
             <Link to="/map">Campaign map</Link>

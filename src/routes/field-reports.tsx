@@ -217,23 +217,22 @@ function FieldReportsPageInner() {
           </p>
           <h3 className="mt-2 font-display text-2xl text-charcoal">
             {allRead
-              ? "Evidence reviewed. Talk to a field leader."
+              ? "Evidence reviewed. Request counsel · win the field."
               : "Review all three reports — then take the call."}
           </h3>
           <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed max-w-xl">
-            Copy your recruiter brief from the dossier — archetype, open
-            line, and proof angle — then use Contact Us for the handoff.
-            This page is the evidence they will discuss with you.
+            You have the proof. The next move is counsel — stand with a team
+            that already wins seasons. This page is the evidence they will discuss with you.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Button asChild variant="paper" size="lg">
               <a href={leaderHref} target="_blank" rel="noreferrer">
-                Talk to a field leader
+                Request counsel · win the field
                 <ArrowRight className="size-4" />
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link to="/partner">Why agents partner</Link>
+              <Link to="/partner">Enter the war council</Link>
             </Button>
             <Button asChild variant="ghost" size="lg">
               <Link to="/dossier">Back to dossier</Link>
