@@ -21,7 +21,7 @@ export function NineFacesDeck({
           <div className="flex items-center gap-2">
             <Scroll className="size-4 shrink-0 text-brass" />
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              Nine client types · table reference
+              Nine client types
             </p>
           </div>
           <p className="mt-2 font-body text-sm text-charcoal leading-relaxed max-w-xl">

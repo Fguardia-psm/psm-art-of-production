@@ -44,11 +44,11 @@ export function FieldCard({
       <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
         <div>
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Reward unlocked · the Field Seal
+            Your Field Seal
           </p>
           <p className="mt-1 font-body text-sm text-charcoal-muted max-w-md">
-            Print and keep by your desk. Mission, risk, and Monday move on one
-            seal — for you and for counsel.
+            Print this for your desk, or share it before a call with a field
+            leader. Mission, risk, and Monday move on one page.
           </p>
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">
@@ -215,7 +215,7 @@ export function FieldCard({
 
           <div className="mt-5 rounded-xl border border-brass/30 bg-gradient-to-br from-brass/12 to-transparent px-4 py-4 sm:px-5">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-              30-day production plan · desk orders
+              30-day production plan
             </p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <div>
@@ -237,7 +237,7 @@ export function FieldCard({
             </div>
             <div className="mt-3 rounded-lg border border-charcoal/10 bg-parchment/90 px-3 py-3">
               <p className="font-ui text-[9px] uppercase tracking-[0.14em] text-brass">
-                Do this in 30 days
+                30-day mission
               </p>
               <p className="mt-1 font-body text-sm font-medium text-charcoal leading-snug">
                 {arch.forecast.mission30}
@@ -301,7 +301,7 @@ export function FieldCard({
 
           <div className="mt-5 rounded-xl border border-dashed border-brass/40 bg-parchment/50 px-4 py-4">
             <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
-              Campaign calendar · mark on paper
+              30-day check-in
             </p>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
               {weekTargets.map((w) => (

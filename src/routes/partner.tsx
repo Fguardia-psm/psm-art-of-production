@@ -57,8 +57,8 @@ function PartnerPage() {
               What happens next
             </p>
             <p className="mt-2 font-body text-xs text-parchment/65 leading-relaxed">
-              Contact opens a human at PSM. Your campaign intel travels with the
-              link. Expect follow-up within 1–2 business days.
+              You’ll reach a PSM field leader. Your campaign summary is included
+              with the request. Typical follow-up is within 1–2 business days.
             </p>
           </div>
           {unlocked && !fieldReportsSeen ? (

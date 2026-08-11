@@ -154,15 +154,12 @@ function DossierPageInner() {
               What happens next
             </p>
             <ul className="mt-2 space-y-1.5 font-body text-xs text-parchment/70 leading-relaxed">
-              <li>Opens PSM Contact — a human, not a spam sequence.</li>
+              <li>You’ll open the PSM contact page to reach a field leader.</li>
               <li>
-                Your archetype, readiness, and 30-day plan travel with the link
-                so the conversation starts warm.
+                Your archetype, readiness score, and 30-day plan are included so
+                the conversation can start with context.
               </li>
-              <li>
-                Expect a field leader to follow up within 1–2 business days (ask
-                for same-day if AEP is live).
-              </li>
+              <li>A field leader typically follows up within 1–2 business days.</li>
             </ul>
           </div>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -190,7 +187,7 @@ function DossierPageInner() {
             </Button>
           </div>
           <p className="mt-4 rounded-md border border-parchment/15 bg-parchment/[0.05] px-3 py-2 font-ui text-[11px] text-parchment/55 leading-relaxed">
-            <span className="text-brass-bright/90">What your field leader sees: </span>
+            <span className="text-brass-bright/90">This link includes: </span>
             {intelLine}
           </p>
           <p className="mt-3 font-ui text-[11px] text-parchment/40">

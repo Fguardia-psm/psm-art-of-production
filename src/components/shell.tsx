@@ -175,9 +175,8 @@ export function CampaignShell({
             tone === "ink" ? "text-parchment/35" : "text-charcoal-soft",
           )}
         >
-          Progress saves on this device only (browser storage). Start over anytime.
-          Counsel opens PSM Contact — no NPN is collected in this campaign until
-          you choose to share it with a human.
+          Your progress saves on this device only. Start over anytime.
+          Requesting counsel opens the PSM contact page.
         </p>
         <p
           className={cn(

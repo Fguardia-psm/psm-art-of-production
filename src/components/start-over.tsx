@@ -11,14 +11,11 @@ import { RotateCcw } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 const CONFIRM_COPY =
-  "Start over from the beginning?\n\nThis clears scout answers, seals, Nine Faces, dossier, and leader code on this device only.\n\nIf you already submitted an NPN, that lead stays with the team — we cannot unsend it.\n\nYou cannot undo this.";
+  "Start over from the beginning?\n\nThis clears your progress on this device only: scout answers, seals, Nine Faces, and dossier.\n\nThis cannot be undone.";
 
 type Variant = "header" | "inline" | "landing" | "danger";
 
-/**
- * Visible start-over control. Red-team fix: was buried only on dossier
- * as a tiny underline after unlock — unusable mid-campaign.
- */
+/** Start over — clears local campaign progress on this device. */
 export function StartOverControl({
   variant = "inline",
   className,

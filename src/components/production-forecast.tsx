@@ -9,10 +9,10 @@ export function ProductionForecastPanel({
 }) {
   const ink = tone === "ink";
   const rows = [
-    { k: "Watch this risk", v: forecast.risk },
-    { k: "Where you break through", v: forecast.breakthrough },
-    { k: "Your 30-day orders", v: forecast.mission30 },
-    { k: "How you’ll know it’s working", v: forecast.measure },
+    { k: "Risk to watch", v: forecast.risk },
+    { k: "Breakthrough", v: forecast.breakthrough },
+    { k: "30-day mission", v: forecast.mission30 },
+    { k: "Measure", v: forecast.measure },
     { k: "Target", v: forecast.target },
   ];
 
@@ -31,7 +31,7 @@ export function ProductionForecastPanel({
             : "font-ui text-[10px] uppercase tracking-[0.22em] text-brass"
         }
       >
-        Your 30-day production plan
+        30-day production plan
       </p>
       <p
         className={
@@ -40,7 +40,7 @@ export function ProductionForecastPanel({
             : "mt-1 font-body text-xs text-charcoal-soft"
         }
       >
-        Sticky-note orders — do these without reopening this app.
+        What to run for the next month — risk, mission, and how you measure it.
       </p>
       <ul className="mt-4 space-y-3">
         {rows.map((r) => (
