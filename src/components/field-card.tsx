@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 
 /**
- * Producer's Field Card — premium printable one-pager.
+ * Field Seal — premium printable one-pager (campaign commission).
  * Screen: reward + share-worthy. Print: desk reference for 30 days.
  */
 export function FieldCard({
@@ -24,7 +24,7 @@ export function FieldCard({
   strongestChapter?: string;
 }) {
   const readinessPct = Math.max(0, Math.min(100, readinessScore));
-  const displayName = agentName?.trim() || "Producer";
+  const bearer = agentName?.trim();
   const weekTargets = [
     "Week 1 — set the mission on the calendar",
     "Week 2 — hit measure; adjust ground",
@@ -37,11 +37,11 @@ export function FieldCard({
       <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
         <div>
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Reward unlocked · keep this
+            Reward unlocked · the Field Seal
           </p>
           <p className="mt-1 font-body text-sm text-charcoal-muted max-w-md">
-            Print and put it by your desk. 30-day mission, risk, and Monday move
-            on one card — for you and for a recruiter conversation.
+            Print and keep by your desk. Mission, risk, and Monday move on one
+            seal — for you and for counsel.
           </p>
         </div>
         <Button
@@ -52,7 +52,7 @@ export function FieldCard({
           onClick={() => window.print()}
         >
           <Printer className="size-4" />
-          Print field card
+          Print Field Seal
         </Button>
       </div>
 
@@ -60,7 +60,6 @@ export function FieldCard({
         id="field-card"
         className="field-card-sheet relative overflow-hidden rounded-2xl border border-brass/40 bg-[var(--color-parchment)] text-charcoal shadow-[var(--shadow-plate)] print:shadow-none print:rounded-none print:border-2 print:border-[var(--color-brass-dim)]"
       >
-        {/* Parchment grain + brass frame */}
         <div
           className="pointer-events-none absolute inset-0 opacity-90"
           aria-hidden
@@ -72,49 +71,61 @@ export function FieldCard({
             `,
           }}
         />
-        {/* Corner marks */}
         <span className="field-card-corner field-card-corner-tl" aria-hidden />
         <span className="field-card-corner field-card-corner-tr" aria-hidden />
         <span className="field-card-corner field-card-corner-bl" aria-hidden />
         <span className="field-card-corner field-card-corner-br" aria-hidden />
 
         <div className="relative px-5 py-6 sm:px-8 sm:py-8">
-          {/* Masthead */}
           <header className="flex flex-wrap items-start justify-between gap-4 border-b border-brass/25 pb-5">
             <div className="min-w-0">
               <p className="font-ui text-[10px] uppercase tracking-[0.28em] text-brass">
                 The Art of Production
               </p>
               <p className="mt-1 font-ui text-[10px] uppercase tracking-[0.2em] text-charcoal-soft">
-                Producer's Field Card · PSM Brokerage
+                Field Seal · campaign commission · PSM Brokerage
               </p>
-              <h2 className="mt-3 font-display text-3xl sm:text-4xl text-charcoal tracking-tight leading-none">
-                {displayName}
-              </h2>
-              <p className="mt-2 font-display text-lg italic text-brass-dim">
-                {arch.name}
-                <span className="text-charcoal-soft"> — {arch.epithet}</span>
-              </p>
+              {bearer ? (
+                <>
+                  <h2 className="mt-3 font-display text-3xl sm:text-4xl text-charcoal tracking-tight leading-none">
+                    {bearer}
+                  </h2>
+                  <p className="mt-2 font-display text-lg italic text-brass-dim">
+                    {arch.name}
+                    <span className="text-charcoal-soft"> — {arch.epithet}</span>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="mt-3 font-display text-3xl sm:text-4xl text-charcoal tracking-tight leading-none">
+                    {arch.name}
+                  </h2>
+                  <p className="mt-2 font-display text-lg italic text-brass-dim">
+                    {arch.epithet}
+                  </p>
+                  <p className="mt-1 font-ui text-[10px] uppercase tracking-[0.16em] text-charcoal-soft">
+                    Sealed for the bearer of this campaign
+                  </p>
+                </>
+              )}
             </div>
 
-            {/* Seal stamp */}
             <div
               className="field-card-seal shrink-0 flex size-[5.5rem] flex-col items-center justify-center rounded-full border-2 border-brass/50 bg-brass/10 text-center shadow-[inset_0_0_0_4px_color-mix(in_oklab,var(--color-parchment)_70%,transparent)]"
               aria-hidden
             >
               <span className="font-ui text-[8px] uppercase tracking-[0.2em] text-brass">
-                Seal
+                Field
               </span>
               <span className="mt-0.5 font-display text-2xl tabular-nums text-charcoal leading-none">
                 {readinessScore}
               </span>
               <span className="font-ui text-[8px] uppercase tracking-[0.14em] text-charcoal-soft">
-                Ready
+                Seal
               </span>
             </div>
           </header>
 
-          {/* Readiness + faces */}
           <div className="mt-5 grid gap-4 sm:grid-cols-[1.2fr_1fr]">
             <div>
               <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
@@ -151,13 +162,16 @@ export function FieldCard({
                       <br />
                     </>
                   ) : null}
-                  {weakestChapter ? <>Watch: {weakestChapter}</> : "Campaign complete"}
+                  {weakestChapter ? (
+                    <>Watch: {weakestChapter}</>
+                  ) : (
+                    "Campaign sealed"
+                  )}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Forecast strip */}
           <div className="mt-5 rounded-xl border border-brass/30 bg-gradient-to-br from-brass/12 to-transparent px-4 py-4 sm:px-5">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
               Production forecast · next 30 days
@@ -182,7 +196,7 @@ export function FieldCard({
             </div>
             <div className="mt-3 rounded-lg border border-charcoal/10 bg-parchment/90 px-3 py-3">
               <p className="font-ui text-[9px] uppercase tracking-[0.14em] text-brass">
-                Mission
+                Field orders · 30 days
               </p>
               <p className="mt-1 font-body text-sm font-medium text-charcoal leading-snug">
                 {arch.forecast.mission30}
@@ -200,7 +214,6 @@ export function FieldCard({
             </div>
           </div>
 
-          {/* Strengths / blind / monday */}
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-charcoal/10 bg-parchment/70 px-3 py-3">
               <p className="font-ui text-[9px] uppercase tracking-[0.14em] text-brass">
@@ -245,10 +258,9 @@ export function FieldCard({
             </div>
           </div>
 
-          {/* Printable week checklist — usefulness */}
           <div className="mt-5 rounded-xl border border-dashed border-brass/40 bg-parchment/50 px-4 py-4">
             <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
-              30-day check-off · mark on paper
+              Campaign calendar · mark on paper
             </p>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
               {weekTargets.map((w) => (
@@ -265,19 +277,18 @@ export function FieldCard({
               ))}
             </ul>
             <p className="mt-3 font-body text-[11px] text-charcoal-muted leading-relaxed">
-              Tip: reopen Nine Faces when a hard client type shows up. Speak their
-              language — one face at a time.
+              When a hard client sits down, open the Nine Faces. One language at
+              a time — the agent who speaks nine wins all.
             </p>
           </div>
 
-          {/* Footer */}
           <footer className="mt-5 flex flex-wrap items-end justify-between gap-3 border-t border-brass/20 pt-4">
             <div>
               <p className="font-ui text-[9px] uppercase tracking-[0.18em] text-charcoal-soft">
                 For agent use only · not a consumer piece
               </p>
               <p className="mt-1 font-body text-[11px] text-charcoal-muted">
-                Bring this card to counsel · psmbrokerage.com/contact
+                Bring this seal to counsel · psmbrokerage.com/contact
               </p>
             </div>
             <p className="font-display text-xs italic text-brass-dim">
