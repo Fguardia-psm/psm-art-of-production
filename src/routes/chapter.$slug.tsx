@@ -15,6 +15,7 @@ import { CampaignGate } from "@/components/campaign-gate";
 import { ChapterInteractionPanel } from "@/components/chapter-interactions";
 import { Button } from "@/components/ui/button";
 import {
+  ARCHETYPES,
   REQUIRED_CHAPTERS,
   getChapter,
   type ChapterResult,
@@ -39,9 +40,12 @@ function ChapterPageInner() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const chapter = getChapter(slug);
-  const { scoutComplete, completedChapters, completeChapter } =
+  const { scoutComplete, completedChapters, completeChapter, provisionalArchetype } =
     useCampaignStore();
   const [resolved, setResolved] = useState(false);
+  const archTip = provisionalArchetype
+    ? ARCHETYPES[provisionalArchetype]
+    : null;
 
   if (!scoutComplete) return <Navigate to="/scout" />;
   if (!chapter) return <Navigate to="/map" />;
@@ -97,6 +101,17 @@ function ChapterPageInner() {
         </div>
 
         <QuotePlate quote={chapter.quote} sub={chapter.quoteSub} />
+
+        {archTip ? (
+          <aside className="rounded-lg border border-brass/25 bg-brass/8 px-4 py-3">
+            <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
+              As {archTip.name} · watch for this
+            </p>
+            <p className="mt-1 font-body text-sm text-charcoal leading-relaxed">
+              {archTip.seasonFocus}
+            </p>
+          </aside>
+        ) : null}
 
         <section className="space-y-4">
           <h2 className="font-ui text-[11px] uppercase tracking-[0.22em] text-brass">

@@ -87,9 +87,10 @@ function DossierPageInner() {
             already know the ground.
           </h2>
           <p className="mt-4 font-body text-sm text-parchment/65 leading-relaxed max-w-xl">
-            PSM is the council after the campaign: contracts, marketing fire,
-            systems, and field leaders who have sealed seasons — not a pitch
-            deck. Bring your reading (
+            Same book. Better ground. Cleaner systems. That is the economic
+            case — not a pep talk. PSM is the council after the campaign:
+            contracts, marketing fire, infrastructure, and leaders who have
+            sealed seasons. Bring your reading (
             <span className="text-brass-bright/90">{arch.name}</span>
             ). Ask how to win the next AEP with formation behind you.
           </p>

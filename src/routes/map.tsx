@@ -266,17 +266,10 @@ function MapPageInner() {
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
-          ) : state.unlocked ? (
-            <Button asChild variant="paper" size="lg">
-              <Link to="/dossier">
-                Enter your field dossier
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
           ) : (
             <Button asChild variant="paper" size="lg">
-              <Link to="/unlock">
-                Seal the campaign
+              <Link to={state.unlocked ? "/dossier" : "/unlock"}>
+                {state.unlocked ? "Enter your field dossier" : "Seal the campaign"}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>

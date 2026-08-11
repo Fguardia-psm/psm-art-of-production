@@ -442,58 +442,81 @@ function DayFormation({
   return (
     <div className="space-y-5">
       <p className="font-body text-charcoal">{interaction.prompt}</p>
-      <div className="flex flex-wrap gap-2">
-        {interaction.tasks.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            disabled={done || (used.has(t.id) && activeTask !== t.id)}
-            onClick={() => setActiveTask(t.id)}
-            className={cn(
-              "rounded-full border px-3 py-2 font-ui text-xs transition-colors min-h-11",
-              activeTask === t.id
-                ? "border-brass bg-brass text-ink"
-                : used.has(t.id)
-                  ? "border-charcoal/10 text-charcoal-soft opacity-50"
-                  : "border-charcoal/15 bg-parchment hover:border-brass/40",
-            )}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {interaction.slots.map((slot) => {
-          const taskId = assign[slot.id];
-          const task = interaction.tasks.find((t) => t.id === taskId);
-          const correct = done && taskId === slot.correct;
-          const wrong = done && taskId && taskId !== slot.correct;
-          return (
+      <p className="font-ui text-xs text-charcoal-soft leading-relaxed">
+        <span className="font-medium text-charcoal">How to place:</span> tap a
+        duty chip, then tap a time of day. Tap a filled slot to replace it.
+      </p>
+      <div>
+        <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass mb-2">
+          1 · Choose a duty
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {interaction.tasks.map((t) => (
             <button
-              key={slot.id}
+              key={t.id}
               type="button"
-              onClick={() => place(slot.id)}
+              disabled={done}
+              onClick={() => setActiveTask(t.id)}
               className={cn(
-                "min-h-[72px] rounded-lg border px-4 py-3 text-left transition-colors",
-                correct && "border-success/50 bg-success/10",
-                wrong && "border-ember/40 bg-ember/10",
-                !done &&
-                  "border-charcoal/12 bg-parchment/60 hover:border-brass/40",
+                "rounded-full border px-3 py-2.5 font-ui text-xs transition-colors min-h-11",
+                activeTask === t.id
+                  ? "border-brass bg-brass text-ink"
+                  : used.has(t.id)
+                    ? "border-charcoal/10 text-charcoal-soft opacity-50"
+                    : "border-charcoal/15 bg-parchment hover:border-brass/40",
               )}
             >
-              <span className="font-ui text-[10px] uppercase tracking-[0.2em] text-charcoal-soft">
-                {slot.label}
-              </span>
-              <span className="mt-1 block font-ui text-sm text-charcoal">
-                {task?.label ?? (activeTask ? "Place here" : "Select a duty")}
-              </span>
+              {t.label}
             </button>
-          );
-        })}
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass mb-2">
+          2 · Place it on a time of day
+          {activeTask
+            ? " · ready to place"
+            : " · select a duty first"}
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {interaction.slots.map((slot) => {
+            const taskId = assign[slot.id];
+            const task = interaction.tasks.find((t) => t.id === taskId);
+            const correct = done && taskId === slot.correct;
+            const wrong = done && taskId && taskId !== slot.correct;
+            return (
+              <button
+                key={slot.id}
+                type="button"
+                onClick={() => place(slot.id)}
+                disabled={done || (!activeTask && !taskId)}
+                className={cn(
+                  "min-h-[72px] rounded-lg border px-4 py-3 text-left transition-colors",
+                  correct && "border-success/50 bg-success/10",
+                  wrong && "border-ember/40 bg-ember/10",
+                  !done &&
+                    activeTask &&
+                    "border-brass/40 bg-brass/5 hover:border-brass",
+                  !done &&
+                    !activeTask &&
+                    "border-charcoal/12 bg-parchment/60",
+                )}
+              >
+                <span className="font-ui text-[10px] uppercase tracking-[0.2em] text-charcoal-soft">
+                  {slot.label}
+                </span>
+                <span className="mt-1 block font-ui text-sm text-charcoal">
+                  {task?.label ??
+                    (activeTask ? "Tap to place here" : "Waiting for a duty")}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
       {!done ? (
         <Button variant="paper" size="lg" disabled={!complete} onClick={commit}>
-          Advance the day
+          {complete ? "Advance the day" : "Place all four duties to continue"}
         </Button>
       ) : (
         <ResultBanner

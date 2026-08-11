@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   createFileRoute,
   Link,
@@ -39,10 +39,12 @@ function NineFacesPageInner() {
     nineFacesComplete,
     nineFacesScore,
     unlocked,
+    claimKitLocal,
   } = useCampaignStore();
 
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
   const [picked, setPicked] = useState<"right" | "wrong" | null>(null);
   const [finished, setFinished] = useState(nineFacesComplete);
 
@@ -70,7 +72,10 @@ function NineFacesPageInner() {
   function choose(kind: "right" | "wrong") {
     if (picked || !face) return;
     setPicked(kind);
-    if (kind === "right") setScore((s) => s + 1);
+    if (kind === "right") {
+      scoreRef.current += 1;
+      setScore(scoreRef.current);
+    }
   }
 
   function next() {
@@ -79,14 +84,15 @@ function NineFacesPageInner() {
       setPicked(null);
       return;
     }
-    completeNineFaces(score);
+    completeNineFaces(scoreRef.current);
     setFinished(true);
   }
 
   function finishAndGo() {
-    if (!nineFacesComplete) completeNineFaces(score);
-    if (unlocked) navigate({ to: "/dossier" });
-    else navigate({ to: "/unlock" });
+    if (!nineFacesComplete) completeNineFaces(scoreRef.current);
+    // Claim kit on this device so the full path (dossier → Field Reports) is clickable
+    if (!unlocked) claimKitLocal();
+    navigate({ to: "/dossier" });
   }
 
   if (finished || nineFacesComplete) {
@@ -114,7 +120,7 @@ function NineFacesPageInner() {
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button variant="paper" size="lg" onClick={finishAndGo}>
-              {unlocked ? "Enter your field dossier" : "Seal the campaign"}
+              "Enter your field dossier"
               <ArrowRight className="size-4" />
             </Button>
             <Button asChild variant="outline" size="lg">
@@ -211,7 +217,7 @@ function NineFacesPageInner() {
 
         <div className="flex justify-end">
           <Button variant="paper" size="lg" disabled={!picked} onClick={next}>
-            {index < total - 1 ? "Next face" : "Seal the scene"}
+            {index < total - 1 ? "Next face" : "Finish · enter dossier"}
             <ArrowRight className="size-4" />
           </Button>
         </div>

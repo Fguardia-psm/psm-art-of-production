@@ -2,19 +2,12 @@ import { useEffect, useState } from "react";
 import { useCampaignStore } from "@/lib/campaign-store";
 
 /**
- * True only after zustand-persist has rehydrated from localStorage.
- * Without this, gated routes Navigate away on first paint (empty default
- * state) and agents lose mid-campaign progress on refresh / deep link.
+ * True only after mount + zustand persist rehydration.
+ * Always starts false on server and first client paint so SSR HTML matches
+ * (avoids hydration mismatch on gated campaign routes).
  */
 export function useHydrated() {
-  const [hydrated, setHydrated] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return useCampaignStore.persist.hasHydrated();
-    } catch {
-      return false;
-    }
-  });
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
@@ -25,7 +18,6 @@ export function useHydrated() {
       const unsub = useCampaignStore.persist.onFinishHydration(() => {
         setHydrated(true);
       });
-      // Fallback if hydration already finished between check and subscribe
       if (useCampaignStore.persist.hasHydrated()) setHydrated(true);
       return unsub;
     } catch {
