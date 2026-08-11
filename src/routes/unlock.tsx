@@ -6,6 +6,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { CampaignShell, SectionKicker } from "@/components/shell";
+import { CampaignGate } from "@/components/campaign-gate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,14 @@ export const Route = createFileRoute("/unlock")({
 });
 
 function UnlockPage() {
+  return (
+    <CampaignGate>
+      <UnlockPageInner />
+    </CampaignGate>
+  );
+}
+
+function UnlockPageInner() {
   const navigate = useNavigate();
   const state = useCampaignStore();
   const progress = requiredProgress(state);
@@ -101,7 +110,7 @@ function UnlockPage() {
         state: licenseState,
         bookStage: bookStage as BookStage,
         focus: focus || undefined,
-        consented: true,
+        consented: true as const,
         submittedAt: new Date().toISOString(),
         archetype,
         recruiterBrief,
@@ -148,13 +157,22 @@ function UnlockPage() {
           Reports, and the manual. NPN verifies you walk this field — and routes
           a recruiter brief with your talk track to the team.
         </p>
+
         {archPreview ? (
-          <p className="mt-3 font-ui text-xs uppercase tracking-[0.18em] text-brass">
-            Brief will open as · {archPreview.name}
-          </p>
+          <div className="mt-6 rounded-xl border border-brass/30 bg-brass/8 px-4 py-3">
+            <p className="font-ui text-[10px] uppercase tracking-[0.2em] text-brass">
+              Provisional reading
+            </p>
+            <p className="mt-1 font-display text-xl text-charcoal">
+              {archPreview.name}
+            </p>
+            <p className="font-body text-sm text-charcoal-muted">
+              {archPreview.epithet}
+            </p>
+          </div>
         ) : null}
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-4">
+        <form onSubmit={onSubmit} className="mt-8 space-y-5">
           <div className="space-y-2">
             <Label htmlFor="name">Full name</Label>
             <Input
@@ -162,7 +180,7 @@ function UnlockPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoComplete="name"
-              className="min-h-11"
+              required
             />
           </div>
           <div className="space-y-2">
@@ -173,18 +191,18 @@ function UnlockPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              className="min-h-11"
+              required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Mobile</Label>
+            <Label htmlFor="phone">Mobile phone</Label>
             <Input
               id="phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               autoComplete="tel"
-              className="min-h-11"
+              required
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -195,18 +213,22 @@ function UnlockPage() {
                 inputMode="numeric"
                 value={npn}
                 onChange={(e) => setNpn(e.target.value)}
-                className="min-h-11"
+                placeholder="5–10 digits"
+                required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="state">License state</Label>
+              <Label htmlFor="state">Primary license state</Label>
               <select
                 id="state"
                 value={licenseState}
                 onChange={(e) => setLicenseState(e.target.value)}
-                className="flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3 font-ui text-sm"
+                className={cn(
+                  "flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3 font-ui text-sm text-charcoal",
+                )}
+                required
               >
-                <option value="">Select</option>
+                <option value="">Select…</option>
                 {US_STATES.map((s) => (
                   <option key={s} value={s}>
                     {s}
@@ -216,24 +238,21 @@ function UnlockPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Book stage</Label>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <Label htmlFor="stage">Book stage</Label>
+            <select
+              id="stage"
+              value={bookStage}
+              onChange={(e) => setBookStage(e.target.value as BookStage | "")}
+              className="flex h-11 w-full rounded-md border border-charcoal/15 bg-parchment px-3 font-ui text-sm text-charcoal"
+              required
+            >
+              <option value="">Select…</option>
               {BOOK_STAGES.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setBookStage(s.id)}
-                  className={cn(
-                    "rounded-lg border px-3 py-3 text-left font-ui text-sm min-h-11",
-                    bookStage === s.id
-                      ? "border-brass bg-brass/10"
-                      : "border-charcoal/12 hover:border-brass/35",
-                  )}
-                >
+                <option key={s.id} value={s.id}>
                   {s.label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="focus">What are you building next? (optional)</Label>
@@ -241,20 +260,20 @@ function UnlockPage() {
               id="focus"
               value={focus}
               onChange={(e) => setFocus(e.target.value)}
-              placeholder="Agency, personal book, marketing…"
-              className="min-h-11"
+              placeholder="e.g. AEP systems, agency ramp, market expand"
             />
           </div>
-          <label className="flex items-start gap-3 cursor-pointer">
+
+          <label className="flex items-start gap-3 rounded-lg border border-charcoal/10 bg-parchment/60 px-3 py-3 cursor-pointer">
             <input
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               className="mt-1 size-4 accent-[var(--color-brass)]"
             />
-            <span className="font-body text-sm text-charcoal-muted leading-snug">
-              I am a licensed insurance agent (or applying under supervision) and
-              consent to PSM contacting me about partnership. For agent use only.
+            <span className="font-body text-sm text-charcoal leading-snug">
+              I am a licensed insurance agent and consent to PSM contacting me
+              about partnership. For Agent Use Only.
             </span>
           </label>
 
@@ -271,14 +290,14 @@ function UnlockPage() {
             className="w-full"
             disabled={submitting}
           >
-            {submitting ? "Sealing…" : "Unlock dossier & Field Reports"}
+            {submitting ? "Sealing…" : "Unlock campaign kit"}
           </Button>
         </form>
 
         <p className="mt-6 text-center">
           <Link
             to="/map"
-            className="font-ui text-xs text-charcoal-soft underline-offset-2 hover:underline"
+            className="font-ui text-xs text-charcoal-soft underline underline-offset-2"
           >
             Return to map
           </Link>

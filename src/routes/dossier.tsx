@@ -5,6 +5,7 @@ import {
   ReadinessPlate,
   SectionKicker,
 } from "@/components/shell";
+import { CampaignGate } from "@/components/campaign-gate";
 import { StartOverControl } from "@/components/start-over";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,14 @@ export const Route = createFileRoute("/dossier")({
 });
 
 function DossierPage() {
+  return (
+    <CampaignGate>
+      <DossierPageInner />
+    </CampaignGate>
+  );
+}
+
+function DossierPageInner() {
   const state = useCampaignStore();
   const {
     unlocked,
@@ -43,10 +52,7 @@ function DossierPage() {
   const arch = ARCHETYPES[provisionalArchetype];
   const opener = RECRUITER_OPENERS[provisionalArchetype];
   const code = leaderCode ?? ensureLeaderCode();
-  const leaderHref = fieldLeaderUrl(
-    provisionalArchetype,
-    lead?.name?.split(" ")[0],
-  );
+  fieldLeaderUrl(provisionalArchetype, lead?.name?.split(" ")[0]);
   const readiness = computeReadiness(state);
 
   const scorecard = Object.entries(chapterResults)

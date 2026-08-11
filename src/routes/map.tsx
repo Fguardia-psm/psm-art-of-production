@@ -4,6 +4,7 @@ import {
   ReadinessPlate,
   SectionKicker,
 } from "@/components/shell";
+import { CampaignGate } from "@/components/campaign-gate";
 import { Button } from "@/components/ui/button";
 import {
   OPTIONAL_CHAPTERS,
@@ -21,6 +22,14 @@ export const Route = createFileRoute("/map")({
 });
 
 function MapPage() {
+  return (
+    <CampaignGate>
+      <MapPageInner />
+    </CampaignGate>
+  );
+}
+
+function MapPageInner() {
   const state = useCampaignStore();
   if (!state.scoutComplete) {
     return <Navigate to="/scout" />;

@@ -11,6 +11,7 @@ import {
   QuotePlate,
   SectionKicker,
 } from "@/components/shell";
+import { CampaignGate } from "@/components/campaign-gate";
 import { Button } from "@/components/ui/button";
 import { CLIENT_FACES, REQUIRED_CHAPTER_SLUGS, shuffleArray } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
@@ -22,6 +23,14 @@ export const Route = createFileRoute("/nine-faces")({
 });
 
 function NineFacesPage() {
+  return (
+    <CampaignGate>
+      <NineFacesPageInner />
+    </CampaignGate>
+  );
+}
+
+function NineFacesPageInner() {
   const navigate = useNavigate();
   const {
     scoutComplete,

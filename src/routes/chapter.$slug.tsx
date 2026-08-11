@@ -11,6 +11,7 @@ import {
   QuotePlate,
   SectionKicker,
 } from "@/components/shell";
+import { CampaignGate } from "@/components/campaign-gate";
 import { ChapterInteractionPanel } from "@/components/chapter-interactions";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,14 @@ export const Route = createFileRoute("/chapter/$slug")({
 });
 
 function ChapterPage() {
+  return (
+    <CampaignGate>
+      <ChapterPageInner />
+    </CampaignGate>
+  );
+}
+
+function ChapterPageInner() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const chapter = getChapter(slug);
@@ -37,7 +46,6 @@ function ChapterPage() {
   if (!scoutComplete) return <Navigate to="/scout" />;
   if (!chapter) return <Navigate to="/map" />;
 
-  // Gate required chapters in order; optional unlock after all required
   if (!chapter.optional) {
     const index = REQUIRED_CHAPTERS.findIndex((c) => c.slug === chapter.slug);
     if (index > 0) {

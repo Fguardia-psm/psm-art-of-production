@@ -5,6 +5,7 @@ import {
   QuotePlate,
   SectionKicker,
 } from "@/components/shell";
+import { CampaignGate } from "@/components/campaign-gate";
 import { Button } from "@/components/ui/button";
 import {
   ARCHETYPES,
@@ -23,6 +24,14 @@ export const Route = createFileRoute("/field-reports")({
 });
 
 function FieldReportsPage() {
+  return (
+    <CampaignGate>
+      <FieldReportsPageInner />
+    </CampaignGate>
+  );
+}
+
+function FieldReportsPageInner() {
   const {
     unlocked,
     provisionalArchetype,
