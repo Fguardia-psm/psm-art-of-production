@@ -8,6 +8,7 @@ import {
   fieldLeaderUrl,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
+import { computeReadiness, chapterScorecard } from "@/lib/readiness";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/partner")({
@@ -15,12 +16,23 @@ export const Route = createFileRoute("/partner")({
 });
 
 function PartnerPage() {
-  const { provisionalArchetype, lead, unlocked, fieldReportsSeen } =
-    useCampaignStore();
-  const leaderHref = fieldLeaderUrl(
-    provisionalArchetype,
-    lead?.name?.split(" ")[0],
-  );
+  const state = useCampaignStore();
+  const { provisionalArchetype, lead, unlocked, fieldReportsSeen, nineFacesScore, chapterResults } =
+    state;
+  const readiness = computeReadiness(state);
+  const scorecard = chapterScorecard(chapterResults);
+  const leaderHref = fieldLeaderUrl({
+    archetype: provisionalArchetype,
+    name: lead?.name?.split(" ")[0],
+    readiness: readiness.score,
+    readinessLabel: readiness.label,
+    nineFacesScore,
+    chaptersDone: scorecard.done,
+    weakestChapter: scorecard.weakest,
+    strongestChapter: scorecard.strongest,
+    fieldReportsSeen,
+    utmContent: "partner-counsel",
+  });
 
   return (
     <CampaignShell tone="ink" className="text-parchment">

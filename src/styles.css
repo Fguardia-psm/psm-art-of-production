@@ -295,3 +295,22 @@
     transition: none;
   }
 }
+
+/* Field card print — clean one-pager */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #field-card,
+  #field-card * {
+    visibility: visible;
+  }
+  #field-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

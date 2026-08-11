@@ -16,6 +16,7 @@ import {
   type FieldReport,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
+import { computeReadiness, chapterScorecard } from "@/lib/readiness";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Check } from "lucide-react";
 
@@ -32,13 +33,18 @@ function FieldReportsPage() {
 }
 
 function FieldReportsPageInner() {
+  const state = useCampaignStore();
   const {
     unlocked,
     provisionalArchetype,
     lead,
     markFieldReportsSeen,
     fieldReportsSeen,
-  } = useCampaignStore();
+    nineFacesScore,
+    chapterResults,
+  } = state;
+  const readiness = computeReadiness(state);
+  const scorecard = chapterScorecard(chapterResults);
 
   const ranked = useMemo(() => {
     if (!provisionalArchetype) return FIELD_REPORTS;
@@ -70,10 +76,18 @@ function FieldReportsPageInner() {
     FIELD_REPORTS.find((r) => r.id === activeId) ?? FIELD_REPORTS[0]!;
 
   const allRead = read.length >= FIELD_REPORTS.length;
-  const leaderHref = fieldLeaderUrl(
-    provisionalArchetype,
-    lead?.name?.split(" ")[0],
-  );
+  const leaderHref = fieldLeaderUrl({
+    archetype: provisionalArchetype,
+    name: lead?.name?.split(" ")[0],
+    readiness: readiness.score,
+    readinessLabel: readiness.label,
+    nineFacesScore,
+    chaptersDone: scorecard.done,
+    weakestChapter: scorecard.weakest,
+    strongestChapter: scorecard.strongest,
+    fieldReportsSeen: true,
+    utmContent: "field-reports-counsel",
+  });
 
   function markRead(id: string) {
     setRead((prev) => (prev.includes(id) ? prev : [...prev, id]));

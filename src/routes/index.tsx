@@ -88,10 +88,9 @@ function LandingPage() {
             className="mt-8 max-w-xl font-body text-lg text-parchment/70 leading-relaxed animate-fade-up"
             style={{ ["--motion" as string]: "500ms" }}
           >
-            Practice how top producers win seasons: prep, conversations, ground,
-            daily order, and marketing fire. Leave with a clear reading of how
-            you win — and a path to talk with PSM about better ground and
-            systems.
+            About 30 minutes. Five strategic campaigns. Nine client languages.
+            One personal producer dossier with a production forecast. Built to
+            make you better at the table — not to pitch you a deck.
           </p>
 
           <blockquote className="mt-10 border-l border-brass/50 pl-5 animate-fade-up">

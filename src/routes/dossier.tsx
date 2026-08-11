@@ -18,6 +18,10 @@ import {
 import { useCampaignStore } from "@/lib/campaign-store";
 import { computeReadiness } from "@/lib/readiness";
 import { NineFacesDeck } from "@/components/nine-faces-deck";
+import { ProductionForecastPanel } from "@/components/production-forecast";
+import { FieldCard } from "@/components/field-card";
+import { chapterScorecard } from "@/lib/readiness";
+import { recruiterIntelSummary } from "@/lib/content";
 import { ArrowRight, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/dossier")({
@@ -40,6 +44,7 @@ function DossierPageInner() {
     lead,
     nineFacesScore,
     fieldReportsSeen,
+    chapterResults,
   } = state;
 
   if (!unlocked || !provisionalArchetype) {
@@ -49,10 +54,21 @@ function DossierPageInner() {
   const arch = ARCHETYPES[provisionalArchetype];
   const opener = RECRUITER_OPENERS[provisionalArchetype];
   const readiness = computeReadiness(state);
-  const counselHref = fieldLeaderUrl(
-    provisionalArchetype,
-    lead?.name?.split(" ")[0],
-  );
+  const scorecard = chapterScorecard(chapterResults);
+  const intel = {
+    archetype: provisionalArchetype,
+    name: lead?.name?.split(" ")[0],
+    readiness: readiness.score,
+    readinessLabel: readiness.label,
+    nineFacesScore,
+    chaptersDone: scorecard.done,
+    weakestChapter: scorecard.weakest,
+    strongestChapter: scorecard.strongest,
+    fieldReportsSeen,
+    utmContent: "dossier-counsel",
+  };
+  const counselHref = fieldLeaderUrl(intel);
+  const intelLine = recruiterIntelSummary(intel);
 
   return (
     <CampaignShell>
@@ -75,6 +91,16 @@ function DossierPageInner() {
           score={readiness.score}
           label={readiness.label}
           parts={readiness.parts}
+        />
+
+        <ProductionForecastPanel forecast={arch.forecast} />
+
+        <FieldCard
+          arch={arch}
+          readinessScore={readiness.score}
+          readinessLabel={readiness.label}
+          nineFacesScore={nineFacesScore}
+          agentName={lead?.name}
         />
 
         {/* War council CTA — primary conversion */}
@@ -120,7 +146,11 @@ function DossierPageInner() {
               </Link>
             </Button>
           </div>
-          <p className="mt-4 font-ui text-[11px] text-parchment/40">
+          <p className="mt-4 rounded-md border border-parchment/15 bg-parchment/[0.05] px-3 py-2 font-ui text-[11px] text-parchment/55 leading-relaxed">
+            <span className="text-brass-bright/90">Recruiter intelligence rides with this link: </span>
+            {intelLine}
+          </p>
+          <p className="mt-3 font-ui text-[11px] text-parchment/40">
             Or open{" "}
             <a
               href={PSM_CONTACT_URL}

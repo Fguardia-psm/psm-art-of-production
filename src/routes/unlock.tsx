@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import {
   ARCHETYPES,
   PSM_CONTACT_URL,
+  fieldLeaderUrl,
   type ArchetypeId,
 } from "@/lib/content";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
-import { computeReadiness } from "@/lib/readiness";
+import { computeReadiness, chapterScorecard } from "@/lib/readiness";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/unlock")({

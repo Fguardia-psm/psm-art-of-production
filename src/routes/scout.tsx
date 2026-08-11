@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ARCHETYPES, SCOUT_QUESTIONS } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
 import { cn } from "@/lib/utils";
+import { ProductionForecastPanel } from "@/components/production-forecast";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/scout")({
@@ -69,7 +70,11 @@ function ScoutPage() {
             {archetype.fieldReading}
           </p>
 
-          <div className="mt-8 space-y-4">
+          <div className="mt-8">
+            <ProductionForecastPanel forecast={archetype.forecast} tone="ink" />
+          </div>
+
+          <div className="mt-6 space-y-4">
             <div className="rounded-xl border border-parchment/12 bg-parchment/[0.04] px-5 py-4">
               <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright/90">
                 At your best

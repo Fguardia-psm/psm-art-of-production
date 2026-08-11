@@ -1,10 +1,16 @@
 import type { ChapterResult, ChapterSlug } from "./content";
-import { REQUIRED_CHAPTER_SLUGS } from "./content";
+import { REQUIRED_CHAPTERS, REQUIRED_CHAPTER_SLUGS } from "./content";
 
 const RESULT_PTS: Record<ChapterResult, number> = {
   victory: 12,
   "field-note": 8,
   lesson: 4,
+};
+
+const RESULT_RANK: Record<ChapterResult, number> = {
+  victory: 3,
+  "field-note": 2,
+  lesson: 1,
 };
 
 /** Readiness 0–100 — how complete the campaign is for a real field conversation. */
@@ -64,4 +70,32 @@ export function computeReadiness(input: {
   }
 
   return { score, band, label, parts };
+}
+
+/** Weakest / strongest required chapter labels for recruiter intel */
+export function chapterScorecard(
+  chapterResults: Record<string, ChapterResult>,
+): { weakest?: string; strongest?: string; done: number } {
+  const scored = REQUIRED_CHAPTERS.map((c) => {
+    const r = chapterResults[c.slug as ChapterSlug];
+    return {
+      title: c.title,
+      rank: r ? RESULT_RANK[r] : 0,
+      has: Boolean(r),
+    };
+  }).filter((x) => x.has);
+
+  if (!scored.length) return { done: 0 };
+
+  let weakest = scored[0]!;
+  let strongest = scored[0]!;
+  for (const s of scored) {
+    if (s.rank < weakest.rank) weakest = s;
+    if (s.rank > strongest.rank) strongest = s;
+  }
+  return {
+    weakest: weakest.title,
+    strongest: strongest.title,
+    done: scored.length,
+  };
 }

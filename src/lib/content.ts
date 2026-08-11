@@ -22,6 +22,14 @@ export type BookStage =
   | "top-producer"
   | "building-agency";
 
+export interface ProductionForecast {
+  risk: string;
+  breakthrough: string;
+  mission30: string;
+  measure: string;
+  target: string;
+}
+
 export interface Archetype {
   id: ArchetypeId;
   name: string;
@@ -35,6 +43,8 @@ export interface Archetype {
   whenYouStruggle: string;
   /** Concrete focus for the next 90 days / AEP runway */
   seasonFocus: string;
+  /** Diagnosis → prescription (Hawat: Production Forecast) */
+  forecast: ProductionForecast;
   strengths: string[];
   blindSpot: string;
   psmMove: string;
@@ -139,6 +149,13 @@ export const ARCHETYPES: Record<ArchetypeId, Archetype> = {
       "Over-preparation. Waiting for perfect intel while fertile ground sits unvisited. Analysis without feet on the ground.",
     seasonFocus:
       "Pick three fertile territories. Put appointments on the calendar before you polish one more spreadsheet. The map must meet the field.",
+    forecast: {
+      risk: "Analysis before action — the map never meets the field.",
+      breakthrough: "Territory planning plus scheduled client reviews.",
+      mission30: "Book 12 review or renewal appointments on the calendar.",
+      measure: "Appointments booked (not hours prepping).",
+      target: "3 solid appointments per week for 4 weeks.",
+    },
 strengths: [
       "Studies the landscape before every campaign",
       "Builds systems that turn chaos into clarity",
@@ -166,6 +183,13 @@ strengths: [
       "Pipeline neglect. When the calendar is empty, illumination has nowhere to land — and you blame \"leads\" instead of ground and rhythm.",
     seasonFocus:
       "Protect two non-negotiable appointment blocks daily. Practice three opening lines for the Nine Faces. Depth plus volume — not depth alone.",
+    forecast: {
+      risk: "Deep conversations without a full pipeline — noble exhaustion.",
+      breakthrough: "Protected appointment blocks + Nine Faces fluency.",
+      mission30: "Hold 16 client conversations using one Face language per sit.",
+      measure: "Sits completed and next-steps set same day.",
+      target: "4 sits per week; zero “I’ll call you later” with no date.",
+    },
 strengths: [
       "Highest form of close: understanding, not pressure",
       "Reads the nine faces of the client",
@@ -193,6 +217,13 @@ strengths: [
       "Order without outreach. A perfect system and an empty funnel. Visibility feels \"unsystematic,\" so you under-invest in fire.",
     seasonFocus:
       "Keep the formation — then add one deliberate visibility fire (community, pharmacy, digital) with a measured reply rate.",
+    forecast: {
+      risk: "Perfect systems, quiet funnel — order without outreach.",
+      breakthrough: "Formation plus one deliberate visibility fire.",
+      mission30: "Zero CRM loops older than 48 hours; run formation 5 days/week.",
+      measure: "Open loops closed + outbound touches logged.",
+      target: "15 outbound touches/day in formation; inbox zero by Friday.",
+    },
 strengths: [
       "Systems preserve strength others waste",
       "Maneuvers with intention, not haste",
@@ -220,6 +251,13 @@ strengths: [
       "Command from the office. Personal production and craft dull while you \"build.\" Chaos returns when culture is only a speech.",
     seasonFocus:
       "One scoreboard. One coaching cadence. One personal production block you will not cancel. Structure that still smells like the field.",
+    forecast: {
+      risk: "Command from the office — structure without personal craft.",
+      breakthrough: "One scoreboard, one coaching cadence, one personal block.",
+      mission30: "Install a weekly huddle and a personal production block you will not cancel.",
+      measure: "Team sits + your personal production hours protected.",
+      target: "1 huddle/week; 8 personal production hours/week.",
+    },
 strengths: [
       "Lays foundations before summoning numbers",
       "Culture as shield — honor, integrity, shared success",
@@ -247,6 +285,13 @@ strengths: [
       "Vanity metrics. Activity without enrollments. Marketing that never hands the baton to a disciplined appointment process.",
     seasonFocus:
       "One fire you will tend weekly. One conversion path from attention to appointment. Measure replies and sits — not likes.",
+    forecast: {
+      risk: "Bright flame, soft close — attention without enrollments.",
+      breakthrough: "One fire tended weekly with a path from reply to sit.",
+      mission30: "Ship 4 value touches and convert replies into booked sits.",
+      measure: "Replies → sits → enrollments (not likes).",
+      target: "10 meaningful replies and 6 sits from fire this month.",
+    },
 strengths: [
       "Marketing as strategy, not vanity",
       "Trust begins before the appointment",
@@ -1101,13 +1146,71 @@ export const PSM_CONTACT_URL =
 export const PDF_URL =
   "https://www.psmbrokerage.com/hubfs/THE%20ART%20OF%20PRODUCTION.pdf";
 
-export function fieldLeaderUrl(archetype?: ArchetypeId | null, name?: string) {
-  // Until LEAD_WEBHOOK_URL is live, send agents to Contact Us
+export type RecruiterIntel = {
+  archetype?: ArchetypeId | null;
+  name?: string;
+  readiness?: number;
+  readinessLabel?: string;
+  nineFacesScore?: number;
+  chaptersDone?: number;
+  weakestChapter?: string;
+  strongestChapter?: string;
+  fieldReportsSeen?: boolean;
+  utmContent?: string;
+};
+
+/** Contact Us link carrying recruiter intelligence (query params for CRM/forms). */
+export function fieldLeaderUrl(
+  archetypeOrIntel?: ArchetypeId | null | RecruiterIntel,
+  name?: string,
+) {
+  const intel: RecruiterIntel =
+    archetypeOrIntel && typeof archetypeOrIntel === "object"
+      ? archetypeOrIntel
+      : { archetype: archetypeOrIntel as ArchetypeId | null | undefined, name };
+
   const u = new URL(PSM_CONTACT_URL);
-  u.searchParams.set("utm_content", "field-leader");
-  if (archetype) u.searchParams.set("archetype", archetype);
-  if (name) u.searchParams.set("agent", name);
+  u.searchParams.set("utm_content", intel.utmContent ?? "field-leader");
+  u.searchParams.set("from", "art-of-production");
+  if (intel.archetype) {
+    u.searchParams.set("archetype", intel.archetype);
+    const arch = ARCHETYPES[intel.archetype];
+    u.searchParams.set("archetype_name", arch.name);
+  }
+  if (intel.name) u.searchParams.set("agent", intel.name);
+  if (intel.readiness !== undefined)
+    u.searchParams.set("readiness", String(intel.readiness));
+  if (intel.readinessLabel)
+    u.searchParams.set("readiness_label", intel.readinessLabel);
+  if (intel.nineFacesScore !== undefined)
+    u.searchParams.set("nine_faces", `${intel.nineFacesScore}/9`);
+  if (intel.chaptersDone !== undefined)
+    u.searchParams.set("chapters", String(intel.chaptersDone));
+  if (intel.weakestChapter)
+    u.searchParams.set("weakest", intel.weakestChapter);
+  if (intel.strongestChapter)
+    u.searchParams.set("strongest", intel.strongestChapter);
+  if (intel.fieldReportsSeen)
+    u.searchParams.set("field_reports", "seen");
   return u.toString();
+}
+
+/** Human-readable recruiter one-liner for counsel CTA. */
+export function recruiterIntelSummary(intel: RecruiterIntel): string {
+  const arch = intel.archetype ? ARCHETYPES[intel.archetype].name : "Unknown";
+  const parts = [
+    arch,
+    intel.readiness !== undefined
+      ? `Readiness ${intel.readiness}/100${intel.readinessLabel ? ` (${intel.readinessLabel})` : ""}`
+      : null,
+    intel.nineFacesScore !== undefined
+      ? `Nine Faces ${intel.nineFacesScore}/9`
+      : null,
+    intel.weakestChapter ? `Watch: ${intel.weakestChapter}` : null,
+    intel.strongestChapter ? `Strength: ${intel.strongestChapter}` : null,
+    intel.fieldReportsSeen ? "Field Reports reviewed" : null,
+  ].filter(Boolean);
+  return parts.join(" · ");
 }
 
 export const PARTNER_PROOF = [
