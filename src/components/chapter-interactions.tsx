@@ -30,6 +30,8 @@ export function ChapterInteractionPanel({
 }
 
 /** Night Before AEP — rising storm meter; stack prep on the workbench */
+const PREP_STORM_DURATION_MS = 75_000;
+
 function PrepStorm({
   interaction,
   onResolved,
@@ -46,15 +48,13 @@ function PrepStorm({
 
   useEffect(() => {
     if (!started || done) return;
+    const start = Date.now();
     const id = window.setInterval(() => {
-      setStorm((s) => {
-        if (s >= 100) {
-          window.clearInterval(id);
-          return 100;
-        }
-        return s + 1.2;
-      });
-    }, 80);
+      const elapsed = Date.now() - start;
+      const pct = Math.min(100, (elapsed / PREP_STORM_DURATION_MS) * 100);
+      setStorm(pct);
+      if (pct >= 100) window.clearInterval(id);
+    }, 100);
     return () => window.clearInterval(id);
   }, [started, done]);
 
@@ -122,6 +122,17 @@ function PrepStorm({
         {!done ? (
           <p className="font-ui text-xs tabular-nums text-charcoal-soft shrink-0">
             Season pressure {Math.min(100, Math.round(storm))}%
+            <span className="block text-[10px] opacity-80">
+              {Math.max(
+                0,
+                Math.ceil(
+                  ((PREP_STORM_DURATION_MS * (100 - Math.min(100, storm))) /
+                    100) /
+                    1000,
+                ),
+              )}
+              s until the season breaks
+            </span>
           </p>
         ) : null}
       </div>
