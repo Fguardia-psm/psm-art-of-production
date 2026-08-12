@@ -205,9 +205,6 @@ export function CounselHandoff(props: Props) {
             <Link to="/dossier">View my dossier</Link>
           </Button>
           <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
-            <a href="/dossier#field-seal">Print Field Seal</a>
-          </Button>
-          <Button asChild variant={ink ? "secondary" : "outline"} size="lg">
             <Link to="/field-reports">Review Field Reports</Link>
           </Button>
         </div>

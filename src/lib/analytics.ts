@@ -15,8 +15,7 @@ export type FunnelEvent =
   | "dossier_view"
   | "field_report_open"
   | "counsel_click"
-  | "field_seal_print"
-  | "field_seal_share"
+
   | "map_view"
   | "start_over";
 

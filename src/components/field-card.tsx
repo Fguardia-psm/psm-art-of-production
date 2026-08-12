@@ -1,12 +1,8 @@
 import type { Archetype, ProductionForecast } from "@/lib/content";
-import { Button } from "@/components/ui/button";
-import { Printer, Share2 } from "lucide-react";
-import { track } from "@/lib/analytics";
-import { printFieldSeal } from "@/lib/print-field-seal";
 
 /**
- * Field Seal — premium printable one-pager (campaign commission).
- * Archetype is always the hero identity; personal name is secondary if present.
+ * Field Seal — on-screen campaign commission. Print/share removed
+ * (blank print in iframe/embed). Seal is viewed in the dossier.
  */
 export function FieldCard({
   arch,
@@ -43,64 +39,15 @@ export function FieldCard({
   ];
 
   return (
-    <section className="print-seal-root space-y-3 print:space-y-0">
-      <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
-        <div>
-          <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-            Your Field Seal
-          </p>
-          <p className="mt-1 font-body text-sm text-charcoal-muted max-w-md">
-            Print this for your desk, or share it before a call with a field
-            leader. Mission, risk, and Monday move on one page.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="paper"
-            size="lg"
-            onClick={() => {
-              track("field_seal_print", { archetype: arch.id });
-              printFieldSeal(document.getElementById("field-card"));
-            }}
-          >
-            <Printer className="size-4" />
-            Print Field Seal
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            onClick={async () => {
-              const text = [
-                `Field Seal · The Art of Production`,
-                arch.name,
-                arch.epithet,
-                `Campaign: ${readinessLabel}`,
-                `Nine Faces ${nineFacesScore}/9`,
-                `30-day plan: ${forecast.mission30}`,
-                `Monday: ${arch.mondayScript}`,
-                `PSM counsel: https://www.psmbrokerage.com/contact`,
-              ].join("\n");
-              track("field_seal_share", { archetype: arch.id });
-              try {
-                if (navigator.share) {
-                  await navigator.share({
-                    title: `${arch.name} · Field Seal`,
-                    text,
-                  });
-                } else {
-                  printFieldSeal(document.getElementById("field-card"));
-                }
-              } catch {
-                /* user cancelled share */
-              }
-            }}
-          >
-            <Share2 className="size-4" />
-            Share seal
-          </Button>
-        </div>
+    <section className="print-seal-root space-y-3">
+      <div>
+        <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
+          Your Field Seal
+        </p>
+        <p className="mt-1 font-body text-sm text-charcoal-muted max-w-md">
+          Your commission mark for this campaign — mission, risk, and Monday
+          move on one card. Bring this reading to counsel.
+        </p>
       </div>
 
       <article
