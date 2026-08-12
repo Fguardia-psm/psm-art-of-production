@@ -46,6 +46,7 @@ function ChapterPageInner() {
   const { scoutComplete, completedChapters, completeChapter, provisionalArchetype } =
     useCampaignStore();
   const [resolved, setResolved] = useState(false);
+  useScrollToTopOnChange(resolved ? `${slug}-sealed` : slug);
   const archTip = provisionalArchetype
     ? ARCHETYPES[provisionalArchetype]
     : null;

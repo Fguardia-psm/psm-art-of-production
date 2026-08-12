@@ -1,6 +1,6 @@
 import { track } from "@/lib/analytics";
 import { useMemo, useRef, useState } from "react";
-import { useScrollToTopOnChange } from "@/components/scroll-to-top";
+import { useScrollToTopOnChange, scrollToTopOfCampaign } from "@/components/scroll-to-top";
 import {
   createFileRoute,
   Link,
@@ -82,6 +82,7 @@ function NineFacesPageInner() {
   }
 
   function next() {
+    scrollToTopOfCampaign();
     if (index < total - 1) {
       setIndex((i) => i + 1);
       setPicked(null);
