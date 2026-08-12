@@ -83,7 +83,7 @@ export function StartOverControl({
         </p>
         <p className="mt-2 font-body text-sm text-charcoal-muted leading-relaxed">
           Wipe seals and progress on this device and return to the beginning.
-          NPN already filed cannot be unsent.
+          Counsel already sent cannot be unsent.
         </p>
         <Button
           type="button"

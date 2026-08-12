@@ -14,8 +14,8 @@ import {
   ARCHETYPES,
   resultLabel,
 } from "@/lib/content";
+import { getCampaignProgress } from "@/lib/campaign-progress";
 import { requiredProgress, useCampaignStore } from "@/lib/campaign-store";
-import { computeReadiness } from "@/lib/readiness";
 import { cn } from "@/lib/utils";
 import { Check, Lock, ArrowRight, Star } from "lucide-react";
 
@@ -41,7 +41,7 @@ function MapPageInner() {
   }
 
   const progress = requiredProgress(state);
-  const readiness = computeReadiness(state);
+  const campaign = getCampaignProgress(state);
   const archetype = state.provisionalArchetype
     ? ARCHETYPES[state.provisionalArchetype]
     : null;
@@ -86,9 +86,9 @@ function MapPageInner() {
 
         <div className="mt-6">
           <ReadinessPlate
-            score={readiness.score}
-            label={readiness.label}
-            parts={readiness.parts}
+            label={campaign.label}
+            band={campaign.band}
+            items={campaign.items}
           />
         </div>
 

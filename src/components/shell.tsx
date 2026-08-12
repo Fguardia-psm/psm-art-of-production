@@ -2,10 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import {
   hasCampaignProgress,
-  requiredProgress,
   useCampaignStore,
 } from "@/lib/campaign-store";
-import { computeReadiness } from "@/lib/readiness";
+import { getCampaignProgress } from "@/lib/campaign-progress";
 import { StartOverControl } from "@/components/start-over";
 
 export function AgentOnlyRibbon({ className }: { className?: string }) {
@@ -35,10 +34,10 @@ export function CampaignHeader({
   tone?: "paper" | "ink";
 }) {
   const state = useCampaignStore();
-  const progress = requiredProgress(state);
-  const readiness = computeReadiness(state);
+  const progress = getCampaignProgress(state);
   const ink = tone === "ink";
   const canReset = hasCampaignProgress(state);
+  const scoutInFlight = !state.scoutComplete;
 
   return (
     <header
@@ -49,7 +48,7 @@ export function CampaignHeader({
           : "border-charcoal/10 bg-parchment/90 text-charcoal",
       )}
     >
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-3xl flex-col gap-2 px-4 py-3 min-[400px]:flex-row min-[400px]:items-center min-[400px]:justify-between min-[400px]:gap-3 sm:px-6">
         <div className="min-w-0">
           <Link
             to="/"
@@ -66,20 +65,24 @@ export function CampaignHeader({
               ink ? "text-parchment/40" : "text-charcoal-soft",
             )}
           >
-            {seasonLine(progress.done, progress.total)}
+            {seasonLine(
+              progress.items.filter((i) => i.id !== "scout" && i.id !== "field-reports" && i.done).length,
+              6,
+            )}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3 min-[400px]:justify-end">
           <div
-            className="hidden items-center gap-2 sm:flex"
+            className="hidden items-center gap-1.5 sm:flex"
             aria-label={`Progress ${progress.done} of ${progress.total}`}
           >
-            {Array.from({ length: progress.total }).map((_, i) => (
+            {progress.items.map((step) => (
               <span
-                key={i}
+                key={step.id}
+                title={step.label}
                 className={cn(
                   "size-2 rounded-full border transition-colors",
-                  i < progress.done
+                  step.done
                     ? "border-brass bg-brass"
                     : ink
                       ? "border-parchment/25 bg-transparent"
@@ -95,23 +98,17 @@ export function CampaignHeader({
                 ink ? "text-parchment/55" : "text-charcoal-soft",
               )}
             >
-              {progress.done}/{progress.total}
+              {scoutInFlight ? "Scout" : `${progress.done}/${progress.total}`}
             </span>
-            {state.scoutComplete ? (
+            {!scoutInFlight ? (
               <p
                 className={cn(
                   "font-ui text-[10px]",
                   ink ? "text-brass-bright/70" : "text-brass",
                 )}
-                title={readiness.label}
+                title={progress.label}
               >
-                {readiness.band === "campaign-sealed"
-                  ? "Campaign sealed"
-                  : readiness.band === "field-ready"
-                    ? "Field-ready"
-                    : readiness.band === "ready"
-                      ? "Rising"
-                      : "Forming"}
+                {progress.status}
               </p>
             ) : null}
             {canReset ? (
@@ -146,7 +143,7 @@ export function CampaignShell({
     <div
       data-campaign-shell
       className={cn(
-        "min-h-dvh flex flex-col",
+        "min-h-dvh flex flex-col overflow-x-clip",
         tone === "ink" ? "ink-wash text-parchment" : "parchment-field text-charcoal",
       )}
     >
@@ -289,37 +286,46 @@ export function MarkWell({ children }: { children: React.ReactNode }) {
 }
 
 export function ReadinessPlate({
-  score,
+  score: _score,
   label,
   parts,
   band,
+  items,
 }: {
-  score: number;
+  score?: number;
   label: string;
-  parts: { label: string; pts: number; max: number }[];
+  parts?: { label: string; pts: number; max: number }[];
   band?: string;
+  items?: { id: string; label: string; done: boolean }[];
 }) {
   const status =
     band === "campaign-sealed"
       ? "Campaign sealed"
       : band === "field-ready"
         ? "Field-ready"
-        : band === "ready"
+        : band === "rising" || band === "ready"
           ? "Rising"
           : "Forming";
+  const rows =
+    items ??
+    (parts ?? []).map((p) => ({
+      id: p.label,
+      label: p.label,
+      done: p.pts >= p.max,
+    }));
   return (
     <div className="rounded-xl border border-charcoal/10 bg-parchment/70 p-5">
       <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
-        Campaign state · before talking with a field leader
+        Campaign state
       </p>
       <p className="mt-2 font-display text-3xl text-charcoal">{status}</p>
       <p className="mt-1 font-body text-sm text-charcoal-muted">{label}</p>
       <ul className="mt-4 space-y-2">
-        {parts.map((p) => (
-          <li key={p.label} className="flex items-center justify-between gap-3">
+        {rows.map((p) => (
+          <li key={p.id} className="flex items-center justify-between gap-3">
             <span className="font-ui text-xs text-charcoal-soft">{p.label}</span>
             <span className="font-ui text-xs text-charcoal">
-              {p.pts >= p.max ? "Complete" : p.pts > 0 ? "In progress" : "Not started"}
+              {p.done ? "Complete" : "Not started"}
             </span>
           </li>
         ))}

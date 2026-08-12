@@ -22,6 +22,7 @@ import {
   getStageAdjustedForecast,
   getSuspectedFieldLeak,
 } from "@/lib/field-leader-brief";
+import { getCampaignProgress } from "@/lib/campaign-progress";
 import { track } from "@/lib/analytics";
 import { NineFacesDeck } from "@/components/nine-faces-deck";
 import { ProductionForecastPanel } from "@/components/production-forecast";
@@ -86,13 +87,17 @@ function DossierPageInner() {
     utmContent: "dossier-counsel",
   };
   const counselHref = fieldLeaderUrl(intel);
+  const campaign = getCampaignProgress(state);
 
   return (
     <CampaignShell>
       <div className="space-y-10 animate-fade-up">
         <div>
           <SectionKicker>Field dossier · sealed</SectionKicker>
-          <h1 className="mt-2 font-display text-3xl text-charcoal sm:text-4xl">
+          <h1
+            data-testid="dossier-heading"
+            className="mt-2 font-display text-3xl text-charcoal sm:text-4xl"
+          >
             {lead?.name
               ? `${lead.name.split(" ")[0]}, your reading is ready`
               : "Your reading is ready"}
@@ -220,10 +225,9 @@ function DossierPageInner() {
         <ProductionForecastPanel forecast={getStageAdjustedForecast(provisionalArchetype, bookStage)} />
 
         <ReadinessPlate
-          score={readiness.score}
-          label={readiness.label}
-          parts={readiness.parts}
-          band={readiness.band}
+          label={campaign.label}
+          band={campaign.band}
+          items={campaign.items}
         />
         </div>
 

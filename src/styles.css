@@ -42,12 +42,16 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   body {
     margin: 0;
     min-height: 100dvh;
+    max-width: 100%;
+    overflow-x: clip;
     background: var(--color-parchment);
     color: var(--color-charcoal);
     font-family: var(--font-body);

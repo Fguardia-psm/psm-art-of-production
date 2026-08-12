@@ -43,7 +43,6 @@ function PrepStorm({
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<ChapterResult>("lesson");
   const [storm, setStorm] = useState(0);
-  // Options active immediately — no "begin" gate blocking taps
   const started = true;
 
   useEffect(() => {
@@ -57,13 +56,6 @@ function PrepStorm({
     }, 100);
     return () => window.clearInterval(id);
   }, [started, done]);
-
-  useEffect(() => {
-    if (started && storm >= 100 && !done) {
-      commit(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storm, started, done]);
 
   const goodCount = selected.filter((id) =>
     interaction.options.find((o) => o.id === id)?.good,
@@ -79,18 +71,11 @@ function PrepStorm({
     );
   }
 
-  function commit(auto = false) {
+  function commit() {
     if (done) return;
     let r: ChapterResult = "lesson";
     if (goodCount >= interaction.need && !hasBad) r = "victory";
     else if (goodCount >= interaction.need - 1 || (goodCount >= 2 && hasBad))
-      r = "field-note";
-    if (
-      auto &&
-      r === "victory" &&
-      storm >= 100 &&
-      goodCount === interaction.need
-    )
       r = "field-note";
     setResult(r);
     setDone(true);
@@ -216,11 +201,11 @@ function PrepStorm({
           variant="paper"
           size="lg"
           className="w-full sm:w-auto min-h-12"
-          disabled={selected.length === 0}
-          onClick={() => commit(false)}
+          disabled={goodCount < interaction.need}
+          onClick={() => commit()}
         >
-          {selected.length === 0
-            ? "Select prep actions above"
+          {goodCount < interaction.need
+            ? `Select ${interaction.need} prep actions to seal`
             : "Seal preparation · continue"}
         </Button>
       ) : (
@@ -256,7 +241,7 @@ function PrepStorm({
   );
 }
 
-/** Multi-beat dialogue — pressure rises on bad paths; field notes allowed */
+/** Multi-select dialogue — pick every move that lowers pressure, then seal */
 function ObjectionPlay({
   interaction,
   onResolved,
@@ -264,24 +249,50 @@ function ObjectionPlay({
   interaction: Extract<ChapterInteraction, { type: "objection" }>;
   onResolved: (result: ChapterResult) => void;
 }) {
-  const [pick, setPick] = useState<string | null>(null);
-  const [pressure, setPressure] = useState(28);
-  const chosen = interaction.options.find((o) => o.id === pick);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [done, setDone] = useState(false);
+  const [result, setResult] = useState<ChapterResult>("lesson");
+  const goodIds = interaction.options
+    .filter((o) => o.grade === "victory")
+    .map((o) => o.id);
+  const need = Math.max(2, goodIds.length);
+  const goodPicked = picked.filter((id) => goodIds.includes(id)).length;
+  const badPicked = picked.some((id) => {
+    const o = interaction.options.find((x) => x.id === id);
+    return o?.grade === "lesson";
+  });
 
-  function choose(id: string) {
-    if (pick) return;
-    const opt = interaction.options.find((o) => o.id === id);
-    if (!opt) return;
-    setPick(id);
-    if (opt.grade === "lesson") setPressure(88);
-    else if (opt.grade === "field-note") setPressure(52);
-    else setPressure(18);
-    onResolved(opt.grade);
+  function toggle(id: string) {
+    if (done) return;
+    setPicked((s) =>
+      s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
+    );
   }
+
+  function commit() {
+    if (done) return;
+    let r: ChapterResult = "lesson";
+    if (goodPicked >= need && !badPicked) r = "victory";
+    else if (goodPicked >= 1) r = "field-note";
+    setResult(r);
+    setDone(true);
+    onResolved(r);
+  }
+
+  const pressure = done
+    ? result === "victory"
+      ? 18
+      : result === "field-note"
+        ? 52
+        : 88
+    : 28;
 
   return (
     <div className="space-y-5">
       <p className="font-body text-charcoal">{interaction.prompt}</p>
+      <p className="font-ui text-xs text-charcoal leading-relaxed">
+        Select every response that lowers pressure. Need {need}. Then seal.
+      </p>
 
       <div className="rounded-xl border border-charcoal/12 bg-ink text-parchment p-4 sm:p-5">
         <div className="flex items-center justify-between gap-3">
@@ -301,49 +312,72 @@ function ObjectionPlay({
         <blockquote className="mt-4 font-display text-lg italic text-parchment/90 sm:text-xl">
           {interaction.clientLine}
         </blockquote>
-        <div
-          className={cn(
-            "mt-4 flex size-14 items-center justify-center rounded-full border font-display text-2xl transition-colors",
-            pick
-              ? chosen?.grade === "victory"
-                ? "border-success/40 bg-success/15 text-parchment"
-                : chosen?.grade === "field-note"
-                  ? "border-brass/40 bg-brass/15"
-                  : "border-ember/40 bg-ember/20"
-              : "border-parchment/20 text-parchment/70",
-          )}
-          aria-hidden
-        >
-          {pick ? (chosen?.grade === "victory" ? "○" : chosen?.grade === "field-note" ? "◑" : "✕") : "?"}
-        </div>
       </div>
 
       <div className="grid gap-2">
-        {interaction.options.map((opt) => (
-          <button
-            key={opt.id}
-            type="button"
-            disabled={!!pick}
-            onClick={() => choose(opt.id)}
-            className={cn(
-              "rounded-lg border px-4 py-3 text-left font-ui text-sm transition-colors min-h-11",
-              pick === opt.id
-                ? opt.grade === "victory"
-                  ? "border-success/50 bg-success/10"
-                  : opt.grade === "field-note"
-                    ? "border-brass/40 bg-brass/10"
-                    : "border-ember/40 bg-ember/10"
-                : "border-charcoal/12 bg-parchment/60 hover:border-brass/40",
-              pick && pick !== opt.id && "opacity-50",
-            )}
-          >
-            {opt.label}
-          </button>
-        ))}
+        {interaction.options.map((opt) => {
+          const on = picked.includes(opt.id);
+          return (
+            <button
+              key={opt.id}
+              type="button"
+              disabled={done}
+              onClick={() => toggle(opt.id)}
+              aria-pressed={on}
+              className={cn(
+                "rounded-lg border px-4 py-3 text-left font-ui text-sm transition-colors min-h-11",
+                on
+                  ? "border-brass bg-brass/15"
+                  : "border-charcoal/12 bg-parchment/60 hover:border-brass/40",
+                done && !on && "opacity-50",
+              )}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
       </div>
-      {chosen ? (
-        <ResultBanner result={chosen.grade} text={chosen.reveal} />
-      ) : null}
+      {!done ? (
+        <Button
+          variant="paper"
+          size="lg"
+          disabled={picked.length < need}
+          onClick={commit}
+        >
+          {picked.length < need
+            ? `Select at least ${need} responses to seal`
+            : "Seal this sit · continue"}
+        </Button>
+      ) : (
+        <div className="space-y-3">
+          <ResultBanner
+            result={result}
+            text={
+              result === "victory"
+                ? "Pressure falls. The client stays in the chair."
+                : result === "field-note"
+                  ? "Some trust held. See the responses that lower pressure."
+                  : "Pressure rose. See the responses that keep the sit alive."
+            }
+          />
+          {result !== "victory" ? (
+            <div className="rounded-lg border border-brass/30 bg-brass/8 px-4 py-3">
+              <p className="font-ui text-[10px] uppercase tracking-[0.18em] text-brass">
+                Responses that lower pressure
+              </p>
+              <ul className="mt-2 space-y-1">
+                {interaction.options
+                  .filter((o) => o.grade === "victory")
+                  .map((o) => (
+                    <li key={o.id} className="font-body text-sm text-charcoal">
+                      {o.label}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }
@@ -434,10 +468,12 @@ function GroundSelect({
         <Button
           variant="paper"
           size="lg"
-          disabled={selected.length === 0}
+          disabled={fertilePicked < interaction.need}
           onClick={commit}
         >
-          Claim this ground
+          {fertilePicked < interaction.need
+            ? `Plant ${interaction.need} warm-ground banners to claim`
+            : "Claim this ground"}
         </Button>
       ) : (
         <div className="space-y-3">

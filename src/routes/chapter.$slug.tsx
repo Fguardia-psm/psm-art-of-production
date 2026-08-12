@@ -142,7 +142,19 @@ function ChapterPageInner() {
           />
         </section>
 
-        {(resolved || alreadyDone) && (
+        {alreadyDone && !resolved ? (
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <p className="font-ui text-xs text-charcoal-soft self-center">
+              This campaign is already sealed on this device.
+            </p>
+            <Button variant="outline" size="lg" onClick={continueOn}>
+              Continue
+              <ArrowRight className="size-4" />
+            </Button>
+          </div>
+        ) : null}
+
+        {resolved && (
           <div className="space-y-6 animate-fade-up">
             <MarkWell>{chapter.markWell}</MarkWell>
             <aside className="rounded-lg border border-charcoal/10 bg-ink/[0.03] px-5 py-4">

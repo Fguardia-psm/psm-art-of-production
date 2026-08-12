@@ -32,6 +32,16 @@ function NineFacesPage() {
   );
 }
 
+function goDossier(navigate: ReturnType<typeof useNavigate>) {
+  void navigate({ to: "/dossier" }).then(() => {
+    if (!window.location.pathname.includes("dossier")) {
+      window.location.assign("/dossier");
+    }
+  }).catch(() => {
+    window.location.assign("/dossier");
+  });
+}
+
 function NineFacesPageInner() {
   const navigate = useNavigate();
   const {
@@ -48,16 +58,12 @@ function NineFacesPageInner() {
   const [score, setScore] = useState(0);
   const scoreRef = useRef(0);
   const [picked, setPicked] = useState<"right" | "wrong" | null>(null);
-  const [finished, setFinished] = useState(nineFacesComplete);
-  useScrollToTopOnChange(finished ? "faces-done" : `face-${index}`);
+  const cardRef = useRef<HTMLElement>(null);
+  useScrollToTopOnChange(`face-${index}`);
 
   const requiredDone = REQUIRED_CHAPTER_SLUGS.every((s) =>
     completedChapters.includes(s),
   );
-
-  if (!scoutComplete) return <Navigate to="/scout" />;
-  if (!requiredDone) return <Navigate to="/map" />;
-
   const face = CLIENT_FACES[index];
   const total = CLIENT_FACES.length;
 
@@ -72,6 +78,9 @@ function NineFacesPageInner() {
     );
   }, [face, index]);
 
+  if (!scoutComplete) return <Navigate to="/scout" />;
+  if (!requiredDone) return <Navigate to="/map" />;
+
   function choose(kind: "right" | "wrong") {
     if (picked || !face) return;
     setPicked(kind);
@@ -81,27 +90,29 @@ function NineFacesPageInner() {
     }
   }
 
+  function enterDossier() {
+    completeNineFaces(scoreRef.current);
+    track("faces_complete", { score: scoreRef.current });
+    if (!unlocked) claimKitLocal();
+    goDossier(navigate);
+  }
+
   function next() {
     scrollToTopOfCampaign();
+    cardRef.current?.scrollIntoView({ block: "start", behavior: "auto" });
     if (index < total - 1) {
       setIndex((i) => i + 1);
       setPicked(null);
+      requestAnimationFrame(() => {
+        scrollToTopOfCampaign();
+        cardRef.current?.scrollIntoView({ block: "start", behavior: "auto" });
+      });
       return;
     }
-    completeNineFaces(scoreRef.current);
-    track("faces_complete", { score: scoreRef.current });
-    setFinished(true);
+    enterDossier();
   }
 
-  function finishAndGo() {
-    if (!nineFacesComplete) completeNineFaces(scoreRef.current);
-    // Claim kit on this device so the full path (dossier → Field Reports) is clickable
-    if (!unlocked) claimKitLocal();
-    navigate({ to: "/dossier" });
-  }
-
-  if (finished || nineFacesComplete) {
-    const displayScore = nineFacesComplete ? nineFacesScore : score;
+  if (nineFacesComplete && index === 0 && !picked) {
     return (
       <CampaignShell>
         <div className="mx-auto max-w-xl text-center animate-fade-up">
@@ -110,7 +121,7 @@ function NineFacesPageInner() {
             The Nine Faces
           </h1>
           <p className="mt-4 font-display text-5xl text-brass tabular-nums">
-            {displayScore}
+            {nineFacesScore}
             <span className="text-2xl text-charcoal-soft"> / {total}</span>
           </p>
           <p className="mt-6 font-body text-charcoal-muted leading-relaxed">
@@ -124,8 +135,16 @@ function NineFacesPageInner() {
             </MarkWell>
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button variant="paper" size="lg" onClick={finishAndGo}>
-              "Enter your field dossier"
+            <Button
+              variant="paper"
+              size="lg"
+              data-testid="enter-dossier"
+              onClick={() => {
+                if (!unlocked) claimKitLocal();
+                goDossier(navigate);
+              }}
+            >
+              Enter your field dossier
               <ArrowRight className="size-4" />
             </Button>
             <Button asChild variant="outline" size="lg">
@@ -160,7 +179,11 @@ function NineFacesPageInner() {
           sub="The agent who reads the person in the chair wins trust faster."
         />
 
-        <section className="rounded-xl border border-charcoal/10 bg-parchment/80 p-5 sm:p-6 shadow-[var(--shadow-card)]">
+        <section
+          ref={cardRef}
+          data-scroll-target
+          className="rounded-xl border border-charcoal/10 bg-parchment/80 p-5 sm:p-6 shadow-[var(--shadow-card)]"
+        >
           <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass">
             Client before you
           </p>
@@ -221,7 +244,13 @@ function NineFacesPageInner() {
         </section>
 
         <div className="flex justify-end">
-          <Button variant="paper" size="lg" disabled={!picked} onClick={next}>
+          <Button
+            variant="paper"
+            size="lg"
+            disabled={!picked}
+            data-testid={index < total - 1 ? "next-face" : "enter-dossier"}
+            onClick={next}
+          >
             {index < total - 1 ? "Next face" : "Finish · enter dossier"}
             <ArrowRight className="size-4" />
           </Button>

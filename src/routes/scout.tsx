@@ -133,6 +133,15 @@ function ScoutPage() {
             {archetype.fieldReading}
           </p>
 
+          <div className="mt-6 rounded-xl border border-brass/40 bg-brass/15 px-5 py-4">
+            <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
+              Opening line you can use Monday
+            </p>
+            <p className="mt-2 font-display text-lg italic text-parchment leading-snug">
+              “{archetype.mondayScript}”
+            </p>
+          </div>
+
           <div className="mt-6 rounded-xl border border-brass/30 bg-brass/10 px-5 py-4">
             <p className="font-ui text-[10px] uppercase tracking-[0.22em] text-brass-bright">
               Exposed flank this season
