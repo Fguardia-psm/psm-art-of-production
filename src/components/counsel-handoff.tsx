@@ -6,12 +6,12 @@ import { buildWholesalerPacket } from "@/lib/wholesaler-payload";
 import { track } from "@/lib/analytics";
 import {
   PSM_CONTACT_URL,
-  fieldLeaderUrl,
   type ArchetypeId,
   type BookStage,
   type ChapterResult,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
+import { getPaidAttribution } from "@/lib/paid-attribution";
 import { STAGE_OPTIONS } from "@/lib/field-leader-brief";
 import { ArrowRight, ExternalLink, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -82,6 +82,7 @@ export function CounselHandoff(props: Props) {
     try {
       if (stage !== storeStage) setBookStage(stage);
 
+      const attribution = getPaidAttribution();
       const packet = buildWholesalerPacket({
         kind: "counsel_request",
         source: props.source,
@@ -100,6 +101,7 @@ export function CounselHandoff(props: Props) {
         chapterResults: props.chapterResults,
         leaderCode: props.leaderCode,
       });
+      const packetWithAds = { ...packet, ...attribution };
 
       await submitCounselIntent({
         data: {
@@ -129,7 +131,7 @@ export function CounselHandoff(props: Props) {
           wholesalerHeadline: packet.wholesaler_headline,
           wholesalerTalkTrack: packet.wholesaler_talk_track,
           consented: true,
-          packet: packet as Record<string, unknown>,
+          packet: packetWithAds as Record<string, unknown>,
         },
       });
 

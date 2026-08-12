@@ -35,7 +35,7 @@ export function FieldCard({
     "Week 1 — set the mission on the calendar",
     "Week 2 — hit measure; adjust ground",
     "Week 3 — protect formation; no task-hopping",
-    "Week 4 — review scores; request counsel if stuck",
+    "Week 4 — review results; request counsel if stuck",
   ];
 
   return (

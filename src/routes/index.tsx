@@ -77,7 +77,11 @@ function LandingPage() {
         </div>
 
         <div className="flex flex-1 flex-col justify-center py-12 sm:py-16">
-          <p className="font-display text-sm title-spaced text-parchment/50 animate-fade-up">
+          <p className="font-ui text-[11px] uppercase tracking-[0.18em] text-brass-bright/75">
+            For licensed insurance agents and agency builders. No consumer plan
+            advice. No obligation.
+          </p>
+          <p className="mt-3 font-display text-sm title-spaced text-parchment/50 animate-fade-up">
             A Strategic Manual for Insurance Agents
           </p>
           <h1 className="mt-4 font-display text-[clamp(2.75rem,8vw,4.5rem)] leading-[0.95] tracking-tight text-parchment animate-ink-in">

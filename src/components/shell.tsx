@@ -324,8 +324,6 @@ export function ReadinessPlate({
           </li>
         ))}
       </ul>
-      {/* score kept off agent ritual — internal only via Field Leader Brief */}
-      <span className="sr-only">Internal readiness score {score}</span>
     </div>
   );
 }

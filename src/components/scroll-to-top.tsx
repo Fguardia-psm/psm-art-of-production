@@ -106,19 +106,6 @@ export function scrollToTopOfCampaign() {
     }
 
     notifyParentScrollTop();
-
-    // Move focus to top landmark so keyboard/AT + some mobile browsers jump up
-    try {
-      const heading = document.querySelector(
-        "[data-campaign-shell] h1, [data-campaign-shell] [data-scroll-target]",
-      );
-      if (heading instanceof HTMLElement) {
-        if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
-        heading.focus({ preventScroll: false });
-      }
-    } catch {
-      /* ignore */
-    }
   };
 
   go();

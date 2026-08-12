@@ -17,7 +17,7 @@ import {
   fieldLeaderUrl,
 } from "@/lib/content";
 import { useCampaignStore } from "@/lib/campaign-store";
-import { computeReadiness } from "@/lib/readiness";
+import { chapterScorecard, computeReadiness } from "@/lib/readiness";
 import {
   getStageAdjustedForecast,
   getSuspectedFieldLeak,
@@ -27,8 +27,6 @@ import { NineFacesDeck } from "@/components/nine-faces-deck";
 import { ProductionForecastPanel } from "@/components/production-forecast";
 import { FieldCard } from "@/components/field-card";
 import { CounselHandoff } from "@/components/counsel-handoff";
-import { chapterScorecard } from "@/lib/readiness";
-import { recruiterIntelSummary } from "@/lib/content";
 import { ArrowRight, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/dossier")({
@@ -88,7 +86,6 @@ function DossierPageInner() {
     utmContent: "dossier-counsel",
   };
   const counselHref = fieldLeaderUrl(intel);
-  const intelLine = recruiterIntelSummary(intel);
 
   return (
     <CampaignShell>
@@ -287,8 +284,8 @@ function DossierPageInner() {
             </Button>
           </div>
           <p className="mt-4 rounded-md border border-parchment/15 bg-parchment/[0.05] px-3 py-2 font-ui text-[11px] text-parchment/55 leading-relaxed">
-            <span className="text-brass-bright/90">What your wholesaler receives: </span>
-            {intelLine}
+            If you request counsel, PSM receives your Field Leader Brief so the
+            conversation starts with your field plan — not a generic pitch.
           </p>
           <p className="mt-3 font-ui text-[11px] text-parchment/40">
             Or open{" "}

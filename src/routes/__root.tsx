@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { AppErrorComponent } from "@/lib/error-component";
 import { IframeResizeReporter } from "@/components/iframe-resize";
+import { PaidPixels } from "@/components/paid-pixels";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import appCss from "@/styles.css?url";
 
@@ -45,6 +46,7 @@ function RootComponent() {
     <RootDocument>
       <ScrollToTop />
       <IframeResizeReporter />
+      <PaidPixels />
       <Outlet />
     </RootDocument>
   );
